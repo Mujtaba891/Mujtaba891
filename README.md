@@ -15,11 +15,10 @@
 ---
 
 ## 🛠️ Tech Stack
-- **Frontend:** HTML, CSS, JavaScript  
-- **Backend:** Node.js, Express.js  
-- **Database:** MongoDB, Firebase  
-- **Tools:** Git, GitHub, VS Code, Terminal  
-- **Other Skills:** Teaching, Entrepreneurship, UI/UX  
+- **Frontend:** HTML, CSS, JavaScript   
+- **Database:** Firebase  
+- **Tools:** GitHub, VS Code
+- **Other Skills:** Teaching, Entrepreneurship, UI/UX, Graphic designing
 
 ---
 
