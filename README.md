@@ -1,12 +1,55 @@
-- 👋 Hi, I’m @Mujtaba891
-- 👀 I’m interested in ...
-- 🌱 I’m currently learning ...
-- 💞️ I’m looking to collaborate on ...
-- 📫 How to reach me ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
+# 👋 Hi, I'm Mujtaba Alam (@Mujtaba891)
 
-<!---
-Mujtaba891/Mujtaba891 is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-You can click the Preview link to take a look at your changes.
---->
+💻 A passionate **Full-Stack Developer** & **Tech Explorer**  
+🚀 Building futuristic apps, editors & e-commerce platforms  
+👨‍🏫 Teaching **Web Development** to kids & beginners  
+
+---
+
+## 🌟 About Me
+- 🔭 Currently working on **MD Code** → A full-stack code editor like VS Code  
+- 🛒 Building **E-commerce platforms** with real-time features  
+- 📚 Exploring **Web, AI & Futuristic Projects**  
+- 👨‍🏫 Passionate about teaching coding to kids  
+
+---
+
+## 🛠️ Tech Stack
+- **Frontend:** HTML, CSS, JavaScript  
+- **Backend:** Node.js, Express.js  
+- **Database:** MongoDB, Firebase  
+- **Tools:** Git, GitHub, VS Code, Terminal  
+- **Other Skills:** Teaching, Entrepreneurship, UI/UX  
+
+---
+
+## 🚀 Featured Projects  
+
+### 🔹 [ArticleGlobe]
+(https://articleglobe3.vercel.app)  
+*A modern article publishing & blogging platform.*  
+
+### 🔹 [Single Code]
+(https://singlecode-md.vercel.app)  
+*A futuristic full-stack code editor & collaboration platform.*  
+
+### 🔹 [HSS Larnoo]
+(https://hss-larnoo.vercel.app/)  
+*A school management & information system.*  
+
+---
+
+## 📊 GitHub Stats
+![Mujtaba's GitHub stats](https://github-readme-stats.vercel.app/api?username=Mujtaba891&show_icons=true&theme=radical)  
+
+![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=Mujtaba891&layout=compact&theme=radical)  
+
+---
+
+## 🌐 Connect With Me
+- 🌍 Portfolio: [mujtabaalam.vercel.app](https://mujtabaalam.vercel.app)  
+- 📧 Email: mujtabaalam010@gmail.com  
+
+---
+
+⭐ **"Code. Create. Innovate."**
