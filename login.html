@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Authentication | Mujtaba Alam</title>
+    <link rel="icon" type="image/jpeg" href="images/mujtaba.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body class="admin-bg">
+
+    <div class="auth-container neumorphic-outset">
+        
+        <!-- Login Form Container (Visible by default) -->
+        <div id="login-form-container">
+            <h2>Admin Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" class="neumorphic-inset" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" class="neumorphic-inset" required>
+                </div>
+                <p id="login-error" class="error-message"></p>
+                <button type="submit" class="neumorphic-btn primary">Login</button>
+            </form>
+            <p class="auth-toggle-link">
+                First time here? <a href="#" id="show-signup">Create an account</a>
+            </p>
+        </div>
+
+        <!-- Signup Form Container (Hidden by default) -->
+        <div id="signup-form-container" style="display: none;">
+            <h2>Admin Sign Up</h2>
+            <form id="signup-form">
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" class="neumorphic-inset" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password (min. 6 characters)</label>
+                    <input type="password" id="signup-password" class="neumorphic-inset" required>
+                </div>
+                 <div class="form-group">
+                    <label for="signup-password-confirm">Confirm Password</label>
+                    <input type="password" id="signup-password-confirm" class="neumorphic-inset" required>
+                </div>
+                <p id="signup-error" class="error-message"></p>
+                <button type="submit" class="neumorphic-btn primary">Sign Up</button>
+            </form>
+            <p class="auth-toggle-link">
+                Already have an account? <a href="#" id="show-login">Login here</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <!-- We don't need Firestore on the login page -->
+    <!-- <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script> -->
+
+    <!-- Login Script -->
+    <script src="js/login.js"></script>
+</body>
+</html>

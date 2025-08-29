@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Mujtaba Alam</title>
+    <meta name="description" content="Complete your order and start your web development project.">
+    <link rel="icon" type="image/jpeg" href="images/mujtaba.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <link rel="stylesheet" href="css/checkout-style.css">
+</head>
+<body class="order-page-bg">
+    <div class="checkout-container neumorphic-outset">
+        <div class="checkout-header"><h2>Order Summary</h2><p>Review your project details and complete your order.</p></div>
+        <div id="order-summary-list" class="order-summary-list neumorphic-inset"><p>Loading details...</p></div>
+        
+        <div class="coupon-section">
+            <div class="coupon-input-group">
+                <input type="text" id="coupon-code-input" class="neumorphic-inset" placeholder="Enter Coupon Code">
+                <button id="apply-coupon-btn" class="neumorphic-btn">Apply</button>
+            </div>
+            <p id="coupon-status" class="coupon-status"></p>
+        </div>
+
+        <div class="total-price-section">
+            <div class="price-line"><span>Subtotal</span><span id="checkout-subtotal-price">₹0</span></div>
+            <div id="discount-display" class="price-line discount" style="display: none;"><span>Discount</span><span id="checkout-discount-amount">-₹0</span></div>
+            <hr>
+            <div class="price-line total">
+                <p>Total Amount</p>
+                <h3 id="checkout-total-price">₹0</h3>
+            </div>
+        </div>
+
+        <button id="rzp-button" class="neumorphic-btn primary large pay-button"><i class="fas fa-shield-alt"></i> Pay Securely</button>
+        <div class="payment-methods-info"><i class="fab fa-cc-visa"></i><i class="fab fa-cc-mastercard"></i><img src="https://razorpay.com/assets/images/upi-payment.png" alt="UPI" height="20"><i class="fas fa-university"></i><span>Cards, UPI & Net Banking Accepted</span></div>
+    </div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="js/checkout-script.js"></script>
+</body>
+</html>

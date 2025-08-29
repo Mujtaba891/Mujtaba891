@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customize Your Project | Mujtaba Alam</title>
+    <meta name="description" content="Get a custom quote for your website by answering a few simple questions.">
+    <link rel="icon" type="image/jpeg" href="images/mujtaba.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <link rel="stylesheet" href="css/order.css">
+</head>
+<body class="order-page-bg">
+
+    <div class="quiz-container neumorphic-outset">
+        <a href="templates.html" class="back-to-home"><i class="fas fa-arrow-left"></i> Change Template</a>
+        
+        <div id="quiz-view">
+            <div class="quiz-header">
+                <h2 id="progress-text">Customize Your Project</h2>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+
+            <div id="question-area">
+                <h3 id="question-text">Loading question...</h3>
+                <div id="options-container" class="options-grid">
+                    <!-- Dynamic Questions and Options will be injected here -->
+                </div>
+            </div>
+
+            <div class="quiz-navigation">
+                <button id="back-btn" class="neumorphic-btn">Back</button>
+                <!-- This will be dynamically changed or replaced at the final step -->
+                <button id="next-btn" class="neumorphic-btn primary">Next</button>
+            </div>
+        </div>
+
+        <!-- This view will show up when saving data -->
+        <div id="loading-spinner" style="display: none;">
+            <div class="spinner"></div>
+            <p>Saving your project...</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="js/order-script.js"></script>
+</body>
+</html>

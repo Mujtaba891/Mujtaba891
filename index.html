@@ -1,12 +1,495 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mujtaba Alam</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mujtaba Alam | Expert Web Developer & UI/UX Designer</title>
+    <meta name="description" content="Portfolio of Mujtaba Alam, a creative developer specializing in building beautiful, functional, and user-friendly digital experiences with modern web technologies.">
+    <meta name="keywords" content="Mujtaba Alam, Web Developer, UI/UX Designer, Neumorphic Design, Freelancer, Kashmir, Portfolio">
+    
+    <link rel="icon" type="image/jpeg" href="images/mujtaba.jpg">
+    
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/about.css">
+    <link rel="stylesheet" href="css/testmonial.css">
+    
+    <!-- Additional styles for new sections -->
+    
 </head>
 <body>
-  <h1>Hi there! I'm Mujtaba Alam</h1>
-  <p>How can i assist you </p>
+
+    <!-- =================================================================
+    HEADER & MOBILE NAVIGATION
+    ================================================================== -->
+    <header>
+        <div class="container nav-container">
+            <a href="index.html" class="logo">Mujtaba Alam.</a>
+            <nav class="nav-menu-desktop">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="services.html">Services</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="templates.html">Templates</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="hamburger"><i class="fas fa-bars"></i></div>
+        </div>
+    </header>
+
+    <aside class="mobile-sidebar">
+        <div class="close-icon"><i class="fas fa-times"></i></div>
+        <nav class="nav-menu-mobile">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="services.html">Services</a>
+            <a href="pricing.html">Pricing</a>
+            <a href="templates.html">Templates</a>
+            <a href="contact.html">Contact</a>
+            <a href="order.html" class="cta-link">Get a Quote</a>
+        </nav>
+    </aside>
+
+    <!-- =================================================================
+    MAIN CONTENT WRAPPER
+    ================================================================== -->
+    <main>
+
+        <!-- ===== Hero Section Start ===== -->
+        <section id="home" class="hero">
+            <div class="container hero-content animate-on-scroll">
+                <img src="images/mujtaba.jpg" alt="Mujtaba Alam" style="width:150px; height:150px; border-radius:50%; object-fit:cover; box-shadow: var(--light-shadow), var(--dark-shadow); padding: 10px; margin-bottom: 20px;">
+                <h1>Creative Developer & Designer</h1>
+                <p class="hero-subtitle">I build beautiful, functional, and user-friendly digital experiences that solve real-world problems.</p>
+                <div>
+                    <a href="#projects-snippet" class="neumorphic-btn primary">View My Work</a>
+                    <a href="contact.html" class="neumorphic-btn">Get In Touch</a>
+                    <a href="pricing.html" class="neumorphic-btn primary">Get a Quote</a>
+                </div>
+                <div class="hero-clients" style="margin-top: 40px; opacity: 0.7;">
+                    <p style="margin-bottom: 10px; font-weight: 600;">Trusted by forward-thinking businesses</p>
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 30px; filter: grayscale(1);">
+    <i class="fas fa-mosque fa-2x"></i>       <!-- Islamic identity -->
+    <i class="fas fa-laptop-code fa-2x"></i>  <!-- Web development -->
+    <i class="fas fa-book-open fa-2x"></i>    <!-- Teaching / learning -->
+    <i class="fas fa-code fa-2x"></i>         <!-- Coding projects -->
+</div>
+
+                </div>
+            </div>
+        </section>
+        <!-- ===== Hero Section End ===== -->
+         <!-- Main About Section -->
+        <section id="about-hero">
+            <div class="container">
+                <div class="about-grid">
+                    <div class="about-image neumorphic-outset animate-on-scroll">
+                        <img src="images/mujtaba.jpg" alt="Mujtaba Alam professional shot">
+                    </div>
+                    <div class="about-text animate-on-scroll" style="animation-delay: 0.1s;">
+                        <h2 class="section-title">I'm Mujtaba Alam. <br>I build things for the web.</h2>
+                        <p>I’m a passionate HTML, CSS, and JavaScript web developer based in Kashmir. My journey into technology began with a deep curiosity about how things work, and it has grown into a commitment to building clean, functional, and user-focused digital experiences.</p>
+                        <p>I enjoy transforming simple ideas into elegant solutions. From the initial spark of a concept to final deployment, I stay dedicated to continuous learning and doing my best with every project.</p>
+                        <div class="about-buttons">
+                           <a href="about.html" class="neumorphic-btn">More About Me</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ===== Services Section Start ===== -->
+        <section id="services">
+            <div class="container">
+                <h2 class="animate-on-scroll">What I Offer</h2>
+                <p class="section-subtitle animate-on-scroll">From concept to launch, I provide a comprehensive suite of services to bring your digital vision to life.</p>
+                <div class="services-grid">
+                    <div class="service-card neumorphic-outset animate-on-scroll">
+                        <i class="fas fa-code"></i>
+                        <h3>Web Development</h3>
+                        <p>Custom-coded, responsive websites built with modern HTML, CSS, and JavaScript for optimal performance.</p>
+                    </div>
+                    <div class="service-card neumorphic-outset animate-on-scroll" style="animation-delay: 0.2s;">
+                        <i class="fas fa-palette"></i>
+                        <h3>UI/UX Design</h3>
+                        <p>Intuitive and engaging user interfaces designed with neumorphic principles for a unique, tactile feel.</p>
+                    </div>
+                    <div class="service-card neumorphic-outset animate-on-scroll" style="animation-delay: 0.4s;">
+                        <i class="fas fa-rocket"></i>
+                        <h3>Performance & SEO</h3>
+                        <p>Fast-loading sites with foundational SEO to help you get discovered on search engines like Google.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ===== Services Section End ===== -->
+
+        <!-- ===== My Process Section Start ===== -->
+        <section id="process">
+            <div class="container">
+                <h2 class="animate-on-scroll">My Development Process</h2>
+                <p class="section-subtitle animate-on-scroll">A structured and collaborative approach ensures your project is delivered on time and exceeds expectations.</p>
+                <ul class="process-timeline">
+                    <li class="timeline-item animate-on-scroll">
+                        <div class="timeline-content">
+                            <h3>1. Discovery & Strategy</h3>
+                            <p>We start by understanding your goals, target audience, and project requirements to build a solid strategic foundation.</p>
+                        </div>
+                    </li>
+                    <li class="timeline-item animate-on-scroll">
+                        <div class="timeline-content">
+                            <h3>2. Design & Prototyping</h3>
+                            <p>I create wireframes and high-fidelity mockups, focusing on user experience and a beautiful interface. We iterate based on your feedback.</p>
+                        </div>
+                    </li>
+                    <li class="timeline-item animate-on-scroll">
+                        <div class="timeline-content">
+                            <h3>3. Development & Coding</h3>
+                            <p>I bring the designs to life with clean, efficient, and well-documented code, ensuring your site is responsive and performant.</p>
+                        </div>
+                    </li>
+                    <li class="timeline-item animate-on-scroll">
+                        <div class="timeline-content">
+                            <h3>4. Launch & Support</h3>
+                            <p>After rigorous testing, we deploy the website. I provide ongoing support to ensure everything runs smoothly post-launch.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <!-- ===== My Process Section End ===== -->
+
+        <!-- ===== Skills & Technologies Section Start ===== -->
+        <section id="tech-stack" style="background-color: #d1d9e6;">
+            <div class="container">
+                <h2 class="animate-on-scroll">Skills & Technologies</h2>
+                <p class="section-subtitle animate-on-scroll">I'm proficient in a wide range of modern web technologies to build robust and scalable applications.</p>
+                <div class="skills-container">
+                    <div class="skills-category neumorphic-outset animate-on-scroll">
+                        <h3>Front-End</h3>
+                        <div class="skills-grid">
+                            <div class="skill-card"> <i class="fab fa-html5" style="color: #e34c26;"></i> <p>HTML5</p> </div>
+                            <div class="skill-card"> <i class="fab fa-css3-alt" style="color: #264de4;"></i> <p>CSS3</p> </div>
+                            <div class="skill-card"> <i class="fab fa-js-square" style="color: #f0db4f;"></i> <p>JavaScript</p> </div>
+                        </div>
+                    </div>
+                    <div class="skills-category neumorphic-outset animate-on-scroll" style="animation-delay: 0.2s;">
+                        <h3>Back-End</h3>
+                        <div class="skills-grid">
+                            <div class="skill-card"> <i class="fas fa-database" style="color: #3fcf8e;"></i> <p>Supabase</p> </div>
+                            <div class="skill-card"> <i class="fas fa-fire" style="color: #f5820b;"></i> <p>Firebase</p> </div>
+                        </div>
+                    </div>
+                    <div class="skills-category neumorphic-outset animate-on-scroll" style="animation-delay: 0.4s;">
+                        <h3>Design Tools</h3>
+                        <div class="skills-grid">
+                            <div class="skill-card"> <i class="fas fa-camera" style="color: #05C46B;"></i> <p>Canva</p> </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ===== Skills & Technologies Section End ===== -->
+
+        <!-- ===== Featured Projects Section Start ===== -->
+        <section id="projects-snippet">
+             <div class="container">
+                <h2 class="animate-on-scroll">Featured Projects</h2>
+                <p class="section-subtitle animate-on-scroll">A glimpse into my recent work. Click to see the full details.</p>
+                <div class="projects-grid">
+                    <a href="https://md-colab.vercel.app/app-details.html?id=Ora" class="project-card neumorphic-outset animate-on-scroll">
+                        <div class="project-image" style="background-image: url('images/ORA.png');"></div>
+                        <div class="project-info">
+                            <h3>ORA Docs App</h3>
+                            <p class="project-description">A platform for creating and managing ora document files</p>
+                            <span class="project-date">Completed: June 2024</span>
+                        </div>
+                    </a>
+                    <a href="https://articleglobe3.vercel.app/" class="project-card neumorphic-outset animate-on-scroll" style="animation-delay: 0.2s;">
+                        <div class="project-image" style="background-image: url('images/AG.png');"></div>
+                        <div class="project-info">
+                            <h3>Article Globe</h3>
+                            <p class="project-description">A modern blogging website for reading and publishing articles.</p>
+                            <span class="project-date">Completed: May 2024</span>
+                        </div>
+                    </a>
+                    <a href="https://babahardware.netlify.app" class="project-card neumorphic-outset animate-on-scroll" style="animation-delay: 0.4s;">
+                        <div class="project-image" style="background-image: url('images/BH.png');"></div>
+                        <div class="project-info">
+                            <h3>Baba Hardware</h3>
+                            <p class="project-description">A service platform for a local mirror installation business.</p>
+                            <span class="project-date">Completed: April 2024</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="view-all-projects-link">
+                    <a href="https://github.com/Mujtaba891?tab=repositories" class="neumorphic-btn">View All Projects</a>
+                </div>
+            </div>
+        </section>
+        <!-- ===== Featured Projects Section End ===== -->
+
+        <!-- ===== Testimonials Section Start ===== -->
+<section class="testimonial-section">
+    <h2 class="section-title">What People Say</h2>
+    <div class="testimonial-container">
+        <div class="testimonial-wrapper">
+
+            <!-- Testimonial 1: Amaan -->
+            <div class="testimonial-card">
+                <div class="card-content">
+                    <p class="testimonial-text">"Mujtaba helped me understand the basics of HTML and CSS when I was completely lost."</p>
+                    <a class="read-more-btn">Read More</a>
+                    <div class="author-info">
+                        <div class="author-details">
+                            <h4 class="author-name">Amaan</h4>
+                            <p class="author-title">Fellow Student</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 2: Zeeshan -->
+            <div class="testimonial-card">
+                <div class="card-content">
+                    <p class="testimonial-text">"He made a simple webpage for my school project. I was really impressed by how neat and fast he worked."</p>
+                    <a class="read-more-btn">Read More</a>
+                    <div class="author-info">
+                        <div class="author-details">
+                            <h4 class="author-name">Zeeshan</h4>
+                            <p class="author-title">School Friend</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonial 3: Sir Nasir -->
+            <div class="testimonial-card">
+                <div class="card-content">
+                    <p class="testimonial-text">"Mujtaba is always learning something new and sharing it with others. He’s curious, consistent, and always improving."</p>
+                    <a class="read-more-btn">Read More</a>
+                    <div class="author-info">
+                        <div class="author-details">
+                            <h4 class="author-name">Sir Nasir</h4>
+                            <p class="author-title">Teacher</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Neomorphic Navigation -->
+    <div class="testimonial-nav">
+        <button id="prevBtn" class="nav-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <button id="nextBtn" class="nav-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+    </div>
+
+</section>
+<!-- ===== Testimonials Section End ===== -->
+
+
+
+        <!-- ===== FAQ Section Start ===== -->
+        <section id="faq">
+            <div class="container">
+                <h2 class="animate-on-scroll">Frequently Asked Questions</h2>
+                <div class="faq-container animate-on-scroll">
+                    <div class="faq-item neumorphic-outset">
+                        <button class="faq-question">
+                            <span>What is the typical timeline for a new website?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>A typical website project takes between 4 to 6 weeks from start to finish. This can vary depending on the complexity of the project and the speed of feedback and content delivery.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item neumorphic-outset">
+                        <button class="faq-question">
+                            <span>How much does a website cost?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>The cost of a website depends entirely on your needs. I offer several packages on my <a href="pricing.html">pricing page</a>, and I can provide a custom quote after our initial discovery call.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item neumorphic-outset">
+                        <button class="faq-question">
+                            <span>Will I be able to update the website myself?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Absolutely! For more complex sites, I can integrate a Content Management System (CMS) that allows you to easily update content, images, and blog posts without needing any coding knowledge.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ===== FAQ Section End ===== -->
+
+        <!-- ===== Call to Action Section Start ===== -->
+        <section id="cta" style="background: linear-gradient(145deg, #1e90ff, #007bff); color: white;">
+            <div class="container cta-content animate-on-scroll">
+                <h2>Have a project in mind?</h2>
+                <p>Let's turn your idea into an amazing website. Get a personalized quote in minutes.</p>
+                <a href="pricing.html" class="neumorphic-btn primary large" style="background: transparent;  backdrop-filter: blur(20); border: 4px solid rgba(107, 105, 105, 0.267); color: white;">Build Your Project Now</a>
+            </div>
+        </section>
+        <!-- ===== Call to Action Section End ===== -->
+
+    </main>
+    <!-- =================================================================
+    END OF MAIN CONTENT
+    ================================================================== -->
+    
+    <!-- =================================================================
+    FOOTER
+    ================================================================== -->
+    <footer style="background-color: #d1d9e6;">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h4>Mujtaba Alam</h4>
+                    <p>A passionate developer from Kashmir, India, dedicated to crafting high-quality digital solutions.</p>
+                </div>
+                <div class="footer-column">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Me</a></li>
+                        <li><a href="https://github.com/Mujtaba891?tab=repositories">Projects</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="services.html">Web Development</a></li>
+                        <li><a href="services.html">UI/UX Design</a></li>
+                        <li><a href="services.html">SEO Optimization</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Get In Touch</h4>
+                    <p>Larnoo, Anantnag, J&K, India</p>
+                    <p>mujtabaalam010@gmail.com</p>
+                </div>
+            </div>
+            <div class="footer-social-links">
+                 <a href="https://github.com/Mujtaba891" target="_blank" class="neumorphic-outset" title="GitHub">
+        <i class="fab fa-github fa-2x" style="color: #18191a;"></i>
+    </a>
+    <a href="https://www.linkedin.com/in/mujtaba-alam-11aa00345/" target="_blank" class="neumorphic-outset" title="LinkedIn">
+        <i class="fab fa-linkedin-in fa-2x" style="color: #0e8af0;"></i>
+    </a>
+    <a href="https://x.com/mujtaba47639658" target="_blank" class="neumorphic-outset" title="X / Twitter">
+        <i class="fab fa-twitter fa-2x" style="color: #5da0d6;"></i>
+    </a>
+    <a href="https://wa.me/919797060239" target="_blank" class="neumorphic-outset" title="WhatsApp">
+        <i class="fab fa-whatsapp fa-2x" style="color: #0d721a;"></i>
+    </a>
+    
+    <a href="mailto:mujtabaalam010@gmail.com" target="_blank" class="neumorphic-outset" title="Email">
+        <i class="fas fa-envelope fa-2x" style="color: #f0740e;"></i>
+    </a>
+    <a href="https://www.instagram.com/mujtabaalamofficial?utm_source=qr&igsh=OHdqdXg4cGI2cDIw" target="_blank" class="neumorphic-outset" title="Instagram">
+        <i class="fab fa-instagram fa-2x" 
+   style="background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #515bd4);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          display: inline-block;"></i>
+
+    </a>
+    <a href="https://youtube.com/@mujtabaalamofficial?si=nrpwkuF-dx-Ldswm" target="_blank" class="neumorphic-outset" title="YouTube">
+        <i class="fab fa-youtube fa-2x" style="color: #e91111;"></i>
+    </a>
+            </div>
+            <p class="footer-text">© 2024 Mujtaba Alam. Designed and Built with ❤️ and Passion.</p>
+        </div>
+    </footer>
+
+    <!-- =================================================================
+    SCRIPTS
+    ================================================================== -->
+    <script src="js/script.js"></script>
+    <script>
+        // Additional script for FAQ accordion
+        document.addEventListener('DOMContentLoaded', () => {
+            const faqQuestions = document.querySelectorAll('.faq-question');
+            faqQuestions.forEach(button => {
+                button.addEventListener('click', () => {
+                    const answer = button.nextElementSibling;
+                    const icon = button.querySelector('i');
+
+                    button.classList.toggle('active');
+
+                    if (button.classList.contains('active')) {
+                        answer.style.maxHeight = answer.scrollHeight + 'px';
+                        answer.style.padding = '0 20px 20px 20px';
+                        icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        answer.style.maxHeight = '0';
+                        answer.style.padding = '0 20px';
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                });
+            });
+        });
+
+        //testmonial
+        document.addEventListener('DOMContentLoaded', function () {
+    const wrapper = document.querySelector('.testimonial-wrapper');
+    const cards = document.querySelectorAll('.testimonial-card');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const readMoreBtns = document.querySelectorAll('.read-more-btn');
+
+    let currentIndex = 0;
+    const totalCards = cards.length;
+
+    // Function to update the slider position
+    function updateSlider() {
+        const offset = -currentIndex * 100;
+        wrapper.style.transform = `translateX(${offset}%)`;
+    }
+
+    // Event listeners for next and previous buttons
+    nextBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % totalCards;
+        updateSlider();
+    });
+
+    prevBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + totalCards) % totalCards;
+        updateSlider();
+    });
+
+    // "Read More" functionality
+    readMoreBtns.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const textElement = e.target.previousElementSibling;
+            textElement.classList.toggle('expanded');
+            if (textElement.classList.contains('expanded')) {
+                e.target.textContent = 'Read Less';
+            } else {
+                e.target.textContent = 'Read More';
+            }
+        });
+    });
+
+    // Initialize slider
+    updateSlider();
+});
+    </script>
 </body>
 </html>

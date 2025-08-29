@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Me | Mujtaba Alam</title>
+    <meta name="description" content="Get in touch with Mujtaba Alam for web development projects, collaborations, or inquiries.">
+    <link rel="icon" type="image/jpeg" href="images/mujtaba.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <!-- Link base stylesheet first -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Link new contact-specific stylesheet -->
+    <link rel="stylesheet" href="css/contact-style.css">
+</head>
+<body class="contact-page"> <!-- Added a class for specific body styling -->
+    
+    <!-- Header (No changes needed) -->
+    <header>
+        <div class="container nav-container">
+            <a href="index.html" class="logo">Mujtaba.</a>
+            <nav class="nav-menu-desktop">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="services.html">Services</a>
+                <a href="projects.html">Projects</a>
+                <a href="pricing.html">Pricing</a>
+                <a href="contact.html" class="active">Contact</a>
+            </nav>
+            <div class="hamburger"><i class="fas fa-bars"></i></div>
+        </div>
+    </header>
+    <aside class="mobile-sidebar"><div class="close-icon"><i class="fas fa-times"></i></div><nav class="nav-menu-mobile"><a href="index.html">Home</a><a href="about.html">About</a><a href="services.html">Services</a><a href="projects.html">Projects</a><a href="pricing.html">Pricing</a><a href="contact.html">Contact</a><a href="order.html" class="cta-link">Get a Quote</a></nav></aside>
+
+    <main>
+        <section id="contact">
+            <div class="container">
+                <h2 class="animate-on-scroll">Get In Touch</h2>
+                <div class="contact-wrapper neumorphic-outset animate-on-scroll">
+                    <!-- Contact Form -->
+                    <form id="contact-form" class="contact-form">
+                        <h3>Send me a message</h3>
+                        <input type="text" name="name" placeholder="Your Name" required>
+                        <input type="email" name="email" placeholder="Your Email" required>
+                        <textarea name="message" rows="6" placeholder="Your Message" required></textarea>
+                        <button type="submit" class="neumorphic-btn primary">Send Message</button>
+                        <p id="form-status"></p> <!-- For success/error messages -->
+                    </form>
+
+                    <!-- Contact Info (No changes needed) -->
+                    <div class="contact-info">
+                        <h3>Contact Information</h3>
+                        <p><i class="fas fa-envelope"></i> mujtabaalam010@gmail.com</p>
+                        <p><i class="fas fa-phone"></i> +91 97970 60239</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Larnoo, Anantnag, J&K, India</p>
+                        <div class="social-links">
+                            <a href="https://github.com/Mujtaba891" target="_blank" class="neumorphic-outset"><i class="fab fa-github"></i></a>
+                            <a href="https://www.linkedin.com/in/mujtaba-alam-11aa00345/" target="_blank" class="neumorphic-outset"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="https://wa.me/919797060239" target="_blank" class="neumorphic-outset"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- !!! IMPORTANT: FIREBASE SDK SCRIPTS !!! -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script>
+      // This inline script remains to initialize Firebase for the page.
+      const firebaseConfig = { 
+            apiKey: "AIzaSyCrimPYJOBcmx-ynWJ9g2GqjrT9ANsTrpg", 
+            authDomain: "mujtaba-alam.firebaseapp.com", 
+            projectId: "mujtaba-alam", 
+            storageBucket: "mujtaba-alam.appspot.com", 
+            messagingSenderId: "221609343134", 
+            appId: "1:221609343134:web:d64123479f43e6bc66638f" 
+      };
+      if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+      }
+      const db = firebase.firestore(); // Makes 'db' available to our external script
+    </script>
+    
+    <!-- Link to the base script for animations -->
+    <script src="js/script.js"></script>
+    <!-- Link to the new contact form script -->
+    <script src="js/contact-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders | Mujtaba Alam</title>
+    <meta name="description" content="View your saved project orders and complete payment.">
+    <link rel="icon" type="image/jpeg" href="images/mujtaba.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="order-page-bg">
+
+    <div class="container my-orders-container">
+        <h2 class="animate-on-scroll">My Saved Orders</h2>
+        <p class="section-subtitle animate-on-scroll">Here are the projects you've saved. You can complete the payment anytime.</p>
+
+        <div id="orders-list-container" class="orders-list-container">
+            <!-- Loading message, will be replaced by script -->
+            <div class="neumorphic-outset order-card" id="loading-orders-placeholder">
+                <div class="spinner"></div>
+                <p>Loading your saved orders...</p>
+            </div>
+            <!-- Order cards will be dynamically inserted here by my-orders-script.js -->
+        </div>
+
+        <div class="back-to-home-container">
+            <a href="index.html" class="back-to-home"><i class="fas fa-arrow-left"></i> Back to Main Site</a>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs are required to fetch data -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <!-- The script that will make this page functional -->
+    <script src="js/my-orders-script.js"></script>
+
+    <!-- Optional: For animations -->
+    <script src="js/script.js"></script>
+</body>
+</html>
