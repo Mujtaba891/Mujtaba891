@@ -1,0 +1,116 @@
+/**
+ * @file Neumorphic styles for the Project Customization (order.html) page.
+ * @author Mujtaba Alam
+ * @version 2.0.0 (Expanded Quiz Support)
+ * @description Provides a responsive design for the expanded order quiz.
+ */
+
+/* --- 1. ROOT & VARIABLES --- */
+:root {
+    --bg-color: #e0e5ec;
+    --primary-color: #007BFF;
+    --primary-color-dark: #0056b3;
+    --text-color: #5b6271;
+    --heading-color: #313742;
+    --disabled-color: #bdc3c7;
+    --light-shadow: -10px -10px 20px #ffffff;
+    --dark-shadow: 10px 10px 20px #a3b1c6;
+    --inset-light-shadow: inset -5px -5px 10px #ffffff;
+    --inset-dark-shadow: inset 5px 5px 10px #a3b1c6;
+    --font-primary: 'Poppins', sans-serif;
+    --transition-fast: 0.2s ease-out;
+    --transition-smooth: 0.4s ease-in-out;
+}
+
+/* --- 2. GLOBAL & BASE STYLES --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body.order-page-bg {
+    font-family: var(--font-primary);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* --- 3. MAIN QUIZ CONTAINER --- */
+.quiz-container {
+    background: var(--bg-color);
+    border-radius: 25px;
+    box-shadow: var(--light-shadow), var(--dark-shadow);
+    padding: 30px 40px;
+    width: 100%;
+    max-width: 750px; /* Increased width for more content */
+}
+
+/* --- 4. QUIZ SPECIFIC STYLES --- */
+.quiz-header { text-align: center; margin-bottom: 30px; }
+#progress-text { color: var(--heading-color); margin-bottom: 15px; font-size: 1.8rem; }
+.progress-bar-container { width: 100%; height: 12px; background-color: var(--bg-color); border-radius: 10px; box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow); }
+.progress-bar { width: 0%; height: 100%; background-color: var(--primary-color); border-radius: 10px; transition: width var(--transition-smooth); }
+
+#question-area { margin-bottom: 30px; }
+#question-text { text-align: center; margin-bottom: 30px; font-size: 1.5rem; font-weight: 500; color: var(--heading-color); }
+.section-subtitle { text-align: center; margin-bottom: 20px; font-size: 0.9rem; color: var(--text-color); grid-column: 1 / -1; }
+
+/* --- Options Grid - UPDATED FOR RESPONSIVENESS --- */
+.options-grid {
+    display: grid;
+    /* Use auto-fit to create as many columns as fit */
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+}
+.options-grid input[type="radio"], .options-grid input[type="checkbox"] { display: none; }
+.option-label { padding: 20px 15px; text-align: center; border-radius: 15px; cursor: pointer; background: var(--bg-color); box-shadow: var(--light-shadow), var(--dark-shadow); transition: all var(--transition-fast); font-weight: 600; font-size: 0.95rem; }
+.option-label:hover { transform: translateY(-3px); }
+.options-grid input:checked + .option-label { box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow); color: var(--primary-color); }
+
+/* --- Text & Contact Inputs --- */
+.full-width-input, .contact-form-grid input {
+    width: 100%;
+    padding: 15px;
+    font-size: 1rem;
+    font-family: var(--font-primary);
+    border: none;
+    outline: none;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    border-radius: 15px;
+    box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow);
+    transition: box-shadow var(--transition-fast);
+}
+.full-width-input { grid-column: 1 / -1; resize: vertical; }
+.contact-form-grid { display: grid; gap: 20px; grid-column: 1 / -1; }
+.full-width-input:focus, .contact-form-grid input:focus { box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow), 0 0 0 2px var(--primary-color); }
+
+/* --- Navigation & Links --- */
+.quiz-navigation { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; border-top: 1px solid #d1d9e6; padding-top: 25px; flex-wrap: wrap; gap: 15px; }
+.back-to-home { display: inline-block; margin-bottom: 20px; font-weight: 600; color: var(--text-color); text-decoration: none; }
+.back-to-home i { margin-right: 5px; }
+
+/* --- 5. SHARED COMPONENTS (Buttons, Spinner) --- */
+.neumorphic-btn { display: inline-block; padding: 12px 28px; border: none; cursor: pointer; font-weight: 600; font-size: 1rem; color: var(--text-color); text-align: center; border-radius: 50px; background: var(--bg-color); box-shadow: var(--light-shadow), var(--dark-shadow); transition: all var(--transition-fast); }
+.neumorphic-btn:hover { color: var(--primary-color); }
+.neumorphic-btn:active { box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow); transform: translateY(1px); }
+.neumorphic-btn.primary { color: #fff; background: var(--primary-color); box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3); }
+.neumorphic-btn.primary:hover { background: var(--primary-color-dark); color: white; }
+
+#loading-spinner { text-align: center; padding: 40px; }
+.spinner { width: 50px; height: 50px; border: 5px solid #d1d9e6; border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px auto; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* --- 6. RESPONSIVENESS --- */
+@media (max-width: 768px) {
+    .options-grid { grid-template-columns: 1fr 1fr; } /* 2 columns on tablets */
+    .quiz-container { padding: 25px; }
+    #progress-text { font-size: 1.5rem; }
+    #question-text { font-size: 1.3rem; }
+}
+@media (max-width: 480px) {
+    .options-grid { grid-template-columns: 1fr; } /* 1 column on phones */
+    .quiz-navigation { justify-content: center; }
+}

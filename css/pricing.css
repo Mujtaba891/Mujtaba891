@@ -1,0 +1,217 @@
+/**
+ * @file Glassmorphic & Neumorphic Pricing Page Styles
+ * @author Mujtaba Alam
+ * @version 1.0.0
+ * @description A modern, responsive stylesheet that blends glassmorphism for cards
+ *              and neomorphism for the background and UI controls.
+ */
+
+/* --- SECTION 01: ROOT & GLOBAL STYLES --- */
+:root {
+    /* Base & Neumorphic Palette */
+    --bg-color: #e0e5ec;
+    --primary-color: #007BFF;
+    --primary-color-glow: rgba(0, 123, 255, 0.5);
+    --text-color: #5b6271;
+    --heading-color: #313742;
+    --white-color: #ffffff;
+    --success-color: #27ae60;
+    --danger-color: #c0392b;
+    --font-primary: 'Poppins', sans-serif;
+    --transition-speed: 0.3s ease;
+
+    /* Glassmorphism Properties */
+    --glass-bg-color: rgba(255, 255, 255, 0.25);
+    --glass-border-color: rgba(255, 255, 255, 0.4);
+    --glass-blur-amount: 15px;
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- SECTION 02: PAGE LAYOUT & TYPOGRAPHY --- */
+body {
+    font-family: var(--font-primary);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    overflow-x: hidden;
+}
+
+.pricing-page-container {
+    width: 100%;
+    max-width: 1200px;
+    text-align: center;
+}
+
+.pricing-page-container h2 {
+    font-size: 2.8rem;
+    color: var(--heading-color);
+    margin-bottom: 15px;
+}
+
+.pricing-page-container .section-subtitle {
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto 50px auto;
+}
+
+/* --- SECTION 03: PRICING GRID --- */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    width: 100%;
+}
+
+/* --- SECTION 04: THE GLASSMORPHIC PRICING CARD --- */
+.pricing-card {
+    background: var(--glass-bg-color);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border-color);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(var(--glass-blur-amount));
+    -webkit-backdrop-filter: blur(var(--glass-blur-amount)); /* For Safari */
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-speed);
+}
+
+.pricing-card:hover {
+    transform: translateY(-10px);
+}
+
+/* --- SECTION 05: CARD CONTENT STYLING --- */
+.pricing-card h3 {
+    font-size: 1.5rem;
+    color: var(--heading-color);
+    margin-bottom: 20px;
+}
+
+.pricing-price {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--heading-color);
+    margin-bottom: 25px;
+}
+
+.pricing-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 30px;
+    text-align: left;
+    flex-grow: 1; /* Pushes button to the bottom */
+}
+
+.pricing-features li {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+}
+
+.pricing-features i {
+    font-size: 1.2rem;
+}
+
+.pricing-features .fa-check {
+    color: var(--success-color);
+}
+
+.pricing-features .fa-times {
+    color: var(--danger-color);
+}
+
+/* --- SECTION 06: FEATURED CARD & BUTTONS --- */
+.pricing-card.featured {
+    transform: scale(1.05);
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 30px var(--primary-color-glow), var(--glass-shadow);
+}
+
+.pricing-card.featured:hover {
+    transform: scale(1.05) translateY(-10px);
+}
+
+/* Neumorphic Button Style */
+.neumorphic-btn {
+    display: inline-block;
+    padding: 15px 30px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--white-color);
+    text-align: center;
+    text-decoration: none;
+    border-radius: 50px;
+    background: var(--primary-color);
+    box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
+    transition: all var(--transition-speed);
+}
+
+.neumorphic-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0, 123, 255, 0.4);
+}
+
+/* --- SECTION 07: FOOTER LINK --- */
+.back-to-home-container {
+    margin-top: 50px;
+}
+
+.back-to-home {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color var(--transition-speed);
+}
+
+.back-to-home:hover {
+    color: var(--primary-color);
+}
+
+.back-to-home i {
+    margin-right: 8px;
+}
+
+/* --- SECTION 08: RESPONSIVE DESIGN --- */
+@media (max-width: 992px) {
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 450px;
+        margin: 0 auto;
+        gap: 40px;
+    }
+
+    .pricing-page-container h2 {
+        font-size: 2.2rem;
+    }
+
+    .pricing-card.featured, .pricing-card.featured:hover {
+        transform: scale(1); /* Reset scaling on mobile to prevent layout issues */
+    }
+}
+
+@media (max-width: 576px) {
+    body {
+        padding: 20px 15px;
+    }
+    .pricing-page-container h2 {
+        font-size: 1.8rem;
+    }
+    .pricing-page-container .section-subtitle {
+        font-size: 1rem;
+    }
+}

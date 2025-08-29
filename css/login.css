@@ -1,0 +1,193 @@
+/**
+ * Login & Authentication Page Stylesheet
+ * @author Mujtaba Alam
+ * @version 1.0.0
+ * @description Neumorphic styles for the admin login and signup page.
+ */
+
+/* --- ROOT & GLOBAL STYLES --- */
+:root {
+    --bg-color: #e0e5ec;
+    --primary-color: #007BFF;
+    --primary-color-dark: #0056b3;
+    --text-color: #5b6271;
+    --heading-color: #313742;
+    --white-color: #ffffff;
+    --danger-color: #e74c3c;
+    --font-primary: 'Poppins', sans-serif;
+    
+    /* Neumorphic Shadows */
+    --light-shadow: -10px -10px 20px #ffffff;
+    --dark-shadow: 10px 10px 20px #a3b1c6;
+    --inset-light-shadow: inset -6px -6px 12px #ffffff;
+    --inset-dark-shadow: inset 6px 6px 12px #a3b1c6;
+    --light-shadow-soft: -6px -6px 12px rgba(255, 255, 255, 0.8);
+    --dark-shadow-soft: 6px 6px 12px rgba(163, 177, 198, 0.6);
+
+    /* Transitions */
+    --transition-speed: 0.3s;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body.admin-bg {
+    background: var(--bg-color);
+    font-family: var(--font-primary);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- NEUMORPHIC UTILITIES --- */
+.neumorphic-outset {
+    background: var(--bg-color);
+    border-radius: 20px;
+    box-shadow: var(--light-shadow), var(--dark-shadow);
+    transition: all var(--transition-speed) ease;
+}
+
+.neumorphic-inset {
+    background: var(--bg-color);
+    border-radius: 15px;
+    box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow);
+    transition: all var(--transition-speed) ease;
+}
+
+.neumorphic-btn {
+    display: inline-block;
+    width: 100%; /* Make button full-width */
+    padding: 15px 28px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-color);
+    text-align: center;
+    border-radius: 50px;
+    background: var(--bg-color);
+    box-shadow: var(--light-shadow-soft), var(--dark-shadow-soft);
+    transition: all var(--transition-speed) ease;
+}
+.neumorphic-btn:hover {
+    box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow);
+    color: var(--primary-color);
+}
+.neumorphic-btn:active {
+    transform: scale(0.98);
+}
+.neumorphic-btn.primary {
+    color: var(--white-color);
+    background: var(--primary-color);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+.neumorphic-btn.primary:hover {
+    background: var(--primary-color-dark);
+    box-shadow: none; /* Remove inset shadow on hover for primary button */
+}
+
+/* --- AUTHENTICATION PAGE STYLES --- */
+.auth-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 40px;
+    text-align: center;
+}
+
+.auth-container h2 {
+    margin-bottom: 30px;
+    color: var(--heading-color);
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+
+#login-form-container, 
+#signup-form-container {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    font-family: var(--font-primary);
+    color: var(--heading-color);
+    background-color: transparent; /* Remove default background to show inset shadow */
+    border-radius: 15px; /* Match the neumorphic-inset radius */
+}
+
+/* Add a focus ring for better accessibility */
+.form-group input:focus {
+    box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow), 0 0 0 2px var(--primary-color);
+}
+
+.error-message {
+    color: var(--danger-color);
+    font-weight: 600;
+    margin-bottom: 20px;
+    min-height: 20px; /* Prevent layout shift when message appears */
+    font-size: 0.9rem;
+}
+
+.auth-toggle-link {
+    margin-top: 30px;
+    font-size: 0.9rem;
+}
+
+.auth-toggle-link a {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.auth-toggle-link a:hover {
+    text-decoration: underline;
+}
+
+/* --- RESPONSIVE DESIGN --- */
+@media (max-width: 576px) {
+    body.admin-bg {
+        padding: 0;
+        align-items: flex-start; /* Align to top on small screens */
+    }
+
+    .auth-container {
+        width: 100%;
+        max-width: none;
+        height: 100vh;
+        border-radius: 0;
+        padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        box-shadow: none; /* Remove shadow on full-screen view */
+    }
+}

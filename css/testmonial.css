@@ -1,0 +1,147 @@
+
+.testimonial-section {
+    width: 90%;
+    max-width: 1200px;
+    padding: 50px 0;
+    text-align: center;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 50px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Testimonial Container & Wrapper */
+.testimonial-container {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.testimonial-wrapper {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+/* Glassmorphism Card Style */
+.testimonial-card {
+    min-width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+.card-content {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    padding: 30px;
+    text-align: left;
+    transition: transform 0.3s;
+}
+
+.card-content:hover {
+    transform: translateY(-10px);
+}
+
+.testimonial-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #1a202c;
+    margin-bottom: 20px;
+    max-height: 7em; /* Approx 4 lines */
+    overflow: hidden;
+    position: relative;
+    transition: max-height 0.5s ease-out;
+}
+
+.testimonial-text.expanded {
+    max-height: 500px; /* Large value to show all text */
+    transition: max-height 0.5s ease-in;
+}
+
+.read-more-btn {
+    cursor: pointer;
+    color: #3f51b5;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 25px;
+}
+
+.author-info {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding-top: 20px;
+}
+
+.author-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.author-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.author-title {
+    font-size: 0.9rem;
+    color: #4a5568;
+    margin: 0;
+}
+
+
+/* Neomorphic Navigation Buttons */
+.testimonial-nav {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+}
+
+.nav-btn {
+    width: 60px;
+    height: 60px;
+    background: #e0e5ec;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #555;
+    transition: all 0.3s ease-in-out;
+    box-shadow: -7px -7px 20px 0px #fff9, -4px -4px 5px 0px #fff9, 7px 7px 20px 0px #0002, 4px 4px 5px 0px #0001;
+}
+
+.nav-btn:hover {
+    color: #3f51b5;
+}
+
+.nav-btn:active {
+    box-shadow: inset -7px -7px 20px 0px #fff9, inset -4px -4px 5px 0px #fff9, inset 7px 7px 20px 0px #0002, inset 4px 4px 5px 0px #0001;
+}
+
+.nav-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 2rem;
+    }
+    .testimonial-text {
+        font-size: 1rem;
+    }
+}

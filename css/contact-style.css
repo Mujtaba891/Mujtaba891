@@ -1,0 +1,149 @@
+/* --- STYLES FOR CONTACT PAGE --- */
+
+/* Ensures the body takes up the full viewport height */
+body.contact-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#contact {
+    width: 100%;
+    padding: 120px 0 80px 0; /* Extra top padding for fixed header */
+}
+
+/* The main wrapper for the form and info */
+.contact-wrapper {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr; /* Make the form wider */
+    gap: 50px;
+    padding: 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* The contact form itself */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-form h3,
+.contact-info h3 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+    color: var(--heading-color);
+}
+
+/* Styling for input and textarea fields */
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 18px;
+    border: none;
+    outline: none;
+    margin-bottom: 20px;
+    font-family: var(--font-primary);
+    font-size: 1rem;
+    color: var(--text-color);
+    border-radius: 15px;
+    background-color: var(--bg-color);
+    box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow);
+    transition: box-shadow 0.3s ease;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow), 0 0 0 2px var(--primary-color);
+}
+
+.contact-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.contact-form .neumorphic-btn {
+    align-self: flex-start; /* Align button to the left */
+}
+
+/* Status message for success or error */
+#form-status {
+    margin-top: 20px;
+    font-weight: 600;
+    min-height: 24px;
+}
+
+.status-success {
+    color: #2ecc71; /* Green for success */
+}
+
+.status-error {
+    color: #e74c3c; /* Red for error */
+}
+
+/* The right-side contact info panel */
+.contact-info {
+    padding-left: 30px;
+    border-left: 2px solid var(--bg-color-darker);
+}
+
+.contact-info p {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+}
+
+.contact-info p i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    width: 30px;
+    text-align: center;
+}
+
+.contact-info .social-links {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+}
+
+.contact-info .social-links a {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+/* --- Responsive adjustments --- */
+@media (max-width: 992px) {
+    .contact-wrapper {
+        grid-template-columns: 1fr; /* Stack on smaller screens */
+        gap: 40px;
+    }
+    .contact-info {
+        padding-left: 0;
+        border-left: none;
+        text-align: center;
+    }
+    .contact-info p {
+        justify-content: center;
+    }
+    .contact-info .social-links {
+        justify-content: center;
+    }
+    .contact-form .neumorphic-btn {
+        width: 100%;
+    }
+}

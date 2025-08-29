@@ -1,0 +1,268 @@
+/**
+ * @file Neumorphic styles for the checkout page.
+ * @author Mujtaba Alam
+ * @version 1.0.0
+ * @description Provides a clean, responsive, and interactive neomorphic design
+ *              for the order summary, coupon application, and payment process.
+ */
+
+/* --- 1. ROOT & VARIABLES --- */
+:root {
+    /* Color Palette */
+    --bg-color: #e0e5ec;
+    --primary-color: #007BFF;
+    --primary-color-dark: #0056b3;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    --text-color: #5b6271;
+    --heading-color: #313742;
+
+    /* Shadow Definitions */
+    --light-shadow: -10px -10px 20px #ffffff;
+    --dark-shadow: 10px 10px 20px #a3b1c6;
+    --inset-light-shadow: inset -5px -5px 10px #ffffff;
+    --inset-dark-shadow: inset 5px 5px 10px #a3b1c6;
+    
+    /* Fonts & Transitions */
+    --font-primary: 'Poppins', sans-serif;
+    --transition-fast: 0.2s ease-out;
+}
+
+/* --- 2. GLOBAL & BASE STYLES --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body.order-page-bg {
+    font-family: var(--font-primary);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* --- 3. CHECKOUT CONTAINER --- */
+.checkout-container {
+    background: var(--bg-color);
+    border-radius: 25px;
+    box-shadow: var(--light-shadow), var(--dark-shadow);
+    padding: 40px;
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Spacing between sections */
+}
+
+/* --- 4. SECTION STYLING --- */
+
+/* Header */
+.checkout-header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+.checkout-header h2 {
+    color: var(--heading-color);
+    font-size: 2rem;
+    margin-bottom: 5px;
+}
+.checkout-header p {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+/* Order Summary */
+#order-summary-list {
+    background: var(--bg-color);
+    border-radius: 15px;
+    box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+#order-summary-list div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #d1d9e6;
+}
+#order-summary-list div:last-child {
+    border-bottom: none;
+}
+#order-summary-list strong {
+    color: var(--heading-color);
+    font-weight: 600;
+}
+
+/* Coupon Section */
+.coupon-input-group {
+    display: flex;
+    gap: 10px;
+}
+#coupon-code-input {
+    flex-grow: 1;
+    padding: 12px 15px;
+    border: none;
+    font-family: var(--font-primary);
+    font-size: 1rem;
+    color: var(--text-color);
+    background: var(--bg-color);
+    border-radius: 10px;
+    box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow);
+    transition: box-shadow var(--transition-fast);
+}
+#coupon-code-input:focus {
+    outline: none;
+    box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow), 0 0 0 2px var(--primary-color);
+}
+.coupon-status {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+.coupon-status.success {
+    color: var(--success-color);
+}
+.coupon-status.error {
+    color: var(--error-color);
+}
+
+/* Price Section */
+.total-price-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.price-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+}
+.price-line span:first-child {
+    color: var(--text-color);
+}
+.price-line span:last-child {
+    font-weight: 600;
+    color: var(--heading-color);
+}
+.price-line.discount span:last-child {
+    color: var(--success-color);
+}
+.total-price-section hr {
+    border: none;
+    height: 1px;
+    background-color: #d1d9e6;
+    margin: 5px 0;
+}
+.price-line.total p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--heading-color);
+}
+#checkout-total-price {
+    font-size: 2rem;
+    color: var(--primary-color);
+    line-height: 1;
+}
+
+/* --- 5. BUTTONS & INPUTS --- */
+.neumorphic-btn {
+    display: inline-block;
+    padding: 12px 25px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--primary-color);
+    text-align: center;
+    border-radius: 50px;
+    background: var(--bg-color);
+    box-shadow: var(--light-shadow), var(--dark-shadow);
+    transition: all var(--transition-fast);
+}
+.neumorphic-btn:hover {
+    box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow);
+}
+.neumorphic-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: var(--light-shadow), var(--dark-shadow); /* Keep shadow on disabled */
+}
+
+.pay-button {
+    width: 100%;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    color: #fff;
+    background: var(--primary-color);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+.pay-button:hover {
+    background: var(--primary-color-dark);
+    box-shadow: none;
+}
+.pay-button i {
+    margin-right: 10px;
+}
+
+/* Payment Info */
+.payment-methods-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-top: -15px; /* Pull it closer to the button */
+}
+.payment-methods-info img {
+    filter: grayscale(1);
+    opacity: 0.8;
+}
+
+/* --- 6. POST-PAYMENT "THANK YOU" STATE --- */
+.checkout-container h2,
+.checkout-container p,
+.checkout-container .neumorphic-btn {
+    text-align: center;
+}
+.checkout-container a.neumorphic-btn {
+    margin: 20px auto 0;
+    display: block;
+    width: fit-content;
+}
+
+/* --- 7. RESPONSIVENESS --- */
+@media (max-width: 600px) {
+    body.order-page-bg {
+        padding: 10px;
+    }
+    .checkout-container {
+        padding: 25px;
+    }
+    .checkout-header h2 {
+        font-size: 1.8rem;
+    }
+    .pay-button {
+        padding: 12px 25px;
+        font-size: 1.1rem;
+    }
+    .payment-methods-info {
+        flex-wrap: wrap; /* Allow icons to wrap on small screens */
+    }
+}
