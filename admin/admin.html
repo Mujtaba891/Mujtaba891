@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Mujtaba Alam</title>
+    <meta name="description" content="Admin panel for managing projects, clients, and coupons.">
+    <link rel="icon" type="image/jpeg" href="images/mujtaba.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <link rel="stylesheet" href="admin-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="admin-bg">
+
+    <div id="loading-spinner"><div class="spinner"></div></div>
+
+    <div id="admin-dashboard" class="admin-container" style="display: none;">
+        
+        <div id="mobile-menu-overlay" class="mobile-overlay"></div>
+
+        <aside id="admin-sidebar" class="admin-sidebar neumorphic-outset">
+            <h2 class="admin-logo">Admin.</h2>
+            <nav class="admin-nav">
+                <a href="dashboard-page" class="nav-link active" data-page="dashboard-page"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="orders-page" class="nav-link" data-page="orders-page"><i class="fas fa-shopping-cart"></i> Orders</a>
+                <a href="clients-page" class="nav-link" data-page="clients-page"><i class="fas fa-users"></i> Clients</a>
+                <a href="messages-page" class="nav-link" data-page="messages-page"><i class="fas fa-envelope-open-text"></i> Messages</a>
+                <a href="coupons-page" class="nav-link" data-page="coupons-page"><i class="fas fa-tags"></i> Coupons</a>
+            </nav>
+            <div class="admin-logout"><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+        </aside>
+
+        <main class="admin-main-content">
+            <header class="admin-header">
+                <button id="menu-toggle-btn" class="menu-toggle-btn"><i class="fas fa-bars"></i></button>
+                <h3 id="page-title">Dashboard Overview</h3>
+                <div class="admin-user">
+                    <span id="admin-welcome-msg">Welcome...</span>
+                    <img src="../images/mujtaba.jpg" alt="Admin" class="admin-avatar">
+                </div>
+            </header>
+
+            <section id="dashboard-page" class="page-section active">
+                <div class="stats-grid">
+                    <div class="stat-card neumorphic-outset"><i class="fas fa-dollar-sign"></i><div><h4>Total Revenue</h4><span id="total-revenue">₹0.00</span></div></div>
+                    <div class="stat-card neumorphic-outset"><i class="fas fa-hourglass-half"></i><div><h4>Pending Orders</h4><span id="pending-orders">0</span></div></div>
+                    <div class="stat-card neumorphic-outset"><i class="fas fa-check-circle"></i><div><h4>Completed Projects</h4><span id="completed-projects">0</span></div></div>
+                </div>
+                <div class="chart-container neumorphic-outset"><h3>Revenue (Last 30 Days)</h3><canvas id="revenue-chart"></canvas></div>
+            </section>
+
+            <section id="orders-page" class="page-section">
+                <div class="table-controls neumorphic-outset">
+                    <input type="text" id="search-orders" class="neumorphic-inset" placeholder="Search by customer name...">
+                    <select id="filter-status" class="neumorphic-inset">
+                        <option value="all">All Statuses</option>
+                        <option value="Pending Payment">Pending Payment</option>
+                        <option value="Awaiting User Payment">Awaiting User Payment</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="recent-orders neumorphic-outset">
+                    <h3>All Orders</h3>
+                    <table><thead><tr><th>Customer</th><th>Template</th><th>Price</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="all-orders-table-body"></tbody></table>
+                </div>
+            </section>
+
+            <section id="coupons-page" class="page-section">
+                <div class="coupon-management-grid">
+                    <div class="create-coupon-form neumorphic-outset">
+                        <h3>Create New Coupon</h3>
+                        <form id="create-coupon-form">
+                            <div class="form-group"><label for="coupon-code">Coupon Code</label><input type="text" id="coupon-code" class="neumorphic-inset" required></div>
+                            <div class="form-group"><label>Discount Type</label><div class="radio-group"><input type="radio" id="type-percentage" name="discount-type" value="percentage" checked><label for="type-percentage">Percentage (%)</label><input type="radio" id="type-fixed" name="discount-type" value="fixed"><label for="type-fixed">Fixed Amount (₹)</label></div></div>
+                            <div class="form-group"><label for="coupon-value">Value</label><input type="number" id="coupon-value" step="any" class="neumorphic-inset" required></div>
+                            <button type="submit" class="neumorphic-btn primary">Create Coupon</button>
+                            <p id="coupon-form-status" class="form-status"></p>
+                        </form>
+                    </div>
+                    <div class="recent-orders neumorphic-outset"><h3>Existing Coupons</h3><table><thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Status</th><th>Actions</th></tr></thead><tbody id="coupons-table-body"></tbody></table></div>
+                </div>
+            </section>
+            
+            <section id="clients-page" class="page-section"><div class="recent-orders neumorphic-outset"><h3>Client List</h3><table><thead><tr><th>Name</th><th>Email</th><th>WhatsApp</th><th>Total Orders</th></tr></thead><tbody id="clients-table-body"></tbody></table></div></section>
+            <section id="messages-page" class="page-section"><div class="recent-orders neumorphic-outset"><h3>Contact Messages</h3><table><thead><tr><th>Name</th><th>Email</th><th>Message</th><th>Received</th></tr></thead><tbody id="messages-table-body"></tbody></table></div></section>
+        </main>
+    </div>
+
+    <!-- ORDER DETAIL MODAL -->
+    <div id="order-modal" class="modal" style="display: none;">
+        <div class="modal-content neumorphic-outset">
+            <span class="close-button">×</span>
+            <h3 id="modal-customer-name">Order Details</h3>
+            <div class="modal-grid">
+                <div class="modal-section">
+                    <h4>Order Info</h4>
+                    <p><strong>Template:</strong> <span id="modal-template-name"></span></p>
+                    <div id="modal-price-breakdown">
+                        <p><strong>Subtotal:</strong> <span id="modal-subtotal-price"></span></p>
+                        <p id="modal-coupon-line" style="display: none;"><strong>Coupon Applied:</strong> <span id="modal-coupon-code"></span></p>
+                        <hr id="modal-price-hr" style="display: none;">
+                        <p><strong>Amount Paid:</strong> <strong id="modal-total-price"></strong></p>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h4>Customer Details</h4>
+                    <p><i class="fas fa-envelope"></i> <span id="modal-contact-email"></span></p>
+                    <p><i class="fab fa-whatsapp"></i> <span id="modal-contact-whatsapp"></span></p>
+                </div>
+                <div id="modal-payment-details" class="modal-section payment-section"></div>
+                <div id="modal-customizations" class="modal-section customizations-section"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
