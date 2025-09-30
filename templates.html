@@ -3,33 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Templates | Mujtaba Alam</title>
-    <meta name="description" content="Browse and select from a variety of professionally designed website templates.">
+    <title>AI Template Generator | Mujtaba Alam</title>
+    <meta name="description" content="Describe your ideal website and let our AI generate a custom plan for you.">
     <link rel="icon" type="image/jpeg" href="images/mujtaba.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
-    
-    <!-- Link to the new, dedicated stylesheet -->
     <link rel="stylesheet" href="css/template-style.css">
 </head>
-<body class="templates-page"> <!-- Added class for specific styling -->
-    
-    <div class="container templates-page-container">
-        <h2 class="animate-on-scroll">Choose a Template</h2>
-        <p class="section-subtitle animate-on-scroll">Select a design that best fits your vision. You'll customize it in the next step.</p>
-        
-        <div class="templates-grid" id="templates-grid">
-            <!-- Templates will be dynamically inserted here by JavaScript -->
-        </div>
+<body class="templates-page">
 
-        <div class="back-to-home-container">
-            <a href="pricing.html" class="back-to-home"><i class="fas fa-arrow-left"></i> Back to Plans</a>
+    <div class="container templates-page-container">
+        <div id="page-content">
+            <!-- Content will be injected here by JavaScript -->
         </div>
     </div>
-    
-    <!-- Neomorphic Browser Preview Modal -->
+
+    <!-- Neomorphic Browser Preview Modal (for static templates) -->
     <div id="preview-modal" class="preview-modal-container" style="display: none;">
         <div class="preview-modal-content">
             <div class="browser-header">
@@ -49,90 +40,14 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const TEMPLATES_MASTER_LIST = [
-                { id: 'clinic', name: 'Clinic', plan: 'pro', price: 11999, pages: 7, domain: 'Free Subdomain', img: 'Template Images/CLINIC.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/Clinic/Clinic' },
-                { id: 'daycare', name: 'Daycare Website', plan: 'pro', price: 10999, pages: 7, domain: 'Free Subdomain', img: 'Template Images/daycare-website-template.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/daycare-website-template/daycare-website-template' },
-                { id: 'educenter', name: 'Educenter', plan: 'pro', price: 13999, pages: 7, domain: 'Free Subdomain', img: 'Template Images/educenter-master.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/educenter-master/educenter-master' },
-                { id: 'ecommerce', name: 'Electro eCommerce', plan: 'advanced', price: 24999, pages: 15, domain: 'Custom Domain Included', img: 'Template Images/Electro-Free-Bootstrap-eCommerce-Website-Templates.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/Electro-Free-Bootstrap-eCommerce-Website-Templates/Electro-Free-Bootstrap-eCommerce-Website-Templates' },
-                { id: 'etrain', name: 'E-Train Master', plan: 'advanced', price: 18999, pages: 15, domain: 'Custom Domain Included', img: 'Template Images/etrain-master.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/etrain-master/etrain-master' },
-                { id: 'karma', name: 'Karma Master', plan: 'starter', price: 6999, pages: 3, domain: 'Free Subdomain', img: 'Template Images/karma-master.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/karma-master/karma-master' },
-                { id: 'kiddy', name: 'Kiddy Master', plan: 'pro', price: 9999, pages: 7, domain: 'Free Subdomain', img: 'Template Images/kiddy-master.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/kiddy-master/kiddy-master' },
-                { id: 'meditrust', name: 'MediTrust', plan: 'pro', price: 12999, pages: 7, domain: 'Free Subdomain', img: 'Template Images/MediTrust.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/MediTrust/MediTrust' },
-                { id: 'organic', name: 'Organic', plan: 'advanced', price: 21999, pages: 15, domain: 'Custom Domain Included', img: 'Template Images/organic-1.0.0.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/organic-1.0.0/organic-1.0.0' },
-                { id: 'passion', name: 'Passion', plan: 'starter', price: 5999, pages: 3, domain: 'Free Subdomain', img: 'Template Images/Passion.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/Passion/Passion' },
-                { id: 'villa-agency', name: 'Villa Agency', plan: 'pro', price: 14999, pages: 7, domain: 'Free Subdomain', img: 'Template Images/templatemo_591_villa_agency.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/templatemo_591_villa_agency/templatemo_591_villa_agency/index.html' },
-                { id: 'glossy-touch', name: 'Glossy Touch', plan: 'starter', price: 7999, pages: 3, domain: 'Free Subdomain', img: 'Template Images/templatemo_592_glossy_touch.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/templatemo_592_glossy_touch/templatemo_592_glossy_touch/index.html' },
-                { id: 'personal-shape', name: 'Personal Shape', plan: 'starter', price: 4999, pages: 3, domain: 'Free Subdomain', img: 'Template Images/templatemo_593_personal_shape.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/templatemo_593_personal_shape/templatemo_593_personal_shape/index.html' },
-                { id: 'nexus-flow', name: 'Nexus Flow', plan: 'advanced', price: 20999, pages: 15, domain: 'Custom Domain Included', img: 'Template Images/templatemo_594_nexus_flow.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/templatemo_594_nexus_flow/templatemo_594_nexus_flow/index.html' }
-            ];
+    <!-- ========================================================== -->
+    <!-- === FIX: ADD THE FIREBASE LIBRARY SCRIPTS HERE === -->
+    <!-- ========================================================== -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-            const templatesGrid = document.getElementById('templates-grid');
-            const urlParams = new URLSearchParams(window.location.search);
-            const planFilter = urlParams.get('plan');
-
-            const templatesToDisplay = planFilter ? TEMPLATES_MASTER_LIST.filter(t => t.plan === planFilter) : TEMPLATES_MASTER_LIST;
-
-            if (templatesToDisplay.length === 0) {
-                templatesGrid.innerHTML = `<p class="section-subtitle">No templates found for this plan. Showing all templates.</p>`;
-                templatesToDisplay.push(...TEMPLATES_MASTER_LIST);
-            }
-
-            templatesToDisplay.forEach(template => {
-                const card = document.createElement('div');
-                card.className = 'template-card animate-on-scroll';
-                // Updated button classes to match new stylesheet
-                card.innerHTML = `
-                    <img src="${template.img}" alt="${template.name}" class="template-image">
-                    <div class="template-info">
-                        <h3>${template.name}</h3>
-                        <ul class="template-details-list">
-                            <li><i class="fas fa-file-alt"></i> Up to ${template.pages} Pages</li>
-                            <li><i class="fas fa-globe"></i> ${template.domain}</li>
-                            <li><i class="fas fa-tag"></i> Starts at ₹${template.price.toLocaleString('en-IN')}</li>
-                        </ul>
-                        <div class="template-actions">
-                            <button class="neumorphic-btn secondary preview-btn" data-url="${template.previewUrl}">Preview</button>
-                            <a href="order.html?template=${template.id}" class="neumorphic-btn primary">Customize</a>
-                        </div>
-                    </div>
-                `;
-                templatesGrid.appendChild(card);
-            });
-
-            // Preview Modal Logic (no changes needed here)
-            const previewModal = document.getElementById('preview-modal');
-            const closePreviewBtn = document.getElementById('close-preview');
-            const previewFrame = document.getElementById('preview-frame');
-            const previewUrlText = document.getElementById('preview-url-text');
-            document.querySelectorAll('.preview-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const url = e.target.dataset.url;
-                    previewFrame.src = url;
-                    previewUrlText.textContent = url;
-                    previewModal.style.display = 'flex';
-                });
-            });
-            const closeModal = () => {
-                previewFrame.src = 'about:blank';
-                previewModal.style.display = 'none';
-            };
-            closePreviewBtn.addEventListener('click', closeModal);
-            previewModal.addEventListener('click', (e) => {
-                if (e.target === previewModal) closeModal();
-            });
-
-            // Scroll Animation Logic
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-            document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
-        });
-    </script>
+    <!-- Your custom script, which now runs AFTER Firebase is loaded -->
+    <script src="js/template-generator.js"></script>
 </body>
 </html>

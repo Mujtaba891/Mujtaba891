@@ -1,10 +1,9 @@
 /**
  * @file Definitive, Fully Functional Admin Dashboard Script
  * @author Mujtaba Alam (Professionally Architected)
- * @version 12.0.0 (Gemini API Key Management)
- * @description Added management for Google Gemini API key in settings,
- *              enabling AI-powered features on the client-side. All previous
- *              functionality, including invoicing, is retained.
+ * @version 13.0.0 (AI Template Management)
+ * @description Added a section to view and manage user-generated AI templates,
+ *              including preview and delete functionality. All previous features are retained.
  */
 'use strict';
 
@@ -30,7 +29,7 @@
     const db = firebase.firestore();
 
     const appState = {
-        orders: [], messages: [], clients: new Map(), coupons: [], updateRequests: [],
+        orders: [], messages: [], clients: new Map(), coupons: [], updateRequests: [], aiTemplates: [],
         revenueChart: null, currentUser: null, currentOrderInModal: null
     };
 
@@ -54,6 +53,7 @@
         couponsTableBody: document.getElementById('coupons-table-body'),
         clientsTableBody: document.getElementById('clients-table-body'),
         messagesTableBody: document.getElementById('messages-table-body'),
+        aiTemplatesTableBody: document.getElementById('ai-templates-table-body'),
         filterStatusSelect: document.getElementById('filter-status'),
         searchOrdersInput: document.getElementById('search-orders'),
         // Order Modal
@@ -123,10 +123,10 @@
             });
         });
         DOM.logoutBtn.addEventListener('click', () => auth.signOut());
-        DOM.createCouponForm.addEventListener('submit', handleCreateCoupon);
+        if (DOM.createCouponForm) DOM.createCouponForm.addEventListener('submit', handleCreateCoupon);
         if (DOM.settingsForm) DOM.settingsForm.addEventListener('submit', handleSaveSettings);
-        DOM.filterStatusSelect.addEventListener('change', populateOrdersTable);
-        DOM.searchOrdersInput.addEventListener('input', populateOrdersTable);
+        if (DOM.filterStatusSelect) DOM.filterStatusSelect.addEventListener('change', populateOrdersTable);
+        if (DOM.searchOrdersInput) DOM.searchOrdersInput.addEventListener('input', populateOrdersTable);
         DOM.mainContent.addEventListener('click', handleMainContentClicks);
         DOM.mainContent.addEventListener('change', handleMainContentChanges);
         DOM.downloadPdfBtn.addEventListener('click', () => downloadInvoice('pdf'));
@@ -173,11 +173,12 @@
         fetchCollection('contact_messages', 'timestamp', 'desc', data => { appState.messages = data; populateMessagesTable(); });
         fetchCollection('coupons', 'createdAt', 'desc', data => { appState.coupons = data; populateCouponsTable(); });
         fetchCollection('update_requests', 'requestedAt', 'desc', data => { appState.updateRequests = data; populateUpdateRequestsTable(); });
+        fetchCollection('ai_templates', 'createdAt', 'desc', data => { appState.aiTemplates = data; populateAiTemplatesTable(); });
         loadSettings();
     }
 
     async function loadSettings() {
-        if (!DOM.settingsForm) return; // Don't run if we aren't on the settings page
+        if (!DOM.settingsForm) return;
         try {
             const doc = await db.collection('settings').doc('api_keys').get();
             if (doc.exists) {
@@ -223,11 +224,11 @@
     function processAndPopulateClients() {
         appState.clients.clear();
         appState.orders.forEach(order => {
-            const email = order.contactDetails.email;
-            if (!appState.clients.has(email)) {
+            const email = order.contactDetails?.email;
+            if(email && !appState.clients.has(email)) {
                 appState.clients.set(email, { name: order.contactDetails.name, whatsapp: order.contactDetails.whatsapp, orderCount: 0, email: email });
             }
-            appState.clients.get(email).orderCount++;
+            if(email) appState.clients.get(email).orderCount++;
         });
         populateClientsTable();
     }
@@ -291,6 +292,19 @@
         renderTable(DOM.messagesTableBody, appState.messages, 4, "No messages.", m => `<td>${escapeHTML(m.name)}</td><td>${escapeHTML(m.email)}</td><td class="message-cell">${escapeHTML(m.message)}</td><td>${formatDate(m.timestamp)}</td>`);
     }
 
+
+    function populateAiTemplatesTable() {
+        renderTable(DOM.aiTemplatesTableBody, appState.aiTemplates, 4, "No AI templates have been generated yet.", template => `
+            <td>${escapeHTML(template.name)}</td>
+            <td>${escapeHTML(template.userEmail)}</td>
+            <td>${formatDate(template.createdAt)}</td>
+            <td class="actions-cell">
+                <a href="preview.html?id=${template.id}" target="_blank" class="action-btn" title="Preview"><i class="fas fa-eye"></i></a>
+                <button class="action-btn delete-ai-template-btn" data-id="${template.id}" title="Delete"><i class="fas fa-trash"></i></button>
+            </td>
+        `);
+    }
+
     // ===================================================================================
     // SECTION 7: EVENT HANDLERS
     // ===================================================================================
@@ -298,13 +312,30 @@
     function handleMainContentClicks(e) {
         const viewBtn = e.target.closest('.view-btn');
         if (viewBtn) showOrderModal(appState.orders.find(o => o.id === viewBtn.dataset.id));
+        
         const couponActionBtn = e.target.closest('.deactivate-coupon-btn, .activate-coupon-btn');
         if (couponActionBtn) handleCouponStatusToggle(couponActionBtn.dataset.id, couponActionBtn.classList.contains('activate-coupon-btn'));
+        
+        const deleteAiBtn = e.target.closest('.delete-ai-template-btn');
+        if (deleteAiBtn) {
+            if (confirm('Are you sure you want to permanently delete this AI template?')) {
+                handleDeleteAiTemplate(deleteAiBtn.dataset.id);
+            }
+        }
     }
 
     function handleMainContentChanges(e) {
         if (e.target.classList.contains('order-status-select')) handleStatusChange('orders', e.target.dataset.id, e.target.value);
         if (e.target.classList.contains('update-status-select')) handleStatusChange('update_requests', e.target.dataset.id, e.target.value);
+    }
+    
+    async function handleDeleteAiTemplate(id) {
+        try {
+            await db.collection('ai_templates').doc(id).delete();
+        } catch (error) {
+            console.error("Error deleting AI template:", error);
+            alert("Failed to delete the template.");
+        }
     }
 
     async function handleCreateCoupon(e) {

@@ -20,7 +20,7 @@
     --border-color: rgba(163, 177, 198, 0.5);
 
     /* NEW: Refined Neumorphic Shadows for a softer look */
-    --light-shadow: -12px -12px 24px rgba(255, 255, 255, 0.8);
+    --light-shadow: -12px -12px 24px rgba(255, 255, 255, 0.39);
     --dark-shadow: 12px 12px 24px #a3b1c6;
     --light-shadow-soft: -6px -6px 12px rgba(255, 255, 255, 0.7);
     --dark-shadow-soft: 6px 6px 12px rgba(163, 177, 198, 0.6);
@@ -79,7 +79,7 @@ section { padding: 120px 0; }
 .neumorphic-outset {
     background: var(--bg-color);
     border-radius: var(--border-radius);
-    box-shadow: var(--light-shadow), var(--dark-shadow);
+    box-shadow: var(--light-shadow-soft), var(--dark-shadow);
     transition: all var(--transition-speed) ease-in-out;
 }
 .neumorphic-inset {

@@ -2,12 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mujtaba Alam | Expert Web Developer & UI/UX Designer</title>
-    <meta name="description" content="Portfolio of Mujtaba Alam, a creative developer specializing in building beautiful, functional, and user-friendly digital experiences with modern web technologies.">
-    <meta name="keywords" content="Mujtaba Alam, Web Developer, UI/UX Designer, Neumorphic Design, Freelancer, Kashmir, Portfolio">
-    
-    <link rel="icon" type="image/jpeg" href="images/mujtaba.jpg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Mujtaba Alam | Web Developer & UI/UX Designer in Kashmir | Portfolio</title>
+
+<meta name="description" content="Explore the portfolio of Mujtaba Alam, a web developer and UI/UX designer from Kashmir. I create responsive, modern, and user-friendly websites with neumorphic design.">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Mujtaba Alam | Web Developer & UI/UX Designer Portfolio">
+<meta property="og:description" content="Creative web developer & UI/UX designer from Kashmir. Explore projects, templates, and services.">
+<meta property="og:image" content="https://mujtabaalam.vercel.app/images/mujtaba.jpg">
+<meta property="og:url" content="https://mujtabaalam.vercel.app">
+<meta property="og:type" content="website">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mujtaba Alam | Web Developer & Designer Portfolio">
+<meta name="twitter:description" content="Check out my projects, templates, and services as a web developer & designer.">
+<meta name="twitter:image" content="https://mujtabaalam.vercel.app/images/mujtaba.jpg">
+
+<link rel="icon" type="image/png" href="images/mujtaba.png">
     
     <!-- Google Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,6 +35,7 @@
     <link rel="stylesheet" href="css/testmonial.css">
     
     <!-- Additional styles for new sections -->
+    <link rel="stylesheet" href="css/ai.css">
     
 </head>
 <body>
@@ -34,6 +49,7 @@
             <nav class="nav-menu-desktop">
                 <a href="index.html">Home</a>
                 <a href="about.html">About</a>
+                <a href="my-orders.html">My Orders</a>
                 <a href="services.html">Services</a>
                 <a href="pricing.html">Pricing</a>
                 <a href="templates.html">Templates</a>
@@ -48,6 +64,7 @@
         <nav class="nav-menu-mobile">
             <a href="index.html">Home</a>
             <a href="about.html">About</a>
+            <a href="my-orders.html">My Orders</a>
             <a href="services.html">Services</a>
             <a href="pricing.html">Pricing</a>
             <a href="templates.html">Templates</a>
@@ -291,7 +308,7 @@
         <button id="prevBtn" class="nav-btn">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
         </button>
-        <button id="nextBtn" class="nav-btn">
+                <button id="nextBtn" class="nav-btn">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
     </div>
@@ -352,6 +369,28 @@
     <!-- =================================================================
     END OF MAIN CONTENT
     ================================================================== -->
+
+    <!-- =================================================================
+    AI ASSISTANT MARKUP
+    ================================================================== -->
+    <div id="ai-assistant-fab" class="neumorphic-outset">
+        <i class="fas fa-robot"></i>
+    </div>
+    <div id="ai-chat-container">
+        <div class="ai-chat-header">
+            <h3>AI Assistant</h3>
+            <button id="ai-chat-close-btn">&times;</button>
+        </div>
+        <div id="ai-chat-messages">
+            <!-- Messages will be injected here by JavaScript -->
+        </div>
+        <form id="ai-chat-form">
+            <input type="text" id="ai-chat-input" class="neumorphic-inset" placeholder="Ask me anything..." autocomplete="off">
+            <button type="submit" id="ai-chat-submit" class="neumorphic-btn primary">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
     
     <!-- =================================================================
     FOOTER
@@ -389,7 +428,7 @@
                  <a href="https://github.com/Mujtaba891" target="_blank" class="neumorphic-outset" title="GitHub">
         <i class="fab fa-github fa-2x" style="color: #18191a;"></i>
     </a>
-    <a href="https://www.linkedin.com/in/mujtaba-alam-11aa00345/" target="_blank" class="neumorphic-outset" title="LinkedIn">
+    <a href="https://www.linkedin.com/in/mujtaba-alam-239589382/" target="_blank" class="neumorphic-outset" title="LinkedIn">
         <i class="fab fa-linkedin-in fa-2x" style="color: #0e8af0;"></i>
     </a>
     <a href="https://x.com/mujtaba47639658" target="_blank" class="neumorphic-outset" title="X / Twitter">
@@ -402,7 +441,7 @@
     <a href="mailto:mujtabaalam010@gmail.com" target="_blank" class="neumorphic-outset" title="Email">
         <i class="fas fa-envelope fa-2x" style="color: #f0740e;"></i>
     </a>
-    <a href="https://www.instagram.com/mujtabaalamofficial?utm_source=qr&igsh=OHdqdXg4cGI2cDIw" target="_blank" class="neumorphic-outset" title="Instagram">
+    <a href="https://www.instagram.com/mujtabaalam25/" target="_blank" class="neumorphic-outset" title="Instagram">
         <i class="fab fa-instagram fa-2x" 
    style="background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af, #515bd4);
           -webkit-background-clip: text;
@@ -410,18 +449,26 @@
           display: inline-block;"></i>
 
     </a>
-    <a href="https://youtube.com/@mujtabaalamofficial?si=nrpwkuF-dx-Ldswm" target="_blank" class="neumorphic-outset" title="YouTube">
+    <a href="https://www.youtube.com/@MujtabaAlam25" target="_blank" class="neumorphic-outset" title="YouTube">
         <i class="fab fa-youtube fa-2x" style="color: #e91111;"></i>
     </a>
             </div>
-            <p class="footer-text">© 2024 Mujtaba Alam. Designed and Built with ❤️ and Passion.</p>
+            <p class="footer-text">© 2025 Mujtaba Alam. Designed and Built with ❤️ and Passion.</p>
         </div>
     </footer>
 
     <!-- =================================================================
     SCRIPTS
     ================================================================== -->
+    <!-- Firebase SDKs (Required for AI Assistant) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <!-- Main and AI Assistant Scripts -->
     <script src="js/script.js"></script>
+    <script src="js/Ai-asistant.js"></script>
+
     <script>
         // Additional script for FAQ accordion
         document.addEventListener('DOMContentLoaded', () => {
@@ -446,7 +493,7 @@
             });
         });
 
-        //testmonial
+        //testimonial
         document.addEventListener('DOMContentLoaded', function () {
     const wrapper = document.querySelector('.testimonial-wrapper');
     const cards = document.querySelectorAll('.testimonial-card');

@@ -215,3 +215,25 @@ body {
         font-size: 1rem;
     }
 }
+/* Add to pricing.css */
+.ai-custom-plan {
+    border: 2px solid var(--primary-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.ai-badge {
+    position: absolute;
+    top: 15px;
+    right: -40px;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 5px 40px;
+    transform: rotate(45deg);
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.ai-custom-plan h3 {
+    color: var(--primary-color);
+}

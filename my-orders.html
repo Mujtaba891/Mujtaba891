@@ -4,27 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Orders | Mujtaba Alam</title>
-    <meta name="description" content="View your saved project orders and complete payment.">
+    <meta name="description" content="View your saved and completed project orders.">
     <link rel="icon" type="image/jpeg" href="images/mujtaba.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .update-form { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color); display: none; }
+        .update-form textarea { width: 100%; padding: 15px; border-radius: 15px; border: none; background: var(--bg-color); box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow); resize: vertical; min-height: 100px; margin-bottom: 15px; font-family: var(--font-primary); }
+        .update-status-message { margin-top: 10px; font-weight: 600; }
+        .disabled-reason { font-size: 0.9em; opacity: 0.7; margin-top: 5px; }
+    </style>
 </head>
 <body class="order-page-bg">
 
     <div class="container my-orders-container">
-        <h2 class="animate-on-scroll">My Saved Orders</h2>
-        <p class="section-subtitle animate-on-scroll">Here are the projects you've saved. You can complete the payment anytime.</p>
-
-        <div id="orders-list-container" class="orders-list-container">
-            <!-- Loading message, will be replaced by script -->
-            <div class="neumorphic-outset order-card" id="loading-orders-placeholder">
-                <div class="spinner"></div>
-                <p>Loading your saved orders...</p>
+        
+        <h2 class="animate-on-scroll">Pending Orders</h2>
+        <p class="section-subtitle animate-on-scroll">These are projects you've saved but haven't paid for yet.</p>
+        <div id="pending-orders-container" class="orders-list-container">
+            <div class="neumorphic-outset order-card" id="loading-pending-placeholder">
+                <div class="spinner"></div><p>Loading pending orders...</p>
             </div>
-            <!-- Order cards will be dynamically inserted here by my-orders-script.js -->
+        </div>
+
+        <hr style="margin: 60px auto; border: 1px solid var(--border-color); width: 50%;">
+
+        <h2 class="animate-on-scroll">Project History & Updates</h2>
+        <p class="section-subtitle animate-on-scroll">View your active and completed projects. You can request free updates for 1 year post-launch.</p>
+        <div id="completed-orders-container" class="orders-list-container">
+            <div class="neumorphic-outset order-card" id="loading-completed-placeholder">
+                <div class="spinner"></div><p>Loading project history...</p>
+            </div>
         </div>
 
         <div class="back-to-home-container">
@@ -32,14 +45,16 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs are required to fetch data -->
+    <!-- Firebase SDKs - THE ORDER IS CRITICAL -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    
+    <!-- THIS WAS THE MISSING LINE - IT IS NOW ADDED -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-    <!-- The script that will make this page functional -->
+    <!-- Your page scripts -->
     <script src="js/my-orders-script.js"></script>
-
-    <!-- Optional: For animations -->
     <script src="js/script.js"></script>
 </body>
 </html>

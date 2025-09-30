@@ -11,7 +11,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
     <link rel="stylesheet" href="admin-style.css">
+    <link rel="stylesheet" href="invoice-style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body class="admin-bg">
 
@@ -26,9 +29,12 @@
             <nav class="admin-nav">
                 <a href="dashboard-page" class="nav-link active" data-page="dashboard-page"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
                 <a href="orders-page" class="nav-link" data-page="orders-page"><i class="fas fa-shopping-cart"></i> Orders</a>
+                <a href="updates-page" class="nav-link" data-page="updates-page"><i class="fas fa-edit"></i> Update Requests</a>
                 <a href="clients-page" class="nav-link" data-page="clients-page"><i class="fas fa-users"></i> Clients</a>
                 <a href="messages-page" class="nav-link" data-page="messages-page"><i class="fas fa-envelope-open-text"></i> Messages</a>
                 <a href="coupons-page" class="nav-link" data-page="coupons-page"><i class="fas fa-tags"></i> Coupons</a>
+                <a href="ai-templates-page" class="nav-link" data-page="ai-templates-page"><i class="fas fa-robot"></i> AI Templates</a>
+                <a href="settings-page" class="nav-link" data-page="settings-page"><i class="fas fa-tags"></i> Settings</a>
             </nav>
             <div class="admin-logout"><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
         </aside>
@@ -69,6 +75,25 @@
                     <table><thead><tr><th>Customer</th><th>Template</th><th>Price</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="all-orders-table-body"></tbody></table>
                 </div>
             </section>
+            <!-- Add this new section to admin.html -->
+<section id="updates-page" class="page-section">
+    <div class="recent-orders neumorphic-outset">
+        <h3>Project Update Requests</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Request Date</th>
+                    <th>Project ID</th>
+                    <th>Request Details</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="update-requests-table-body">
+                <!-- Update requests will be populated here by admin.js -->
+            </tbody>
+        </table>
+    </div>
+</section>
 
             <section id="coupons-page" class="page-section">
                 <div class="coupon-management-grid">
@@ -85,6 +110,52 @@
                     <div class="recent-orders neumorphic-outset"><h3>Existing Coupons</h3><table><thead><tr><th>Code</th><th>Type</th><th>Value</th><th>Status</th><th>Actions</th></tr></thead><tbody id="coupons-table-body"></tbody></table></div>
                 </div>
             </section>
+            <!-- In admin.html, inside the <main> tag, after the other page sections -->
+<section id="ai-templates-page" class="page-section">
+    <div class="recent-orders neumorphic-outset">
+        <h3>User-Generated AI Templates</h3>
+        <p>Review templates created by users. You can delete inappropriate or broken templates.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Template Name</th>
+                    <th>Created By (Email)</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="ai-templates-table-body">
+                <!-- AI Templates will be populated here -->
+            </tbody>
+        </table>
+    </div>
+</section>
+</div>
+<!-- NEW: Settings Page Section -->
+            <section id="settings-page" class="page-section">
+                <div class="settings-container">
+                    <div class="settings-card neumorphic-outset">
+                        <h3>API Key Management</h3>
+                        <p>Enter and save your API keys here. These will be used for third-party integrations like the payment gateway.</p>
+                        <form id="settings-form">
+                            <div class="form-group">
+    <label for="razorpay-key-id">Razorpay Key ID</label>
+    <input type="text" id="razorpay-key-id" class="neumorphic-inset" placeholder="Enter your Razorpay Key ID" required>
+</div>
+
+<!-- NEW: Gemini API Key Input -->
+<div class="form-group">
+    <label for="gemini-api-key">Google Gemini API Key</label>
+    <input type="text" id="gemini-api-key" class="neumorphic-inset" placeholder="Enter your Gemini API Key" required>
+    <small>Used for AI-powered suggestions on the order page.</small>
+</div>
+
+<button type="submit" class="neumorphic-btn primary">Save Settings</button>
+<p id="settings-form-status" class="form-status"></p>
+                        </form>
+                    </div>
+                </div>
+            </section>
             
             <section id="clients-page" class="page-section"><div class="recent-orders neumorphic-outset"><h3>Client List</h3><table><thead><tr><th>Name</th><th>Email</th><th>WhatsApp</th><th>Total Orders</th></tr></thead><tbody id="clients-table-body"></tbody></table></div></section>
             <section id="messages-page" class="page-section"><div class="recent-orders neumorphic-outset"><h3>Contact Messages</h3><table><thead><tr><th>Name</th><th>Email</th><th>Message</th><th>Received</th></tr></thead><tbody id="messages-table-body"></tbody></table></div></section>
@@ -92,35 +163,92 @@
     </div>
 
     <!-- ORDER DETAIL MODAL -->
-    <div id="order-modal" class="modal" style="display: none;">
-        <div class="modal-content neumorphic-outset">
-            <span class="close-button">×</span>
-            <h3 id="modal-customer-name">Order Details</h3>
-            <div class="modal-grid">
-                <div class="modal-section">
-                    <h4>Order Info</h4>
-                    <p><strong>Template:</strong> <span id="modal-template-name"></span></p>
-                    <div id="modal-price-breakdown">
-                        <p><strong>Subtotal:</strong> <span id="modal-subtotal-price"></span></p>
-                        <p id="modal-coupon-line" style="display: none;"><strong>Coupon Applied:</strong> <span id="modal-coupon-code"></span></p>
-                        <hr id="modal-price-hr" style="display: none;">
-                        <p><strong>Amount Paid:</strong> <strong id="modal-total-price"></strong></p>
-                    </div>
+<div id="order-modal" class="modal" style="display: none;">
+    <!-- This is the content that will be captured for the invoice -->
+    <div id="invoice-content" class="modal-content neumorphic-outset">
+        <span class="close-button">×</span>
+        <h3 id="modal-customer-name">Order Details</h3>
+        <div class="modal-grid">
+            <div class="modal-section">
+                <h4>Order Info</h4>
+                <p><strong>Template:</strong> <span id="modal-template-name"></span></p>
+                <div id="modal-price-breakdown">
+                    <p><strong>Subtotal:</strong> <span id="modal-subtotal-price"></span></p>
+                    <p id="modal-coupon-line" style="display: none;"><strong>Coupon Applied:</strong> <span id="modal-coupon-code"></span></p>
+                    <hr id="modal-price-hr" style="display: none;">
+                    <p><strong>Amount Paid:</strong> <strong id="modal-total-price"></strong></p>
                 </div>
-                <div class="modal-section">
-                    <h4>Customer Details</h4>
-                    <p><i class="fas fa-envelope"></i> <span id="modal-contact-email"></span></p>
-                    <p><i class="fab fa-whatsapp"></i> <span id="modal-contact-whatsapp"></span></p>
-                </div>
-                <div id="modal-payment-details" class="modal-section payment-section"></div>
-                <div id="modal-customizations" class="modal-section customizations-section"></div>
             </div>
+            <div class="modal-section">
+                <h4>Customer Details</h4>
+                <p><i class="fas fa-envelope"></i> <span id="modal-contact-email"></span></p>
+                <p><i class="fab fa-whatsapp"></i> <span id="modal-contact-whatsapp"></span></p>
+            </div>
+            <div id="modal-payment-details" class="modal-section payment-section"></div>
+            <div id="modal-customizations" class="modal-section customizations-section"></div>
+        </div>
+        <!-- NEW: Download Buttons Section -->
+        <div class="modal-actions">
+            <button id="download-pdf-btn" class="neumorphic-btn"><i class="fas fa-file-pdf"></i> Download PDF</button>
+            <button id="download-jpg-btn" class="neumorphic-btn primary"><i class="fas fa-file-image"></i> Download JPG</button>
         </div>
     </div>
+
+<!-- HIDDEN INVOICE STRUCTURE FOR RENDERING -->
+<div id="invoice-container-for-render" style="position: absolute; left: -9999px; top: -9999px;">
+    <div id="invoice-content-render" class="invoice-render-container">
+        <!-- Header -->
+        <div class="invoice-header">
+            <h1>INVOICE</h1>
+            <div class="invoice-sender-details">
+                <h3 id="invoice-sender-name">Mujtaba Alam</h3>
+                <p id="invoice-sender-email">mujtabaalam010@gmail.com</p>
+                <p id="invoice-sender-phone">+91 97970 60239</p>
+            </div>
+        </div>
+
+        <!-- Meta Info -->
+        <div class="invoice-meta">
+            <div class="invoice-customer-details">
+                <h2>BILL TO</h2>
+                <p id="invoice-customer-name"></p>
+                <p id="invoice-customer-email"></p>
+                <p id="invoice-customer-whatsapp"></p>
+            </div>
+            <div class="invoice-order-info">
+                <h2>ORDER DETAILS</h2>
+                <p><strong>Invoice No:</strong> <span id="invoice-number"></span></p>
+                <p><strong>Order Date:</strong> <span id="invoice-order-date"></span></p>
+                <p><strong>Payment Status:</strong> <span id="invoice-payment-status"></span></p>
+            </div>
+        </div>
+        
+        <!-- Amount Breakdown Table -->
+        <div class="invoice-amount-breakdown">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody id="invoice-breakdown-body">
+                    <!-- Rows will be injected here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Footer -->
+        <div class="invoice-footer">
+            <p>Thank you for your business!</p>
+            <p>If you have any questions, please contact us.</p>
+        </div>
+    </div>
+</div>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <script src="admin.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

@@ -14,40 +14,97 @@
 </head>
 <body class="order-page-bg">
 
-    <div class="quiz-container neumorphic-outset">
-        <a href="templates.html" class="back-to-home"><i class="fas fa-arrow-left"></i> Change Template</a>
+    <!-- This is the main container that will be hidden until the user logs in -->
+    <div class="quiz-container neumorphic-outset" id="quiz-container" style="display: none;">
         
-        <div id="quiz-view">
-            <div class="quiz-header">
-                <h2 id="progress-text">Customize Your Project</h2>
-                <div class="progress-bar-container">
-                    <div class="progress-bar" id="progress-bar"></div>
+        <!-- NEW: Flexbox wrapper for side-by-side layout -->
+        <div class="quiz-layout-wrapper">
+
+            <!-- Column 1: The Quiz -->
+            <div class="quiz-main-column">
+                <a href="templates.html" class="back-to-home"><i class="fas fa-arrow-left"></i> Change Template</a>
+                
+                <div id="quiz-view">
+                    <div class="quiz-header">
+                        <h2 id="progress-text">Customize Your Project</h2>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progress-bar"></div>
+                        </div>
+                    </div>
+
+                    <div id="question-area">
+                        <h3 id="question-text">Loading question...</h3>
+                        <div id="options-container" class="options-grid">
+                            <!-- Dynamic Questions and Options will be injected here -->
+                        </div>
+                        <p class="validation-error" id="validation-error-message" style="display:none; color: var(--danger-color); text-align: center; margin-top: 15px; font-weight: 600;"></p>
+                    </div>
+
+                    <div class="quiz-navigation">
+                        <!-- Navigation buttons will be injected here -->
+                    </div>
                 </div>
             </div>
 
-            <div id="question-area">
-                <h3 id="question-text">Loading question...</h3>
-                <div id="options-container" class="options-grid">
-                    <!-- Dynamic Questions and Options will be injected here -->
+            <!-- Column 2: The Real-Time Order Summary -->
+            <div class="quiz-summary-column">
+                <div class="order-summary-box neumorphic-inset">
+                    <h4><i class="fas fa-shopping-cart"></i> Order Summary</h4>
+                    <div class="summary-item">
+                        <span>Base Template Price</span>
+                        <strong id="summary-base-price">₹0</strong>
+                    </div>
+                    <div class="summary-item summary-addon" id="summary-logo-item" style="display: none;">
+                        <span>+ Logo Design</span>
+                        <strong id="summary-logo-cost">₹0</strong>
+                    </div>
+                    <div class="summary-item summary-addon" id="summary-content-item" style="display: none;">
+                        <span>+ Content Creation</span>
+                        <strong id="summary-content-cost">₹0</strong>
+                    </div>
+                    <div class="summary-item summary-addon" id="summary-pages-item" style="display: none;">
+                        <span>+ Extra Pages (<span id="summary-extra-pages-count">0</span>)</span>
+                        <strong id="summary-pages-cost">₹0</strong>
+                    </div>
+                    <hr>
+                    <div class="summary-total">
+                        <p>Total Estimated Price</p>
+                        <h3 id="summary-total-price">₹0</h3>
+                    </div>
                 </div>
             </div>
 
-            <div class="quiz-navigation">
-                <button id="back-btn" class="neumorphic-btn">Back</button>
-                <!-- This will be dynamically changed or replaced at the final step -->
-                <button id="next-btn" class="neumorphic-btn primary">Next</button>
-            </div>
         </div>
 
-        <!-- This view will show up when saving data -->
         <div id="loading-spinner" style="display: none;">
             <div class="spinner"></div>
             <p>Saving your project...</p>
         </div>
     </div>
 
+    <!-- Some new CSS to handle the layout and summary box -->
+    <style>
+        .quiz-layout-wrapper { display: flex; gap: 40px; }
+        .quiz-main-column { flex: 2; }
+        .quiz-summary-column { flex: 1; padding-top: 45px; }
+        .order-summary-box { padding: 25px; border-radius: 20px; position: sticky; top: 100px; }
+        .order-summary-box h4 { margin-bottom: 20px; font-size: 1.3em; color: var(--heading-color); border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .summary-item, .summary-total { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .summary-addon span { opacity: 0.8; }
+        .order-summary-box hr { border: none; height: 1px; background: var(--border-color); margin: 20px 0; }
+        .summary-total p { font-weight: 600; font-size: 1.1em; color: var(--heading-color); }
+        .summary-total h3 { font-size: 2em; color: var(--primary-color); }
+        .drive-link-input { margin-top: 15px; }
+        @media (max-width: 992px) {
+            .quiz-layout-wrapper { flex-direction: column-reverse; }
+            .quiz-summary-column { padding-top: 0; }
+            .order-summary-box { position: static; margin-bottom: 40px; }
+        }
+    </style>
+
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="js/order-script.js"></script>
 </body>

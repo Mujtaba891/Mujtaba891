@@ -1,0 +1,106 @@
+/* ==========================================================
+   Professional Invoice Stylesheet for Admin Dashboard
+   Author: Mujtaba Alam
+   Version: 1.0.0
+   ========================================================== */
+
+/* This class is applied to the invoice container before rendering */
+.invoice-render-container {
+    font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+    color: #555;
+    background-color: #fff;
+    padding: 40px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
+}
+
+.invoice-header h1 {
+    font-size: 36px;
+    font-weight: 300;
+    color: #000;
+    margin: 0;
+    line-height: 1;
+}
+
+.invoice-sender-details {
+    text-align: right;
+}
+
+.invoice-sender-details h3 {
+    font-size: 20px;
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.invoice-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #eee;
+}
+
+.invoice-customer-details, .invoice-order-info {
+    width: 48%;
+}
+
+.invoice-customer-details h2, .invoice-order-info h2 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 10px 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.invoice-customer-details p, .invoice-order-info p {
+    margin: 0 0 5px 0;
+}
+
+.invoice-amount-breakdown {
+    margin-top: 40px;
+}
+
+.invoice-amount-breakdown table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: right;
+}
+
+.invoice-amount-breakdown th, .invoice-amount-breakdown td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.invoice-amount-breakdown th {
+    background: #f9f9f9;
+    font-weight: bold;
+    text-align: left;
+}
+.invoice-amount-breakdown th:last-child,
+.invoice-amount-breakdown td:last-child {
+    text-align: right;
+}
+
+.invoice-amount-breakdown .total-row td {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #000;
+    border-top: 2px solid #333;
+    border-bottom: none;
+}
+
+.invoice-footer {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 12px;
+    color: #777;
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Preview</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: sans-serif; }
+        #loading { display: flex; justify-content: center; align-items: center; height: 100%; font-size: 1.5em; color: #555; }
+        iframe { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+    <div id="loading">Loading Preview...</div>
+    <iframe id="preview-frame" style="display:none;"></iframe>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script>
+        const firebaseConfig = {
+        apiKey: "AIzaSyCrimPYJOBcmx-ynWJ9g2GqjrT9ANsTrpg",
+        authDomain: "mujtaba-alam.firebaseapp.com",
+        projectId: "mujtaba-alam",
+        storageBucket: "mujtaba-alam.appspot.com",
+        messagingSenderId: "221609343134",
+        appId: "1:221609343134:web:d64123479f43e6bc66638f"
+    };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        async function loadPreview() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const templateId = urlParams.get('id');
+            const loadingDiv = document.getElementById('loading');
+            const iframe = document.getElementById('preview-frame');
+
+            if (!templateId) {
+                loadingDiv.textContent = 'Error: No Template ID provided.';
+                return;
+            }
+
+            try {
+                const doc = await db.collection('ai_templates').doc(templateId).get();
+                if (doc.exists) {
+                    const htmlContent = doc.data().htmlCode;
+                    iframe.srcdoc = htmlContent; // Securely load HTML content
+                    loadingDiv.style.display = 'none';
+                    iframe.style.display = 'block';
+                } else {
+                    loadingDiv.textContent = 'Error: Template not found.';
+                }
+            } catch (error) {
+                console.error("Error fetching template:", error);
+                loadingDiv.textContent = 'Error loading preview.';
+            }
+        }
+        loadPreview();
+    </script>
+</body>
+</html>

@@ -1,22 +1,31 @@
 /**
- * @file Script for the checkout.html page with coupon functionality.
+ * @file Script for the checkout.html page with dynamic API keys and coupon functionality.
  * @author Mujtaba Alam
- * @version 6.0.0 (Rule Compliant)
- * @description Updated to comply with new Firestore security rules. Sends 'finalPrice'
- *              on update instead of modifying 'estimatedPrice'.
+ * @version 7.0.0 (Dynamic API Key)
+ * @description Fetches Razorpay API key from Firestore instead of using a hardcoded
+ *              value, enhancing security. Complies with all security rules for payment updates.
  */
-'use strict';
+'use-strict';
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    // ===================================================================================
+    // SECTION 1: INITIALIZATION AND STATE MANAGEMENT
+    // ===================================================================================
+
     let db;
-    const checkoutState = {
+
+    // Central state object to manage all dynamic data for the checkout process.
+    const state = {
         basePrice: 0,
         finalPrice: 0,
         appliedCoupon: null,
-        checkoutData: null
+        checkoutData: null,
+        razorpayApiKey: null,
     };
 
-    const UIElements = {
+    // Centralized DOM element references for performance and maintainability.
+    const UI = {
         summaryList: document.getElementById('order-summary-list'),
         subtotalPrice: document.getElementById('checkout-subtotal-price'),
         totalPrice: document.getElementById('checkout-total-price'),
@@ -28,112 +37,201 @@ document.addEventListener('DOMContentLoaded', () => {
         couponStatus: document.getElementById('coupon-status'),
     };
 
+    /**
+     * Initializes the Firebase application.
+     * @returns {boolean} True if initialization is successful, otherwise false.
+     */
     function initializeFirebase() {
         try {
-            const firebaseConfig = { apiKey: "AIzaSyCrimPYJOBcmx-ynWJ9g2GqjrT9ANsTrpg", authDomain: "mujtaba-alam.firebaseapp.com", projectId: "mujtaba-alam", storageBucket: "mujtaba-alam.appspot.com", messagingSenderId: "221609343134", appId: "1:221609343134:web:d64123479f43e6bc66638f" };
-            if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+            const firebaseConfig = {
+                apiKey: "AIzaSyCrimPYJOBcmx-ynWJ9g2GqjrT9ANsTrpg",
+                authDomain: "mujtaba-alam.firebaseapp.com",
+                projectId: "mujtaba-alam",
+                storageBucket: "mujtaba-alam.appspot.com",
+                messagingSenderId: "221609343134",
+                appId: "1:221609343134:web:d64123479f43e6bc66638f"
+            };
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
             db = firebase.firestore();
             return true;
         } catch (error) {
-            console.error("Firebase init failed:", error);
-            alert("Connection error. Please try again.");
+            console.error("Firebase initialization failed:", error);
+            alert("A connection error occurred. Please refresh the page and try again.");
             return false;
         }
     }
 
-    const formatCurrency = (amount) => `₹${Math.round(amount).toLocaleString('en-IN')}`;
-    const getCheckoutData = () => {
+    // ===================================================================================
+    // SECTION 2: DATA FETCHING AND UI RENDERING
+    // ===================================================================================
+
+    /**
+     * Fetches the Razorpay API Key ID from the 'settings/api_keys' document in Firestore.
+     * @returns {Promise<string|null>} The API key or null if not found or on error.
+     */
+    async function fetchRazorpayApiKey() {
+        if (!db) return null;
         try {
-            checkoutState.checkoutData = JSON.parse(localStorage.getItem('checkoutData'));
-            return checkoutState.checkoutData;
-        } catch (e) {
+            const doc = await db.collection('settings').doc('api_keys').get();
+            if (doc.exists && doc.data().razorpayKeyId) {
+                return doc.data().razorpayKeyId;
+            } else {
+                console.error("CRITICAL: Razorpay Key ID not found in Firestore 'settings/api_keys'. Payment cannot proceed.");
+                return null;
+            }
+        } catch (error) {
+            console.error("Error fetching Razorpay API key:", error);
             return null;
         }
-    };
+    }
 
-    function renderOrderSummary(data) {
-        if (!data || !data.price || !data.summary) return;
-        checkoutState.basePrice = data.price;
-        checkoutState.finalPrice = data.price;
-        UIElements.summaryList.innerHTML = `<div><span>${data.summary[0].question}</span><strong>${data.summary[0].text}</strong></div>`;
+    /**
+     * Retrieves checkout data from localStorage and populates the state.
+     * @returns {boolean} True if data is found and valid, otherwise false.
+     */
+    function getCheckoutDataFromStorage() {
+        try {
+            const data = localStorage.getItem('checkoutData');
+            if (data) {
+                state.checkoutData = JSON.parse(data);
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.error("Failed to parse checkout data from localStorage:", e);
+            return false;
+        }
+    }
+
+    /**
+     * Renders the initial order summary based on checkout data.
+     */
+    function renderOrderSummary() {
+        const { price, summary } = state.checkoutData;
+        state.basePrice = price;
+        state.finalPrice = price;
+
+        const summaryHTML = summary.map(item => `<div><span>${item.question}</span><strong>${item.text}</strong></div>`).join('');
+        UI.summaryList.innerHTML = summaryHTML;
+
         updatePriceUI();
     }
 
+    /**
+     * Updates all price-related elements in the UI based on the current state.
+     */
     function updatePriceUI() {
         let discount = 0;
-        if (checkoutState.appliedCoupon) {
-            if (checkoutState.appliedCoupon.type === 'percentage') {
-                discount = (checkoutState.basePrice * checkoutState.appliedCoupon.value) / 100;
-            } else {
-                discount = checkoutState.appliedCoupon.value;
-            }
+        if (state.appliedCoupon) {
+            discount = state.appliedCoupon.type === 'percentage'
+                ? (state.basePrice * state.appliedCoupon.value) / 100
+                : state.appliedCoupon.value;
         }
         
-        checkoutState.finalPrice = Math.max(0, checkoutState.basePrice - discount);
+        state.finalPrice = Math.max(0, state.basePrice - discount);
 
-        UIElements.subtotalPrice.textContent = formatCurrency(checkoutState.basePrice);
-        UIElements.totalPrice.textContent = formatCurrency(checkoutState.finalPrice);
+        const formatCurrency = (amount) => `₹${Math.round(amount).toLocaleString('en-IN')}`;
+        UI.subtotalPrice.textContent = formatCurrency(state.basePrice);
+        UI.totalPrice.textContent = formatCurrency(state.finalPrice);
 
         if (discount > 0) {
-            UIElements.discountAmount.textContent = `- ${formatCurrency(discount)}`;
-            UIElements.discountDisplay.style.display = 'flex';
+            UI.discountAmount.textContent = `- ${formatCurrency(discount)}`;
+            UI.discountDisplay.style.display = 'flex';
         } else {
-            UIElements.discountDisplay.style.display = 'none';
+            UI.discountDisplay.style.display = 'none';
         }
     }
 
-    async function handleApplyCoupon() {
-        const code = UIElements.couponInput.value.toUpperCase().trim();
-        if (!code) { UIElements.couponStatus.textContent = 'Please enter a code.'; return; }
+    /**
+     * Displays a message on the page, replacing the checkout form.
+     * Used for critical errors or when no data is found.
+     */
+    function showPageMessage(title, message, buttonText, buttonLink) {
+        document.body.innerHTML = `
+            <div class="checkout-container neumorphic-outset">
+                <h2>${title}</h2>
+                <p>${message}</p>
+                <a href="${buttonLink}" class="neumorphic-btn">${buttonText}</a>
+            </div>`;
+    }
 
-        UIElements.applyCouponBtn.disabled = true;
-        UIElements.couponStatus.textContent = 'Validating...';
+    // ===================================================================================
+    // SECTION 3: COUPON LOGIC
+    // ===================================================================================
+
+    /**
+     * Handles the coupon application logic.
+     */
+    async function handleApplyCoupon() {
+        const code = UI.couponInput.value.toUpperCase().trim();
+        if (!code) {
+            UI.couponStatus.textContent = 'Please enter a coupon code.';
+            return;
+        }
+
+        UI.applyCouponBtn.disabled = true;
+        UI.couponStatus.textContent = 'Validating...';
+        UI.couponStatus.className = 'coupon-status';
 
         try {
             const snapshot = await db.collection('coupons').where('code', '==', code).get();
+
             if (snapshot.empty) {
-                UIElements.couponStatus.textContent = 'Invalid coupon code.';
-                UIElements.couponStatus.className = 'coupon-status error';
-                checkoutState.appliedCoupon = null;
+                UI.couponStatus.textContent = 'Invalid coupon code.';
+                UI.couponStatus.className = 'coupon-status error';
+                state.appliedCoupon = null;
             } else {
                 const couponData = snapshot.docs[0].data();
                 if (couponData.isActive) {
-                    checkoutState.appliedCoupon = couponData;
-                    UIElements.couponStatus.textContent = `Success! '${couponData.code}' applied.`;
-                    UIElements.couponStatus.className = 'coupon-status success';
-                    UIElements.couponInput.disabled = true;
-                    UIElements.applyCouponBtn.textContent = 'Remove';
+                    state.appliedCoupon = couponData;
+                    UI.couponStatus.textContent = `Success! '${couponData.code}' has been applied.`;
+                    UI.couponStatus.className = 'coupon-status success';
+                    UI.couponInput.disabled = true;
+                    UI.applyCouponBtn.textContent = 'Remove';
                 } else {
-                    UIElements.couponStatus.textContent = 'This coupon is currently inactive.';
-                    UIElements.couponStatus.className = 'coupon-status error';
-                    checkoutState.appliedCoupon = null;
+                    UI.couponStatus.textContent = 'This coupon is currently inactive.';
+                    UI.couponStatus.className = 'coupon-status error';
+                    state.appliedCoupon = null;
                 }
             }
         } catch (error) {
             console.error("Error validating coupon:", error);
-            UIElements.couponStatus.textContent = 'Could not validate coupon. Try again.';
-            UIElements.couponStatus.className = 'coupon-status error';
+            UI.couponStatus.textContent = 'Could not validate the coupon. Please try again.';
+            UI.couponStatus.className = 'coupon-status error';
+        } finally {
+            updatePriceUI();
+            UI.applyCouponBtn.disabled = false;
         }
-        updatePriceUI();
-        UIElements.applyCouponBtn.disabled = false;
     }
     
+    /**
+     * Handles the coupon removal logic.
+     */
     function handleRemoveCoupon() {
-        checkoutState.appliedCoupon = null;
+        state.appliedCoupon = null;
         updatePriceUI();
-        UIElements.couponStatus.textContent = 'Coupon removed.';
-        UIElements.couponStatus.className = 'coupon-status';
-        UIElements.couponInput.disabled = false;
-        UIElements.couponInput.value = '';
-        UIElements.applyCouponBtn.textContent = 'Apply';
+        UI.couponStatus.textContent = 'Coupon has been removed.';
+        UI.couponStatus.className = 'coupon-status';
+        UI.couponInput.disabled = false;
+        UI.couponInput.value = '';
+        UI.applyCouponBtn.textContent = 'Apply';
     }
 
-    // ===================================================================
-    // --- THIS IS THE CRITICAL UPDATE FOR THE NEW RULES ---
-    // ===================================================================
-        async function updateOrderAfterPayment(paymentResponse) {
+    // ===================================================================================
+    // SECTION 4: PAYMENT LOGIC
+    // ===================================================================================
+
+    /**
+     * Updates the order document in Firestore after a successful payment.
+     * This function is designed to comply with Firestore security rules.
+     * @param {object} paymentResponse - The response object from Razorpay.
+     */
+    async function updateOrderAfterPayment(paymentResponse) {
         if (!db) return;
-        const orderId = checkoutState.checkoutData.orderId;
+        
+        const orderId = state.checkoutData.orderId;
         const orderRef = db.collection('orders').doc(orderId);
         
         const updateData = {
@@ -145,74 +243,102 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // If a coupon was used, add the final price and coupon details.
-        // This is allowed by your security rules and is the critical part of the fix.
-        if (checkoutState.appliedCoupon) {
-            updateData.finalPrice = checkoutState.finalPrice; // The discounted price
-            updateData.appliedCoupon = { // The coupon details
-                code: checkoutState.appliedCoupon.code,
-                type: checkoutState.appliedCoupon.type,
-                value: checkoutState.appliedCoupon.value
+        if (state.appliedCoupon) {
+            updateData.finalPrice = state.finalPrice;
+            updateData.appliedCoupon = {
+                code: state.appliedCoupon.code,
+                type: state.appliedCoupon.type,
+                value: state.appliedCoupon.value
             };
         }
 
         try {
-            // This update will now succeed because it follows the security rules.
             await orderRef.update(updateData);
         } catch (error) {
-            console.error(`Critical: Failed to update order ${orderId} after payment.`, error);
+            console.error(`CRITICAL: Failed to update order ${orderId} after payment. Manual verification needed.`, error);
+            // Optionally, inform the user that there was an issue and to contact support.
+            alert("Your payment was successful, but there was an issue updating your order status. Please contact support with your payment ID.");
         }
     }
 
+    /**
+     * Initializes the Razorpay payment process.
+     */
     function initializePayment() {
-        UIElements.payButton.addEventListener('click', () => {
-            const data = checkoutState.checkoutData;
+        UI.payButton.addEventListener('click', () => {
+            const data = state.checkoutData;
             const options = {
-                key: 'rzp_test_Elr0SJAHeTD4Jj',
-                amount: checkoutState.finalPrice * 100,
+                key: state.razorpayApiKey,
+                amount: state.finalPrice * 100, // Amount in paise
                 currency: "INR",
                 name: "Mujtaba Alam - Web Services",
                 description: `Payment for ${data.summary[0].text}`,
-                handler: function (response) {
-                    updateOrderAfterPayment(response).then(() => {
-                        localStorage.removeItem('checkoutData');
-                        let myOrders = JSON.parse(localStorage.getItem('myOrders')) || [];
-                        myOrders = myOrders.filter(id => id !== data.orderId);
-                        localStorage.setItem('myOrders', JSON.stringify(myOrders));
-                        document.body.innerHTML = `<div class="checkout-container neumorphic-outset"><h2><i class="fas fa-check-circle" style="color: var(--success-color);"></i> Thank You!</h2><p>Your payment was successful. The project is now In Progress. You can view its status on the My Orders page.</p><a href="index.html" class="neumorphic-btn">Back to Home</a></div>`;
-                    });
+                handler: async function (response) {
+                    UI.payButton.disabled = true;
+                    UI.payButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                    await updateOrderAfterPayment(response);
+                    localStorage.removeItem('checkoutData');
+                    showPageMessage(
+                        '<i class="fas fa-check-circle" style="color: var(--success-color);"></i> Thank You!',
+                        'Your payment was successful and your project is now in progress. You can track its status on the "My Orders" page.',
+                        'Back to Home',
+                        'index.html'
+                    );
                 },
-                prefill: { name: data.contact.name, email: data.contact.email, contact: data.contact.whatsapp },
-                notes: { firebase_order_id: data.orderId },
-                theme: { color: "#007BFF" }
+                prefill: {
+                    name: data.contact.name,
+                    email: data.contact.email,
+                    contact: data.contact.whatsapp
+                },
+                notes: {
+                    firebase_order_id: data.orderId
+                },
+                theme: {
+                    color: "#007BFF"
+                }
             };
 
-            const rzp1 = new Razorpay(options);
-            rzp1.on('payment.failed', (e) => { alert(`Payment failed: ${e.error.description}`); });
-            rzp1.open();
+            const rzp = new Razorpay(options);
+            rzp.on('payment.failed', (response) => {
+                alert(`Payment failed: ${response.error.description}`);
+            });
+            rzp.open();
         });
     }
 
-    function setupCouponButton() {
-        UIElements.applyCouponBtn.addEventListener('click', () => {
-            checkoutState.appliedCoupon ? handleRemoveCoupon() : handleApplyCoupon();
-        });
-    }
+    // ===================================================================================
+    // SECTION 5: MAIN EXECUTION FLOW
+    // ===================================================================================
 
-    function setupCheckoutPage() {
+    /**
+     * The main function to set up the entire checkout page.
+     */
+    async function main() {
         if (!initializeFirebase()) {
-            if (UIElements.payButton) UIElements.payButton.disabled = true;
+            UI.payButton.disabled = true;
             return;
         }
 
-        if (getCheckoutData()) {
-            renderOrderSummary(checkoutState.checkoutData);
-            initializePayment();
-            setupCouponButton();
-        } else {
-            document.body.innerHTML = `<div class="checkout-container neumorphic-outset"><h2>Oops!</h2><p>No project data found in your session.</p><a href="templates.html" class="neumorphic-btn">Choose a Template</a></div>`;
+        if (!getCheckoutDataFromStorage()) {
+            showPageMessage('Oops!', 'No project data found in your session. Please choose a template to begin.', 'Choose a Template', 'templates.html');
+            return;
         }
+
+        renderOrderSummary();
+
+        state.razorpayApiKey = await fetchRazorpayApiKey();
+        if (state.razorpayApiKey) {
+            initializePayment();
+        } else {
+            UI.payButton.innerHTML = '<i class="fas fa-times-circle"></i> Payments Unavailable';
+            UI.payButton.disabled = true;
+            alert('The payment gateway is currently unavailable. Please contact support.');
+        }
+
+        UI.applyCouponBtn.addEventListener('click', () => {
+            state.appliedCoupon ? handleRemoveCoupon() : handleApplyCoupon();
+        });
     }
 
-    setupCheckoutPage();
+    main(); // Start the application
 });

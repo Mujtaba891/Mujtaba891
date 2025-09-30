@@ -243,3 +243,105 @@ a.back-to-home:hover {
     opacity: 1;
     transform: translateY(0);
 }
+
+/* Add these styles to the END of your css/template-style.css file */
+
+/* --- AI GENERATOR STYLES --- */
+.ai-generator-container {
+    max-width: 800px;
+    margin: 40px auto;
+    text-align: center;
+}
+
+.ai-form {
+    padding: 30px 40px;
+    margin-top: 30px;
+    border-radius: 20px;
+    background: var(--bg-color); /* Assuming --bg-color is your main background */
+}
+
+.ai-form label {
+    display: block;
+    font-weight: 600;
+    color: var(--heading-color);
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+.ai-form textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border-radius: 15px;
+    border: none;
+    background-color: var(--bg-color); /* Neumorphic inset style */
+    box-shadow: var(--inset-light-shadow), var(--inset-dark-shadow); /* From your main style */
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: var(--text-color);
+    resize: vertical;
+}
+
+.ai-form textarea:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.ai-form .large {
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    font-size: 1.2em;
+}
+
+.ai-error {
+    color: var(--danger-color);
+    font-weight: 600;
+    margin-top: 15px;
+    min-height: 20px;
+}
+
+/* Add these styles to the end of css/template-style.css */
+
+/* --- AI RESULT CARD STYLES --- */
+#ai-result-container {
+    margin-top: 40px;
+    padding: 30px;
+    border-radius: 20px;
+    display: none; /* Hidden by default */
+    text-align: left;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+#ai-result-container h3 {
+    text-align: center;
+    color: var(--heading-color);
+    font-size: 1.8em;
+    margin-bottom: 25px;
+}
+
+.ai-result-card {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.ai-result-card .ai-icon {
+    font-size: 5em;
+    color: var(--primary-color);
+    padding: 20px;
+    background-color: var(--bg-color);
+    border-radius: 20px;
+    box-shadow: var(--light-shadow-soft), var(--dark-shadow-soft);
+}
+
+.ai-result-card .template-info {
+    flex-grow: 1;
+}
+
+@media (max-width: 768px) {
+    .ai-result-card {
+        flex-direction: column;
+        text-align: center;
+    }
+}
