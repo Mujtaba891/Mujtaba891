@@ -25,9 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
         dom: {}
     };
 
-    /**
-     * Selects and stores all necessary DOM elements.
-     */
     function selectDOMElements() {
         state.dom.fab = document.getElementById('ai-assistant-fab');
         state.dom.chatContainer = document.getElementById('ai-chat-container');
@@ -38,9 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
         state.dom.submitButton = document.getElementById('ai-chat-submit');
     }
 
-    /**
-     * Initializes the Firebase application and Firestore.
-     */
     function initializeFirebase() {
         try {
             if (!firebase.apps.length) {
@@ -53,9 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * Fetches the Gemini API key from Firestore.
-     */
     async function fetchApiKey() {
         if (!state.db) return;
         try {
@@ -63,25 +54,28 @@ document.addEventListener('DOMContentLoaded', () => {
             if (doc.exists && doc.data().geminiApiKey) {
                 state.geminiApiKey = doc.data().geminiApiKey;
             } else {
-                console.warn("AI Assistant: Gemini API Key not found in Firestore. AI features will be disabled.");
+                console.warn("AI Assistant: Gemini API Key not found. AI features disabled.");
                 if (state.dom.fab) state.dom.fab.style.display = 'none';
             }
         } catch (error) {
-            console.error("AI Assistant: Error fetching API key. This is likely due to Firestore security rules.", error);
+            console.error("AI Assistant: Error fetching API key.", error);
             if (state.dom.fab) state.dom.fab.style.display = 'none';
         }
     }
 
-    /**
-     * Binds all necessary event listeners.
-     */
     function bindEventListeners() {
         if (!state.dom.fab) return;
         state.dom.fab.addEventListener('click', toggleChat);
         state.dom.closeButton.addEventListener('click', toggleChat);
         state.dom.chatForm.addEventListener('submit', handleFormSubmit);
+        // NEW: Event delegation for suggestion chips
+        state.dom.chatContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('suggestion-chip')) {
+                handleSuggestionClick(e.target.textContent);
+            }
+        });
     }
-    
+
     function toggleChat() {
         state.isChatOpen = !state.isChatOpen;
         state.dom.chatContainer.classList.toggle('active', state.isChatOpen);
@@ -89,20 +83,20 @@ document.addEventListener('DOMContentLoaded', () => {
             addWelcomeMessage();
             state.isFirstOpen = false;
         }
-        if(state.isChatOpen) {
+        if (state.isChatOpen) {
             state.dom.chatInput.focus();
         }
     }
-    
+
     function addWelcomeMessage() {
-        const welcomeText = "Hello! I'm an AI assistant representing Mujtaba. Feel free to ask me about my skills, projects, or services. You can even ask me to draft an email to him for you!";
+        const welcomeText = "Hello! I'm an AI assistant representing Mujtaba. I can tell you about his skills, projects, or services. How can I help you today?";
         addMessageToUI('ai', welcomeText);
+        renderSuggestions(["What are your skills?", "Tell me about your projects", "How do I get a quote?"]);
     }
-    
+
     function parseMarkdown(text) {
-        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        text = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-        return text;
+        return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                   .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
     }
 
     function addMessageToUI(sender, text) {
@@ -124,63 +118,81 @@ document.addEventListener('DOMContentLoaded', () => {
                 scrollToBottom();
             }
         } else {
-            if (indicator) {
-                indicator.remove();
-            }
+            if (indicator) indicator.remove();
         }
     }
 
     function scrollToBottom() {
         state.dom.messagesContainer.scrollTop = state.dom.messagesContainer.scrollHeight;
     }
+
+    // NEW: Function to render suggestion chips
+    function renderSuggestions(suggestions = []) {
+        clearSuggestions();
+        if (suggestions.length === 0) return;
+
+        const container = document.createElement('div');
+        container.id = 'ai-suggestion-chips';
+        
+        suggestions.forEach(text => {
+            const button = document.createElement('button');
+            button.classList.add('suggestion-chip');
+            button.textContent = text;
+            container.appendChild(button);
+        });
+
+        state.dom.chatContainer.insertBefore(container, state.dom.chatForm);
+        scrollToBottom();
+    }
+
+    // NEW: Function to clear old suggestions
+    function clearSuggestions() {
+        const existingContainer = document.getElementById('ai-suggestion-chips');
+        if (existingContainer) existingContainer.remove();
+    }
     
+    // NEW: Function to handle clicking a suggestion
+    function handleSuggestionClick(text) {
+        state.dom.chatInput.value = text;
+        state.dom.chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+    }
+
     async function handleFormSubmit(e) {
         e.preventDefault();
         if (state.isAwaitingResponse) return;
 
         const userInput = state.dom.chatInput.value.trim();
         if (userInput === '') return;
-
+        
+        clearSuggestions();
         addMessageToUI('user', userInput);
         state.dom.chatInput.value = '';
         state.isAwaitingResponse = true;
         toggleTypingIndicator(true);
 
         try {
-            if (!state.geminiApiKey) {
-                throw new Error("API Key is not available. Check Firestore rules and key validity.");
-            }
-            const aiResponse = await getAiResponse(userInput);
+            if (!state.geminiApiKey) throw new Error("API Key is not available.");
             
-            const jsonMatch = aiResponse.match(/{[\s\S]*}/);
-            if (jsonMatch) {
-                try {
-                    const responseJson = JSON.parse(jsonMatch[0]);
-                    if (responseJson.action === 'redirect' && responseJson.url) {
-                        addMessageToUI('ai', `Sure! Taking you to the ${responseJson.url.replace('.html', '')} page now...`);
-                        setTimeout(() => { window.location.href = responseJson.url; }, 1200);
-                        return; 
-                    }
-                    // NEW: Handle the new 'send_email' action
-                    if (responseJson.action === 'send_email' && responseJson.subject && responseJson.body) {
-                        const recipient = 'mujtabaalam010@gmail.com';
-                        const subject = encodeURIComponent(responseJson.subject);
-                        const body = encodeURIComponent(responseJson.body);
-                        const mailtoLink = `mailto:${recipient}?subject=${subject}&body=${body}`;
-                        
-                        addMessageToUI('ai', "Great! I've drafted an email for you. I'm opening your default email client now so you can review and send it.");
-                        window.location.href = mailtoLink;
-                        return;
-                    }
-                } catch (error) {
-                    addMessageToUI('ai', aiResponse);
-                }
-            } else {
-                addMessageToUI('ai', aiResponse);
+            const aiResponseText = await getAiResponse(userInput);
+            const responseData = JSON.parse(aiResponseText);
+
+            if (responseData.answer) {
+                addMessageToUI('ai', responseData.answer);
+            }
+            if (responseData.suggestions) {
+                renderSuggestions(responseData.suggestions);
+            }
+
+            // Handle special actions
+            if (responseData.action === 'redirect' && responseData.url) {
+                setTimeout(() => { window.location.href = responseData.url; }, 1200);
+            } else if (responseData.action === 'send_email' && responseData.subject && responseData.body) {
+                const mailtoLink = `mailto:mujtabaalam010@gmail.com?subject=${encodeURIComponent(responseData.subject)}&body=${encodeURIComponent(responseData.body)}`;
+                window.location.href = mailtoLink;
             }
 
         } catch (error) {
-            console.error("AI Response Error:", error.message);
+            console.error("AI Response Error:", error);
             addMessageToUI('ai', "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.");
         } finally {
             toggleTypingIndicator(false);
@@ -190,8 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function getAiResponse(userPrompt) {
-        // UPDATED: Added a new rule for sending emails.
-        const systemPrompt = `You are the AI persona of Mujtaba Alam, a web developer from Kashmir. You must speak in the first person ("I", "my", "me"). Your goal is to be helpful, professional, and encourage visitors to hire you or explore the site.
+        // --- THIS IS THE UPDATED AI TRAINING PROMPT ---
+        const systemPrompt = `You are the AI persona of Mujtaba Alam, a web developer from Kashmir. You are helpful, professional, and encourage visitors to hire you.
 
         My Information:
         - My Skills: HTML5, CSS3, JavaScript (ES6), Supabase, Firebase, and Canva for design.
@@ -236,15 +248,33 @@ document.addEventListener('DOMContentLoaded', () => {
         3.  **Redirection Command:** If the user wants to go to a page (contact, pricing, etc.), respond ONLY with this JSON: {"action": "redirect", "url": "contact.html"}.
         4.  **NEW Email Command:** If a user asks you to write or draft an email for them to send to me (e.g., for collaboration, a project inquiry), you MUST respond ONLY with a JSON object like this: {"action": "send_email", "subject": "Collaboration Inquiry", "body": "Hello Mujtaba,\\n\\nI found your portfolio and I'm interested in collaborating on a project..."}. Generate a relevant subject and a professional, concise body based on the user's request.
         5.  **Stay On Topic:** If asked about unrelated topics, politely steer the conversation back to web development.
-        6.  **Be Concise:** Keep answers direct.`;
+        6.  **Be Concise:** Keep answers direct.
+        
+        - Skills: HTML5, CSS3, JavaScript (ES6), Supabase, Firebase, Canva.
+        - Services: Web Development, UI/UX Design, SEO.
+        - Projects: ORA Docs App, Article Globe, Baba Hardware. More on GitHub.
+        - Quote Process: Users can either pick a plan from the pricing page to see templates or use the "AI Custom" plan to describe their project and get a custom plan built by an AI.
+        
+        **CRITICAL RESPONSE RULE:** You MUST respond ONLY with a single, valid JSON object. Do NOT write any text before or after the JSON.
+        The JSON object MUST have two keys:
+        1. "answer": A string containing your conversational response. Use simple Markdown (**bold**, [links](url)).
+        2. "suggestions": An array of 2-3 short, relevant follow-up questions the user might ask next.
+        
+        **ACTION RULE:** If you need to perform an action like redirecting or sending an email, add an "action" key to the JSON.
+        
+        **EXAMPLES:**
+        1. User asks "What are your skills?":
+           {"answer": "I specialize in front-end technologies like **HTML5, CSS3, and JavaScript (ES6)**. I also work with backend services like **Firebase and Supabase** to build full applications.", "suggestions": ["Tell me about your projects", "What are your prices?", "How do I get a quote?"]}
+        
+        2. User asks "Take me to the contact page":
+           {"action": "redirect", "url": "contact.html", "answer": "Of course! Taking you to the contact page now...", "suggestions": ["What's your email address?", "Can you draft an email for me?"]}
+           
+        3. User asks "Help me write an email for a project":
+           {"action": "send_email", "subject": "Project Inquiry from Portfolio", "body": "Hello Mujtaba,\\n\\nI found your portfolio and I'm interested in discussing a potential project...", "answer": "Great! I've drafted an email for you. I'm opening your default email client so you can review and send it.", "suggestions": ["What are your rates?", "How long does a project take?"]}
+        `;
         
         const apiEndpoint = `${CONFIG.geminiApiEndpoint}${state.geminiApiKey}`;
-
-        const requestBody = {
-            contents: [{
-                parts: [{ text: `System Instructions:\n${systemPrompt}\n\nUser Question:\n${userPrompt}` }]
-            }]
-        };
+        const requestBody = { contents: [{ parts: [{ text: `System Instructions:\n${systemPrompt}\n\nUser Question:\n${userPrompt}` }] }] };
 
         const response = await fetch(apiEndpoint, {
             method: 'POST',
@@ -254,21 +284,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(`API request failed with status ${response.status}: ${errorData.error.message}`);
+            throw new Error(`API request failed: ${errorData.error.message}`);
         }
 
         const data = await response.json();
-        if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) {
-             return data.candidates[0].content.parts[0].text;
+        if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+            // Clean the response to ensure it's valid JSON
+            return data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
         } else {
-            console.warn("AI Response format was unexpected:", data);
-            return "I'm sorry, I received an unusual response. Could you please try rephrasing?";
+            throw new Error("Received an invalid response format from the AI.");
         }
     }
 
-    /**
-     * Main initialization function for the AI Assistant.
-     */
     async function init() {
         selectDOMElements();
         if (!state.dom.fab) {

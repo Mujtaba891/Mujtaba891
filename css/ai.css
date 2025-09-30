@@ -192,6 +192,33 @@
     font-size: 1.2rem;
 }
 
+/* --- NEW: Suggestion Chips --- */
+#ai-suggestion-chips {
+    padding: 0 15px 15px 15px; /* Spacing above the input form */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.suggestion-chip {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.suggestion-chip:hover {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    transform: translateY(-2px);
+}
+
 /* --- Responsive Adjustments --- */
 @media (max-width: 480px) {
     :root {
