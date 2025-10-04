@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stylo AI | Website Editor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo" onclick="window.location.href='home.html'">
+            <img src="assets/Images/logo1.png" alt="logo" width="110px">
+        </div>
+        
+            <button id="images-btn" class="btn-icon" title="My Images"><i class="fas fa-images"></i></button>
+        <div id="auth-container">
+            <button id="login-btn" class="btn btn--secondary"><i class="fab fa-google"></i> Sign In</button>
+            <div id="user-info" class="user-profile hidden">
+                <span id="user-email"></span>
+                <div id="user-avatar"></div>
+                <button id="logout-btn" class="btn-icon" title="Logout" aria-label="Logout"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <aside class="control-panel">
+            <div class="control-panel__header">
+                <h2><i class="fas fa-comments"></i> AI Chat</h2>
+                <button id="new-project-btn" class="btn btn--secondary btn--sm"><i class="fas fa-plus"></i> New Project</button>
+            </div>
+            
+            <details class="control-section">
+                <summary>1. Train AI (AI Persona)</summary>
+                <div class="control-group">
+                    <label for="ai-persona-input">Set a personality or expertise for the AI.</label>
+                    <textarea id="ai-persona-input" rows="3" placeholder="e.g., You are a minimalist web designer..."></textarea>
+                </div>
+            </details>
+
+            <div class="chat-container">
+                <div id="chat-history" class="chat-history"></div>
+                <div class="chat-input-area">
+                    <div id="image-mention-popup" class="mention-popup hidden"></div>
+                    <textarea id="chat-input" rows="3" placeholder="e.g., Create a landing page for a coffee shop..."></textarea>
+                    <button id="send-chat-btn" class="btn btn--primary"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+             <button id="generate-btn" class="btn btn--primary"><i class="fas fa-bolt"></i><span class="btn__text">2. Generate with AI</span></button>
+        </aside>
+
+        <section class="workspace">
+            <div class="workspace__header">
+                <div class="workspace__title">
+                    <h2><i class="fas fa-eye"></i> Live Preview</h2>
+                    <!-- NEW: Responsive Toggles -->
+                    <div id="responsive-toggles" class="responsive-toggles">
+                        <button class="btn-icon active" data-size="100%" title="Desktop"><i class="fas fa-desktop"></i></button>
+                        <button class="btn-icon" data-size="768px" title="Tablet"><i class="fas fa-tablet-alt"></i></button>
+                        <button class="btn-icon" data-size="375px" title="Mobile"><i class="fas fa-mobile-alt"></i></button>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <!-- NEW: View in New Tab Button -->
+                    <button id="view-new-tab-btn" class="btn btn--secondary hidden"><i class="fas fa-external-link-alt"></i> New Tab</button>
+                    <button id="code-btn" class="btn btn--secondary hidden"><i class="fas fa-code"></i> View Code</button>
+                    <button id="save-btn" class="btn btn--secondary hidden"><i class="fas fa-save"></i> Save Project</button>
+                </div>
+            </div>
+           <div class="preview-container">
+                <div id="loader-overlay" class="loader-overlay hidden">
+                    <div class="spinner"></div><p>Building your vision...</p>
+                </div>
+                 <div id="initial-message" class="initial-message">
+                    <i class="fas fa-desktop"></i><p>Your generated website will appear here.</p>
+                </div>
+                <iframe id="preview-frame" title="Website Preview"></iframe>
+            </div>
+        </section>
+    </main>
+
+    <!-- SAVED PROJECTS -->
+    <div class="content-wrapper">
+        <section class="saved-templates">
+            <div class="templates__header">
+                <h2><i class="fas fa-history"></i> My Projects</h2>
+                <input type="search" id="search-input" class="form__input" placeholder="Search projects...">
+            </div>
+            <div id="templates-list" class="templates__grid"></div>
+        </section>
+    </div>
+    
+    <!-- MODALS -->
+    <div id="code-modal" class="modal hidden">
+        <div class="modal__content modal__content--large">
+            <div class="modal__header">
+                 <h3>Website Code</h3>
+                 <!-- NEW: Code Editor Actions -->
+                 <div class="modal__actions--header">
+                    <button id="code-edit-toggle" class="btn-icon" title="Toggle Edit Mode"><i class="fas fa-pencil-alt"></i></button>
+                    <button id="code-download-zip" class="btn-icon" title="Download as .zip"><i class="fas fa-file-archive"></i></button>
+                    <button class="modal__close" aria-label="Close modal">&times;</button>
+                 </div>
+            </div>
+            <div class="code-viewer">
+                <div class="code-viewer__tabs">
+                    <button class="code-viewer__tab active" data-tab="html">HTML</button>
+                    <button class="code-viewer__tab" data-tab="css">CSS</button>
+                    <button class="code-viewer__tab" data-tab="js">JavaScript</button>
+                </div>
+                <div class="code-viewer__content">
+                    <!-- NEW: Code Editor Structure with line numbers and textarea -->
+                    <div class="code-editor__pane active" data-pane="html">
+                        <textarea readonly class="line-numbers"></textarea>
+                        <textarea id="code-html" class="language-html code-editor" spellcheck="false"></textarea>
+                    </div>
+                    <div class="code-editor__pane" data-pane="css">
+                        <textarea readonly class="line-numbers"></textarea>
+                        <textarea id="code-css" class="language-css code-editor" spellcheck="false"></textarea>
+                    </div>
+                    <div class="code-editor__pane" data-pane="js">
+                        <textarea readonly class="line-numbers"></textarea>
+                        <textarea id="code-js" class="language-javascript code-editor" spellcheck="false"></textarea>
+                    </div>
+                </div>
+                <div class="code-viewer__footer">
+                    <div class="code-viewer__ai-suggester">
+                        <i class="fas fa-magic-wand-sparkles"></i>
+                        <input type="text" id="ai-suggestion-prompt" class="form__input" placeholder="e.g., line 15, make this button blue">
+                        <button id="ai-suggestion-btn" class="btn btn--primary">Suggest Edit</button>
+                    </div>
+                    <button id="ai-apply-changes-btn" class="btn btn--secondary">Apply Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Other Modals (Save, Notify, Delete, Images) remain the same -->
+    <div id="save-modal" class="modal hidden">
+        <div class="modal__content">
+            <button class="modal__close" aria-label="Close modal">&times;</button>
+            <h3>Save Project</h3>
+            <p>Give your project a name to save or update it.</p>
+            <input type="text" id="save-template-name-input" class="form__input" placeholder="e.g., My SaaS Landing Page">
+            <div class="modal__actions">
+                <button id="confirm-save-btn" class="btn btn--primary">Confirm & Save</button>
+            </div>
+        </div>
+    </div>
+    <div id="notification-modal" class="modal hidden">
+        <div class="modal__content">
+            <p id="notification-message"></p>
+            <div class="modal__actions">
+                 <button id="close-notification-btn" class="btn btn--primary">OK</button>
+            </div>
+        </div>
+    </div>
+    <div id="delete-modal" class="modal hidden">
+        <div class="modal__content">
+            <h3>Confirm Deletion</h3>
+            <p>Are you sure you want to permanently delete this project? This action cannot be undone.</p>
+            <div class="modal__actions">
+                <button id="cancel-delete-btn" class="btn btn--secondary">Cancel</button>
+                <button id="confirm-delete-btn" class="btn btn--danger">Yes, Delete</button>
+            </div>
+        </div>
+    </div>
+    <div id="images-modal" class="modal hidden">
+        <div class="modal__content modal__content--large">
+            <div class="modal__header">
+                 <h3>My Images</h3>
+                 <button class="modal__close" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="images-manager__body">
+                <div class="images-manager__actions">
+                    <input type="file" id="image-upload-input" multiple accept="image/*" class="hidden">
+                    <button id="upload-image-btn" class="btn btn--primary"><i class="fas fa-upload"></i> Upload New Images</button>
+                    <div id="image-upload-status"></div>
+                </div>
+                <div id="images-list" class="images-manager__grid"></div>
+            </div>
+        </div>
+    </div>
+    <!-- NEW, OPTIMIZED DIMENSIONS -->
+    <iframe id="thumbnail-renderer" style="display: none; width: 800px; height: 600px;"></iframe>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
