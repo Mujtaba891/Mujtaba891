@@ -18,8 +18,11 @@
         <div class="logo" onclick="window.location.href='home.html'">
             <img src="assets/Images/logo1.png" alt="logo" width="110px">
         </div>
-        
-            <button id="images-btn" class="btn-icon" title="My Images"><i class="fas fa-images"></i></button>
+        <div class="header__actions">
+            <!-- NEW: Collections Button -->
+            <button id="collections-btn" class="btn-icon" title="My Collections" disabled><i class="fas fa-database"></i></button>
+            <button id="images-btn" class="btn-icon" title="My Images" disabled><i class="fas fa-images"></i></button>
+        </div>
         <div id="auth-container">
             <button id="login-btn" class="btn btn--secondary"><i class="fab fa-google"></i> Sign In</button>
             <div id="user-info" class="user-profile hidden">
@@ -49,7 +52,9 @@
                 <div id="chat-history" class="chat-history"></div>
                 <div class="chat-input-area">
                     <div id="image-mention-popup" class="mention-popup hidden"></div>
-                    <textarea id="chat-input" rows="3" placeholder="e.g., Create a landing page for a coffee shop..."></textarea>
+                    <!-- NEW: Collection Mention Popup -->
+                    <div id="collection-mention-popup" class="mention-popup hidden"></div>
+                    <textarea id="chat-input" rows="3" placeholder="e.g., Create a contact form linked to collection #leads..."></textarea>
                     <button id="send-chat-btn" class="btn btn--primary"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
@@ -60,7 +65,6 @@
             <div class="workspace__header">
                 <div class="workspace__title">
                     <h2><i class="fas fa-eye"></i> Live Preview</h2>
-                    <!-- NEW: Responsive Toggles -->
                     <div id="responsive-toggles" class="responsive-toggles">
                         <button class="btn-icon active" data-size="100%" title="Desktop"><i class="fas fa-desktop"></i></button>
                         <button class="btn-icon" data-size="768px" title="Tablet"><i class="fas fa-tablet-alt"></i></button>
@@ -68,7 +72,6 @@
                     </div>
                 </div>
                 <div class="action-buttons">
-                    <!-- NEW: View in New Tab Button -->
                     <button id="view-new-tab-btn" class="btn btn--secondary hidden"><i class="fas fa-external-link-alt"></i> New Tab</button>
                     <button id="code-btn" class="btn btn--secondary hidden"><i class="fas fa-code"></i> View Code</button>
                     <button id="save-btn" class="btn btn--secondary hidden"><i class="fas fa-save"></i> Save Project</button>
@@ -86,7 +89,6 @@
         </section>
     </main>
 
-    <!-- SAVED PROJECTS -->
     <div class="content-wrapper">
         <section class="saved-templates">
             <div class="templates__header">
@@ -187,11 +189,54 @@
             </div>
         </div>
     </div>
-    <!-- NEW, OPTIMIZED DIMENSIONS -->
-    <iframe id="thumbnail-renderer" style="display: none; width: 800px; height: 600px;"></iframe>
+    <!-- NEW: COLLECTIONS MODAL -->
+    <!-- COLLECTIONS MODAL - Firestore Style -->
+<div id="collections-modal" class="modal hidden">
+    <div class="modal__content modal__content--large modal__content--firestore">
+        <div class="firestore-browser">
+            <!-- Pane 1: Collections -->
+            <div class="firestore-pane" id="firestore-pane-collections">
+                <div class="firestore-header">
+                    <span class="firestore-header__title"><i class="fas fa-layer-group"></i> Collections</span>
+                    <button id="add-collection-btn" class="btn-icon" title="Add New Collection"><i class="fas fa-plus"></i></button>
+                </div>
+                <div class="firestore-list" id="collections-list">
+                    <!-- JS will render collections here -->
+                    <div class="firestore-item--empty">Select a collection.</div>
+                </div>
+            </div>
+
+            <!-- Pane 2: Documents (Submissions) -->
+            <div class="firestore-pane" id="firestore-pane-documents">
+                <div class="firestore-header">
+                    <div class="firestore-header__breadcrumb" id="documents-breadcrumb">
+                        <span>Select a collection...</span>
+                    </div>
+                </div>
+                <div class="firestore-list" id="documents-list">
+                    <!-- JS will render documents here -->
+                    <div class="firestore-item--empty">No collection selected.</div>
+                </div>
+            </div>
+
+            <!-- Pane 3: Data Viewer -->
+            <div class="firestore-pane" id="firestore-pane-data">
+                <div class="firestore-header">
+                    <div class="firestore-header__breadcrumb" id="data-breadcrumb">
+                        <span>Select a document...</span>
+                    </div>
+                    <button class="modal__close btn-icon" aria-label="Close modal" title="Close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="firestore-data-viewer" id="data-viewer">
+                     <!-- JS will render data here -->
+                    <div class="firestore-item--empty">No document selected.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- SCRIPTS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script type="module" src="firebase-config.js"></script>
     <script type="module" src="app.js"></script>
