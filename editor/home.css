@@ -133,9 +133,11 @@ body {
 .templates__grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-auto-flow: dense;
     gap: 2rem;
     text-align: left;
 }
+
 .template-card {
     background: var(--surface-color);
     border-radius: var(--radius);
@@ -143,10 +145,109 @@ body {
     overflow: hidden;
     transition: transform 0.2s, box-shadow 0.2s;
 }
+
 .template-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
 .template-card img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: top; }
 .template-card h3 { padding: 1.5rem 1.5rem 0.5rem; margin: 0; }
 .template-card .btn { margin: 1rem 1.5rem 1.5rem; width: calc(100% - 3rem); }
+
+/* --- ADD TO home.css --- */
+
+/* Template Controls (Search & Filters) */
+.templates__controls {
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+/* Search Bar */
+.search-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+}
+.search-wrapper i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+}
+#template-search {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 50px; /* Pill shape */
+    font-size: 1rem;
+    font-family: var(--font-family);
+    transition: all 0.2s;
+    box-shadow: var(--shadow-md);
+}
+#template-search:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(74, 71, 163, 0.2);
+}
+
+/* Category Filter Buttons */
+.category-filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+}
+.filter-btn {
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+.filter-btn:hover {
+    background: #f7fafc;
+    transform: translateY(-1px);
+}
+.filter-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(74, 71, 163, 0.3);
+}
+
+.templates-loading, .templates-empty {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 0;
+    color: var(--text-light);
+    gap: 1rem;
+}
+.templates-empty i {
+    font-size: 3rem;
+    color: #cbd5e0;
+}
+
+/* Spinner for loading state */
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border-left-color: var(--primary-color);
+    animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+
 
 /* --- FEATURES SECTION --- */
 .features { background-color: #fff; }

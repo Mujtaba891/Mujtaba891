@@ -674,23 +674,28 @@ document.addEventListener('DOMContentLoaded', () => {
     $('code-btn').addEventListener('click', showCode);
     $('images-btn').addEventListener('click', () => s.user && toggleModal('images-modal', true));
     $('collections-btn').addEventListener('click', () => s.user && toggleModal('collections-modal', true));
-    
     // --- Chat & Generation ---
     $('send-chat-btn').addEventListener('click', () => addUserMessageToChat($('chat-input').value));
+
+    // This listener handles pressing "Enter" in the text box. It is correct.
     $('chat-input').addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             addUserMessageToChat(e.target.value);
         }
     });
+    // This listener handles auto-resizing and @/# mentions. It is correct.
     $('chat-input').addEventListener('input', (e) => {
         e.target.style.height = 'auto';
         e.target.style.height = `${e.target.scrollHeight}px`;
         handleImageMention(e);
         handleCollectionMention(e);
     });
-    $('generate-btn').addEventListener('click', generateWithStreaming);
 
+    // THIS IS THE ONLY LISTENER THAT SHOULD BE ON THE 'generate-btn'.
+    // It correctly adds the message from the input box to the chat before starting the AI.
+    // REMOVE any other listeners for 'generate-btn'.
+    $('generate-btn').addEventListener('click', () => addUserMessageToChat($('chat-input').value));
     // --- Mention Popups ---
     $('image-mention-popup').addEventListener('click', e => {
         const item = e.target.closest('.mention-item');

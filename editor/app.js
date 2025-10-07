@@ -606,12 +606,26 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- Chat & Mentions ---
     $('send-chat-btn').addEventListener('click', () => addUserMessageToChat($('chat-input').value));
-    $('chat-input').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addUserMessageToChat(e.target.value); }});
-    $('chat-input').addEventListener('input', e => {
-        e.target.style.height = 'auto'; e.target.style.height = `${e.target.scrollHeight}px`;
-        handleImageMention(e); handleCollectionMention(e);
+
+    // This listener handles pressing "Enter" in the text box. It is correct.
+    $('chat-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            addUserMessageToChat(e.target.value);
+        }
     });
-    $('generate-btn').addEventListener('click', generateWithStreaming); 
+    // This listener handles auto-resizing and @/# mentions. It is correct.
+    $('chat-input').addEventListener('input', (e) => {
+        e.target.style.height = 'auto';
+        e.target.style.height = `${e.target.scrollHeight}px`;
+        handleImageMention(e);
+        handleCollectionMention(e);
+    });
+
+    // THIS IS THE ONLY LISTENER THAT SHOULD BE ON THE 'generate-btn'.
+    // It correctly adds the message from the input box to the chat before starting the AI.
+    // REMOVE any other listeners for 'generate-btn'.
+    $('generate-btn').addEventListener('click', () => addUserMessageToChat($('chat-input').value)); 
     $('image-mention-popup').addEventListener('click', e => {
         const item = e.target.closest('.mention-item'); if (!item) return;
         const name = item.dataset.name; const input = s.activeMentionInput; if (!input) return;
@@ -696,7 +710,22 @@ document.addEventListener('DOMContentLoaded', () => {
             catch (err) { notify('Failed to rename image.', 'error'); } }
         }
     });
+    // --- NEW: Project Search Functionality ---
+    $('search-input').addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase().trim();
+        const projectCards = document.querySelectorAll('#templates-list .template-card');
 
+        projectCards.forEach(card => {
+            // The project name is stored in a `data-name` attribute on the card
+            const projectName = card.dataset.name || ''; 
+
+            if (projectName.includes(searchTerm)) {
+                card.style.display = 'flex'; // Use 'flex' because the card is a flex container
+            } else {
+                card.style.display = 'none'; // Hide the card if it doesn't match
+            }
+        });
+    });
     // --- Template List Actions ---
     $('templates-list').addEventListener('click', async e => {
         const btn = e.target.closest('button, a'); if (!btn) return;

@@ -47,15 +47,38 @@
         </section>
 
         <!-- TEMPLATES SECTION -->
-        <section id="templates" class="templates">
-            <div class="container">
-                <h2 class="section-title">Start with a Stunning Template</h2>
-                <p class="section-subtitle">Choose from a variety of professionally designed, community-shared templates.</p>
-                <div id="public-templates-grid" class="templates__grid">
-                    <p class="section-subtitle" style="grid-column: 1 / -1;">Loading templates...</p>
-                </div>
+        <!-- TEMPLATES SECTION -->
+<section id="templates" class="templates">
+    <div class="container">
+        <h2 class="section-title">Start with a Stunning Template</h2>
+        <p class="section-subtitle">Explore professionally designed, community-shared templates to jumpstart your project.</p>
+        
+        <!-- NEW: Search and Category Controls ("The AI Manager") -->
+        <!-- home.html -->
+
+<!-- ... inside the "TEMPLATES SECTION" ... -->
+<div class="templates__controls">
+    <div class="search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" id="template-search" placeholder="Search templates (e.g., 'portfolio', 'crypto')...">
+    </div>
+
+    <!-- THIS DIV SHOULD NOW BE EMPTY -->
+    <div class="category-filters" id="category-filters">
+        <!-- JavaScript will automatically create the buttons here -->
+    </div>
+</div>
+<!-- ... -->
+
+        <div id="public-templates-grid" class="templates__grid">
+            <!-- Templates will be rendered here by home.js -->
+            <div class="templates-loading">
+                <div class="spinner"></div>
+                <p>Loading community templates...</p>
             </div>
-        </section>
+        </div>
+    </div>
+</section>
 
         <!-- HOW IT WORKS SECTION -->
         <section class="how-it-works">
@@ -233,6 +256,10 @@
     
     <script type="module" src="firebase-config.js"></script>
     <script type="module" src="home.js"></script>
+    <script>
+const g = document.querySelector('.templates__grid');
+[...g.children].sort(() => Math.random()-0.5).forEach(c => g.appendChild(c));
+</script>
 
 </body>
 </html>

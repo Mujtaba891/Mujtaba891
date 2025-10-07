@@ -1,76 +1,187 @@
-// --- home.js ---
-// This script fetches and displays public templates on the homepage.
+// home.js
 
-// Import the necessary Firestore functions from the Firebase SDK
 import { db } from './firebase-config.js';
-import { collection, query, where, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+import { collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+
+// --- STATE, CONSTANTS, & UI ELEMENTS ---
+// 1. ADD "Forms & Surveys" to the list. I've placed it in a logical spot.
+const CATEGORIES = [
+    'All',
+    'Portfolio',
+    'AI Tools',
+    'E-commerce',
+    'Business',
+    'Marketing & Sales',
+    'Forms & Surveys', // <-- NEW CATEGORY ADDED HERE
+    'Blog & Content',
+    'Education',
+    'Technology',
+    'Real Estate',
+    'Health & Fitness',
+    'Food & Drink',
+    'Events',
+    'Other'
+];
+
+// Local cache for all fetched templates
+let allTemplates = [];
+let currentCategory = 'All';
+let currentSearchTerm = '';
+
+const gridEl = document.getElementById('public-templates-grid');
+const searchInput = document.getElementById('template-search');
+const categoriesContainer = document.getElementById('category-filters');
+
+// --- "AI" CATEGORIZATION LOGIC ---
 
 /**
- * Fetches public templates from Firestore and renders them on the homepage.
+ * A smarter function to automatically categorize templates based on keywords in their name.
+ * @param {string} name - The name of the template.
+ * @returns {string} The determined category.
  */
-const loadPublicTemplates = async () => {
-    const templatesGrid = document.getElementById('public-templates-grid');
-    if (!templatesGrid) {
-        console.error("Template grid element not found on this page.");
-        return; // Exit if the grid element isn't on the page
+const determineCategory = (name) => {
+    const n = name.toLowerCase();
+
+    // 2. ADD a new rule at the TOP to catch all form-related keywords first.
+    if (n.includes('form') || n.includes('survey') || n.includes('inquiry') || n.includes('registration') || n.includes('application') || n.includes('feedback') || n.includes('onboarding') || n.includes('proposal') || n.includes('enrollment')) return 'Forms & Surveys';
+
+    // --- Existing rules remain the same ---
+    if (n.includes('portfolio') || n.includes('resume') || n.includes('cv') || n.includes('personal bio') || n.includes('photographer') || n.includes('designer') || n.includes('scholar') || n.includes('speaker')) return 'Portfolio';
+    if (n.includes(' ai') || n.includes('advisor') || n.includes('optimization') || n.includes('assistant') || n.includes('co-pilot')) return 'AI Tools';
+    if (n.includes('shop') || n.includes('store') || n.includes('e-commerce') || n.includes('product')) return 'E-commerce';
+    if (n.includes('agency') || n.includes('business') || n.includes('startup') || n.includes('saas') || n.includes('consultancy') || n.includes('analytics') || n.includes('customer support')) return 'Business';
+    if (n.includes('marketing') || n.includes('sales') || n.includes('lead generation') || n.includes('landing page')) return 'Marketing & Sales';
+    if (n.includes('blog') || n.includes('news') || n.includes('magazine')) return 'Blog & Content';
+    if (n.includes('education') || n.includes('madrasa')) return 'Education';
+    if (n.includes('crypto') || n.includes('tech') || n.includes('app launch') || n.includes('ai tool')) return 'Technology';
+    if (n.includes('real estate')) return 'Real Estate';
+    if (n.includes('fitness') || n.includes('salon') || n.includes('spa')) return 'Health & Fitness';
+    if (n.includes('cafe') || n.includes('restaurant') || n.includes('grocery')) return 'Food & Drink';
+    if (n.includes('artist') || n.includes('musician') || n.includes('event')) return 'Events';
+    
+    return 'Other'; // Fallback for any name that doesn't match a keyword
+};
+
+// --- RENDERING FUNCTIONS ---
+
+const renderTemplates = (templatesToRender) => {
+    if (!gridEl) return;
+    if (templatesToRender.length === 0) {
+        gridEl.innerHTML = `<div class="templates-empty"><i class="fas fa-search"></i><p>No templates found matching your criteria.</p></div>`;
+        return;
     }
+    const templatesHTML = templatesToRender.map(t => {
+        const placeholderImage = 'logo.png';
+        let imageUrl = t.data.thumbnailUrl || placeholderImage;
+        if (imageUrl.includes('cloudinary')) {
+            imageUrl = imageUrl.replace('/upload/', '/upload/w_400,c_fill,q_auto/');
+        }
+        return `
+            <div class="template-card">
+                <img src="${imageUrl}" alt="${t.data.name}" loading="lazy">
+                <h3>${t.data.name}</h3>
+                <a href="index.html?templateId=${t.id}" class="btn btn--secondary">Open in Editor</a>
+            </div>
+        `;
+    }).join('');
+    gridEl.innerHTML = templatesHTML;
+};
+
+const renderCategoryFilters = () => {
+    if (!categoriesContainer) return;
+    // The buttons are now generated from our predefined CATEGORIES constant
+    const buttonsHTML = CATEGORIES.map(category => `
+        <button class="filter-btn ${category === 'All' ? 'active' : ''}" data-category="${category}">
+            ${category}
+        </button>
+    `).join('');
+    categoriesContainer.innerHTML = buttonsHTML;
+};
+
+
+// --- CORE LOGIC ---
+
+const filterAndRender = () => {
+    const term = currentSearchTerm.toLowerCase();
+    const filtered = allTemplates.filter(t => {
+        const categoryMatch = currentCategory === 'All' || t.derivedCategory === currentCategory;
+        const searchMatch = !term || t.data.name.toLowerCase().includes(term);
+        return categoryMatch && searchMatch;
+    });
+    renderTemplates(filtered);
+};
+/**
+ * Fetches ALL public templates from Firestore ONCE on page load.
+ */
+const initializeTemplates = async () => {
+    if (!gridEl) return;
+    gridEl.innerHTML = `<div class="templates-loading"><div class="spinner"></div><p>Loading community templates...</p></div>`;
 
     try {
-        // 1. Create a query to get documents from the 'ai_templates' collection that are:
-        //    - Marked as public (isPublic == true)
-        //    - Ordered by the donation date, showing the newest first
-        //    - Limited to a maximum of 6 to keep the homepage tidy
         const q = query(
-            collection(db, 'ai_templates'), 
-            where("isPublic", "==", true),
-            orderBy("donatedAt", "desc"),
-            limit(6)
+            collection(db, 'ai_templates'),
+            where("isPublic", "==", true)
         );
 
-        // 2. Execute the query to get the documents
         const querySnapshot = await getDocs(q);
-
-        // 3. Handle the case where no public templates are found
         if (querySnapshot.empty) {
-            templatesGrid.innerHTML = `
-                <p class="section-subtitle" style="grid-column: 1 / -1;">
-                    No public templates have been shared yet. Be the first to donate one from the editor!
-                </p>`;
+            gridEl.innerHTML = `<div class="templates-empty"><i class="fas fa-folder-open"></i><p>No public templates available yet. Be the first!</p></div>`;
             return;
         }
 
-        // 4. If templates are found, build the HTML for each template card
-        const templatesHTML = querySnapshot.docs.map(doc => {
-            const template = doc.data();
-            
-            // Define a default placeholder image in case a template doesn't have a thumbnail
-            const placeholderImage = 'logo.png';
-            
-            // Use the template's real thumbnail if it exists, otherwise use the placeholder
-            const imageUrl = template.thumbnailUrl || placeholderImage;
-            
-            return `
-                <div class="template-card">
-                    <img src="${imageUrl}" alt="${template.name} Template Screenshot">
-                    <h3>${template.name}</h3>
-                    <a href="index.html?templateId=${doc.id}" class="btn btn--secondary">Open in Editor</a>
-                </div>
-            `;
-        }).join('');
+        // Store all templates in a temporary array.
+        let templatesFromDB = querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                data: data,
+                derivedCategory: determineCategory(data.name)
+            };
+        });
+        
+        // --- THIS IS THE NEW SHUFFLE LOGIC ---
+        for (let i = templatesFromDB.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [templatesFromDB[i], templatesFromDB[j]] = [templatesFromDB[j], templatesFromDB[i]]; // Swap elements
+        }
+        // --- END OF SHUFFLE LOGIC ---
+        allTemplates = templatesFromDB;
 
-        // 5. Replace the "Loading..." message with the generated template cards
-        templatesGrid.innerHTML = templatesHTML;
-
+        // Render the UI
+        renderCategoryFilters();
+        renderTemplates(allTemplates);
     } catch (error) {
-        console.error("Error loading public templates:", error);
-        templatesGrid.innerHTML = `
-            <p class="section-subtitle" style="grid-column: 1 / -1; color: #E53E3E;">
-                Could not load public templates at this time. Please check the console for errors.
-            </p>`;
-        // Note for developer: This error often happens if the required Firestore index is not created.
-        // Firebase usually provides a link in the developer console error message to create it automatically.
+        console.error("Error loading templates:", error);
+        gridEl.innerHTML = `<div class="templates-empty"><p style="color: #E53E3E;">Error loading templates. Check console.</p></div>`;
     }
 };
 
-// Add an event listener to run the function after the page's HTML has fully loaded.
-document.addEventListener('DOMContentLoaded', loadPublicTemplates);
+
+// --- EVENT LISTENERS ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    initializeTemplates();
+
+    if (searchInput) {
+        let debounceTimer;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                currentSearchTerm = searchInput.value.trim();
+                filterAndRender();
+            }, 300);
+        });
+    }
+
+    if (categoriesContainer) {
+        categoriesContainer.addEventListener('click', (e) => {
+            if (!e.target.matches('.filter-btn')) return;
+
+            document.querySelector('.filter-btn.active')?.classList.remove('active');
+            e.target.classList.add('active');
+
+            currentCategory = e.target.dataset.category;
+            filterAndRender();
+        });
+    }
+});
