@@ -731,7 +731,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const btn = e.target.closest('button, a'); if (!btn) return;
         e.preventDefault(); const id = btn.dataset.id;
         if (btn.classList.contains('load-btn')) { const docSnap = await getDoc(doc(db, "ai_templates", id)); if (docSnap.exists()) loadProject(docSnap.data(), docSnap.id); } 
-        else if (btn.classList.contains('deploy-btn')) { /* Deployment logic ... */ } 
+        else if (btn.classList.contains('deploy-btn')) {
+            setLoading(btn, true, 'Deploying...');
+            try {
+                const docSnap = await getDoc(doc(db, "ai_templates", id));
+                const pData = docSnap.data();
+                const siteName = pData.siteName || slugify(pData.name);
+                // Note: The deployment URL is specific to your Google Apps Script
+                const res = await fetch("https://script.google.com/macros/s/AKfycbyYdmhzlBHLYw-nK2QfGXxrTFo6EUPsBtCBIqE4xVBC-gJ40x7bVBXSiX6v_5tDNHFDsQ/exec", { method: 'POST', mode: 'cors', body: JSON.stringify({ htmlContent: pData.htmlContent, siteName }) });
+                const result = await res.json();
+                if (result.success) {
+                    await updateDoc(doc(db, "ai_templates", id), { deploymentUrl: `https://${result.url}`, siteName, isDirty: false });
+                    loadTemplates();
+                    notify('Deployment successful!', 'success');
+                } else {
+                    throw new Error(result.error || 'Deployment failed.');
+                }
+            } catch (err) {
+                notify(`Deploy failed: ${err.message}`, 'error');
+            } finally {
+                setLoading(btn, false);
+            }} 
         else if (btn.classList.contains('template-card__delete-btn')) { $('delete-modal').dataset.id = id; toggleModal('delete-modal', true); } 
         else if (btn.classList.contains('template-card__donate-btn')) {
             const fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.accept = 'image/*'; fileInput.style.display = 'none';
@@ -833,4 +853,5 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleModal(e.target.closest('.modal').id, false);
         }
     });
+
 });
