@@ -43,7 +43,30 @@ const notify = (msg, type = 'success') => {
     contentEl.style.borderColor = type === 'success' ? '#9AE6B4' : '#FEB2B2';
     toggleModal('notification-modal', true);
 };
-const toggleModal = (id, show) => $(id)?.classList.toggle('hidden', !show);
+// A smarter way to handle modal state in the URL
+const toggleModal = (id, show) => {
+    const el = $(id);
+    if (!el) return;
+
+    el.classList.toggle('hidden', !show);
+
+    const params = new URLSearchParams(window.location.search);
+    const currentUrl = new URL(window.location);
+
+    if (show) {
+        // This part is fine: set the modal param and push a new state
+        params.set('modal', id);
+        currentUrl.search = params.toString();
+        history.pushState(null, '', currentUrl.toString());
+    } else {
+        // THIS IS THE FIX: When closing, remove only the modal param
+        // This preserves the ?project=... part of the URL.
+        params.delete('modal');
+        currentUrl.search = params.toString();
+        // Use replaceState so we don't create a messy history of modals opening/closing
+        history.replaceState(null, '', currentUrl.toString());
+    }
+};
 const setLoading = (btn, isLoading, text) => {
     if (!btn) return;
     btn.disabled = isLoading;
@@ -78,23 +101,26 @@ const toggleCardLoader = (projectId, show) => {
         }
     }
 };
+// FIND and REPLACE your entire resetWorkspace function with this one:
 const resetWorkspace = () => {
-    if (s.projectUnsubscribe) { // ADD THIS BLOCK
+    if (s.projectUnsubscribe) {
         s.projectUnsubscribe();
         s.projectUnsubscribe = null;
     }
+    // ADD THIS LINE to update the URL
+    history.pushState({ projectId: null }, 'New Project', window.location.pathname);
+
     s.html = ''; s.editId = null; s.currentProjectData = null;
     s.chatHistory = [{ role: 'ai', text: 'Hello! How can I help you build a website today?' }];
     renderChatHistory();
     $('preview-frame').srcdoc = '';
     $('save-template-name-input').value = '';
     $('ai-persona-input').value = '';
-    // ADD THIS to hide the share button on new projects
-    ['save-btn', 'code-btn', 'view-new-tab-btn', 'share-btn'].forEach(id => $(id).classList.add('hidden')); 
+    ['save-btn', 'code-btn', 'view-new-tab-btn', 'share-btn'].forEach(id => $(id).classList.add('hidden'));
     $('initial-message').classList.remove('hidden');
     $('save-btn').innerHTML = `<i class="fas fa-save"></i> Save Project`;
     $('preview-frame').classList.add('hidden');
-    renderCollaborators([]); // ADD THIS to clear avatars
+    renderCollaborators([]);
     document.querySelectorAll('#responsive-toggles button').forEach(b => b.classList.remove('active'));
     document.querySelector('#responsive-toggles button[data-size="100%"]').classList.add('active');
     $('preview-frame').style.width = '100%';
@@ -111,17 +137,28 @@ const updateUIForLoadedProject = (projectData) => {
     $('save-template-name-input').value = projectData.name;
     $('save-btn').innerHTML = `<i class="fas fa-sync-alt"></i> Update Project`;
 };
+// FIND and REPLACE your entire loadProject function with this one:
 const loadProject = (initialData, id) => {
+    // This check prevents an infinite loop with the router
+    if (s.editId === id) return;
+
     resetWorkspace(); // This will clear any previous listener
     s.editId = id;
+
+    // ADD THIS LINE to update the URL
+    history.pushState({ projectId: id }, `Project: ${initialData.name}`, `?project=${id}`);
+    
+    // Attach a real-time listener to the project document
     const docRef = doc(db, "ai_templates", id);
     s.projectUnsubscribe = onSnapshot(docRef, (docSnap) => {
         if (!docSnap.exists()) {
             notify("This project no longer exists.", "error");
-            resetWorkspace();
+            resetWorkspace(); // This will trigger a URL change back to home
             return;
         }
+
         const projectData = docSnap.data();
+        
         if (s.html !== projectData.htmlContent) {
             s.html = projectData.htmlContent;
             $('preview-frame').srcdoc = s.html;
@@ -130,6 +167,7 @@ const loadProject = (initialData, id) => {
              s.chatHistory = projectData.chatHistory || [{ role: 'ai', text: `Project "${projectData.name}" loaded.` }];
              renderChatHistory();
         }
+        
         updateUIForLoadedProject({ id, ...projectData });
         renderCollaborators(projectData.collaborators || []);
     }, (error) => {
@@ -643,6 +681,54 @@ const toggleCodeEditorReadOnly = (isReadOnly) => {
     toggleBtn.classList.toggle('active', !isReadOnly);
 };
 
+// --- NEW ROUTING HANDLER FUNCTION ---
+const handleRouteChange = async () => {
+    // No need for a loader here as it can cause a flicker when just closing modals
+    const params = new URLSearchParams(window.location.search);
+    const projectId = params.get('project');
+    const modalId = params.get('modal');
+
+    // --- Handle Project State ---
+    if (projectId && projectId !== s.editId) {
+        showLoader(true); // Show loader only for heavy operations like loading a project
+        try {
+            const docSnap = await getDoc(doc(db, "ai_templates", projectId));
+            if (docSnap.exists()) {
+                loadProject(docSnap.data(), docSnap.id);
+            } else {
+                notify('Project not found.', 'error');
+                history.replaceState(null, 'New Project', window.location.pathname);
+                resetWorkspace();
+            }
+        } catch (err) {
+            notify(`Error loading project: ${err.message}`, 'error');
+            resetWorkspace();
+        } finally {
+            showLoader(false);
+        }
+    } else if (!projectId && s.editId) {
+        // If the URL has no project but one is loaded, reset everything.
+        // This handles the case where the user navigates back from a project.
+        resetWorkspace();
+    }
+
+    // --- THIS IS THE FIX: Make this the single source of truth for modal visibility ---
+    // 1. Hide ALL modals first.
+    document.querySelectorAll('.modal').forEach(m => m.classList.add('hidden'));
+    
+    // 2. Then, show ONLY the one specified in the URL.
+    if (modalId && $(modalId)) {
+        if (modalId === 'code-modal') {
+             // The showCode function has its own logic for populating the editor
+             // before making the modal visible, so we call it directly.
+             showCode(); 
+        } else {
+            // For all other modals, we just toggle their visibility directly.
+            $(modalId).classList.remove('hidden');
+        }
+    }
+};
+
 // --- AUTHENTICATION ---
 // Replace your entire onAuthStateChanged function with this updated version:
 onAuthStateChanged(auth, async user => {
@@ -1111,4 +1197,12 @@ document.querySelector('.saved-templates').addEventListener('click', async e => 
         }
     }
 });
+window.addEventListener('popstate', () => {
+        // We wrap in a timeout to ensure the URL has updated before we read it
+        setTimeout(handleRouteChange, 0);
+    });
+
+    // Handle initial page load based on the URL
+    // This ensures that if a user refreshes or shares a link, the correct project loads.
+    handleRouteChange();
 });
