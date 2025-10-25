@@ -1,7 +1,7 @@
 // --- IMPORTS ---
 import { auth, db, config } from './firebase-config.js';
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-auth.js";
-import { doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, collection, serverTimestamp, query, where, getDocs, orderBy, collectionGroup  } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+import { doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, collection, serverTimestamp, query, where, getDocs, orderBy, collectionGroup, onSnapshot, arrayUnion, arrayRemove, deleteField } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
 
 // --- STATE & CONSTANTS ---
 const $ = id => document.getElementById(id);
@@ -11,13 +11,15 @@ const CLOUDINARY_CLOUD_NAME = 'dyff2bufp';
 const CLOUDINARY_UPLOAD_PRESET = 'unsigned_upload';
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
 
-// Application state
+// --- STATE & CONSTANTS ---
 const s = {
     user: null, apiKey: null, html: '', userImages: [], editId: null,
     isGenerating: false, chatHistory: [], currentProjectData: null,
     collections: [], currentCollectionId: null, currentCollectionName: null,
     documents: [], currentDocumentIndex: null, currentDocumentData: null,
-    activeMentionInput: null
+    activeMentionInput: null,
+    projectUnsubscribe: null, // ADD THIS: To manage the real-time listener
+    sharedProjects: [],
 };
 
 // --- UI HELPER FUNCTIONS ---
@@ -77,16 +79,22 @@ const toggleCardLoader = (projectId, show) => {
     }
 };
 const resetWorkspace = () => {
+    if (s.projectUnsubscribe) { // ADD THIS BLOCK
+        s.projectUnsubscribe();
+        s.projectUnsubscribe = null;
+    }
     s.html = ''; s.editId = null; s.currentProjectData = null;
     s.chatHistory = [{ role: 'ai', text: 'Hello! How can I help you build a website today?' }];
     renderChatHistory();
     $('preview-frame').srcdoc = '';
     $('save-template-name-input').value = '';
     $('ai-persona-input').value = '';
-    ['save-btn', 'code-btn', 'view-new-tab-btn'].forEach(id => $(id).classList.add('hidden'));
+    // ADD THIS to hide the share button on new projects
+    ['save-btn', 'code-btn', 'view-new-tab-btn', 'share-btn'].forEach(id => $(id).classList.add('hidden')); 
     $('initial-message').classList.remove('hidden');
     $('save-btn').innerHTML = `<i class="fas fa-save"></i> Save Project`;
     $('preview-frame').classList.add('hidden');
+    renderCollaborators([]); // ADD THIS to clear avatars
     document.querySelectorAll('#responsive-toggles button').forEach(b => b.classList.remove('active'));
     document.querySelector('#responsive-toggles button[data-size="100%"]').classList.add('active');
     $('preview-frame').style.width = '100%';
@@ -98,25 +106,62 @@ const updateUIForLoadedProject = (projectData) => {
     s.currentProjectData = projectData;
     $('initial-message').classList.add('hidden');
     $('preview-frame').classList.remove('hidden');
-    ['save-btn', 'code-btn', 'view-new-tab-btn'].forEach(id => $(id).classList.remove('hidden'));
+    // ADD 'share-btn' to this list
+    ['save-btn', 'code-btn', 'view-new-tab-btn', 'share-btn'].forEach(id => $(id).classList.remove('hidden'));
     $('save-template-name-input').value = projectData.name;
     $('save-btn').innerHTML = `<i class="fas fa-sync-alt"></i> Update Project`;
 };
-const loadProject = (data, id) => {
-    resetWorkspace();
-    s.html = data.htmlContent;
-    if (data.userId !== s.user?.uid) {
-        s.editId = null; 
-        s.chatHistory = [{ role: 'ai', text: `Template "${data.name}" loaded. Make changes and save it as your own project!` }];
-        $('save-template-name-input').value = `Copy of ${data.name}`;
+const loadProject = (initialData, id) => {
+    resetWorkspace(); // This will clear any previous listener
+    s.editId = id;
+    const docRef = doc(db, "ai_templates", id);
+    s.projectUnsubscribe = onSnapshot(docRef, (docSnap) => {
+        if (!docSnap.exists()) {
+            notify("This project no longer exists.", "error");
+            resetWorkspace();
+            return;
+        }
+        const projectData = docSnap.data();
+        if (s.html !== projectData.htmlContent) {
+            s.html = projectData.htmlContent;
+            $('preview-frame').srcdoc = s.html;
+        }
+        if (JSON.stringify(s.chatHistory) !== JSON.stringify(projectData.chatHistory)) {
+             s.chatHistory = projectData.chatHistory || [{ role: 'ai', text: `Project "${projectData.name}" loaded.` }];
+             renderChatHistory();
+        }
+        updateUIForLoadedProject({ id, ...projectData });
+        renderCollaborators(projectData.collaborators || []);
+    }, (error) => {
+        console.error("Real-time listener error:", error);
+        notify("Lost connection to the project. Please refresh.", "error");
+    });
+};
+const renderCollaborators = (collaborators) => {
+    const avatarContainer = $('collaborators-container');
+    const listContainer = $('collaborators-list');
+    if (!avatarContainer || !listContainer) return;
+
+    const collaboratorsArray = Object.entries(collaborators || {});
+    
+    avatarContainer.innerHTML = collaboratorsArray.map(([uid, data]) => {
+        const initial = (data.displayName || data.email).charAt(0).toUpperCase();
+        return `<div class="collaborator-avatar" title="${data.displayName || data.email}">${initial}</div>`;
+    }).join('');
+
+    if (collaboratorsArray.length > 0) {
+        listContainer.innerHTML = collaboratorsArray.map(([uid, data]) => `
+            <div class="collaborator-item" data-uid="${uid}">
+                <div class="collaborator-item__info">
+                    <strong>${data.displayName || 'Unknown User'}</strong>
+                    <small>${data.email}</small>
+                </div>
+                ${s.currentProjectData?.userId !== uid ? `<button class="collaborator-item__remove-btn" title="Remove collaborator">&times;</button>` : '<span>(Owner)</span>'}
+            </div>
+        `).join('');
     } else {
-        s.editId = id;
-        s.chatHistory = data.chatHistory || [{ role: 'ai', text: `Project "${data.name}" loaded.` }];
+        listContainer.innerHTML = '<p>You are the only one on this project.</p>';
     }
-    renderChatHistory();
-    $('preview-frame').srcdoc = s.html;
-    updateUIForLoadedProject({ id: s.editId, ...data });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 const slugify = text => text.toString().toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-').substring(0, 50);
 const renderChatHistory = () => {
@@ -349,6 +394,19 @@ const generateWithStreaming = async () => {
         s.chatHistory.push({ role: 'ai', text: "Sorry, I encountered an error. Please try again." });
         renderChatHistory();
     } finally {
+        // ADD THIS BLOCK to save changes to Firestore after generation
+        if (s.editId) {
+            try {
+                const docRef = doc(db, "ai_templates", s.editId);
+                await updateDoc(docRef, {
+                    htmlContent: s.html,
+                    chatHistory: s.chatHistory
+                });
+            } catch (updateError) {
+                console.error("Failed to save real-time updates:", updateError);
+                notify("Could not save real-time changes.", "error");
+            }
+        }
         showLoader(false);
     }
 };
@@ -517,6 +575,50 @@ const loadTemplates = async () => {
         }).join('') : "<p>You haven't saved any projects yet.</p>";
     } catch (e) { listEl.innerHTML = `<p style='color:red;'>Could not load projects.</p>`; console.error(e); }
 };
+
+// --- NEW FUNCTIONS to load and render shared projects ---
+const loadSharedProjects = async () => {
+    if (!s.user) return;
+    const listEl = $('shared-templates-list');
+    listEl.innerHTML = "<p>Loading shared projects...</p>";
+    try {
+        const q = query(collection(db, "ai_templates"), where("sharedWith", "array-contains", s.user.uid), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+        s.sharedProjects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderSharedProjects();
+    } catch (e) {
+        listEl.innerHTML = `<p style='color:red;'>Could not load shared projects.</p>`;
+        console.error("Error loading shared projects:", e);
+    }
+};
+
+const renderSharedProjects = () => {
+    const listEl = $('shared-templates-list');
+    listEl.innerHTML = s.sharedProjects.length ? s.sharedProjects.map(t => {
+        // Find the owner's details from the collaborators map
+        const ownerData = t.collaborators[t.userId];
+        const ownerInfo = ownerData ? `Shared by ${ownerData.displayName || ownerData.email}` : 'Shared by an unknown user';
+        
+        const cardImage = `<div class="template-card__image" style="background-image: url(${t.thumbnailUrl || 'assets/Images/logo1.png'})"></div>`;
+
+        // Actions for a shared user are different: No delete or donate buttons
+        const cardActions = `
+            <button class="btn btn--sm btn--secondary load-btn" data-id="${t.id}"><i class="fas fa-folder-open"></i> Load</button>
+            ${t.deploymentUrl ? `<a href="${t.deploymentUrl}" target="_blank" class="btn btn--sm btn--success"><i class="fas fa-external-link-alt"></i> Visit</a>` : ''}
+        `;
+
+        return `<div class="template-card" data-name="${t.name.toLowerCase()}">
+            ${cardImage}
+            <div class="template-card__content">
+                <div class="template-card__header"><h4>${t.name}</h4></div>
+                <div class="template-card__owner"><i class="fas fa-share-alt"></i> ${ownerInfo}</div>
+                <div class="template-card__actions">
+                    ${cardActions}
+                </div>
+            </div>
+        </div>`;
+    }).join('') : "<p>No projects have been shared with you yet.</p>";
+};
 const showCode = () => {
     const doc = new DOMParser().parseFromString(s.html || '<!DOCTYPE html><html><body></body></html>', 'text/html');
     const html = doc.body.innerHTML.trim();
@@ -542,6 +644,7 @@ const toggleCodeEditorReadOnly = (isReadOnly) => {
 };
 
 // --- AUTHENTICATION ---
+// Replace your entire onAuthStateChanged function with this updated version:
 onAuthStateChanged(auth, async user => {
     s.user = user;
     $('login-btn').classList.toggle('hidden', !!user);
@@ -549,12 +652,27 @@ onAuthStateChanged(auth, async user => {
     $('images-btn').disabled = !user;
     $('collections-btn').disabled = !user;
     if (user) {
+        // ADDED: Create/update a user document in Firestore on login
+        try {
+            const userRef = doc(db, "users", user.uid);
+            await setDoc(userRef, {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+                lastLogin: serverTimestamp()
+            }, { merge: true }); // Use merge: true to avoid overwriting existing data
+        } catch (e) {
+            console.error("Error saving user data to Firestore:", e);
+        }
+        // END ADDED BLOCK
+
         $('user-email').textContent = user.displayName || user.email;
         $('user-avatar').textContent = (user.displayName || user.email).charAt(0).toUpperCase();
         try { s.apiKey = (await getDoc(doc(db, "settings", "api_keys"))).data().geminiApiKey; } 
         catch (e) { notify('API Key Error: Could not fetch API key from Firestore.', 'error'); }
         
-        Promise.all([loadTemplates(), loadUserImages(), loadCollections()]);
+        Promise.all([loadTemplates(), loadUserImages(), loadCollections(), loadSharedProjects()]);
 
         const urlParams = new URLSearchParams(window.location.search);
         const templateId = urlParams.get('templateId');
@@ -562,7 +680,15 @@ onAuthStateChanged(auth, async user => {
             showLoader(true);
             try {
                 const docSnap = await getDoc(doc(db, "ai_templates", templateId));
-                if (docSnap.exists()) { loadProject(docSnap.data(), docSnap.id); } 
+                if (docSnap.exists()) { 
+                    // Use the real-time loadProject function
+                    const initialData = docSnap.data();
+                    if(initialData.userId === s.user.uid || (initialData.sharedWith && initialData.sharedWith.includes(s.user.uid))) {
+                       loadProject(initialData, docSnap.id);
+                    } else {
+                       notify('You do not have access to this project.', 'error');
+                    }
+                } 
                 else { notify('Template not found.', 'error'); }
             } catch (err) { notify(`Failed to load template: ${err.message}`, 'error'); }
             finally {
@@ -574,9 +700,13 @@ onAuthStateChanged(auth, async user => {
         resetWorkspace();
         s.userImages = [];
         s.collections = [];
+        s.sharedProjects = []; // ADD THIS to clear on logout
         $('templates-list').innerHTML = '<p>Sign in to view your saved projects.</p>';
+        $('shared-templates-list').innerHTML = ''; // ADD THIS to clear on logout
     }
 });
+
+
 
 // --- EVENT HANDLERS & INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -642,6 +772,72 @@ document.addEventListener('DOMContentLoaded', () => {
         const match = textBeforeCursor.match(/\B#([a-zA-Z0-9_.-]*)$/);
         if (match) { input.value = text.substring(0, match.index) + `${id} ` + text.substring(cursorPos); input.focus(); $('collection-mention-popup').classList.add('hidden'); }
     });
+
+    // --- Share & Collaboration Logic ---
+    $('share-btn').addEventListener('click', () => {
+        if (s.editId) {
+            renderCollaborators(s.currentProjectData.collaborators); // Ensure list is up-to-date
+            toggleModal('share-modal', true);
+        }
+    });
+
+    $('confirm-share-btn').addEventListener('click', async () => {
+        const email = $('share-email-input').value.trim();
+        if (!s.editId || !email) return;
+
+        setLoading($('confirm-share-btn'), true, 'Adding...');
+        try {
+            // Find user by email. Note: This requires a 'users' collection with public email field.
+            // For this example, we'll assume a 'users' collection keyed by UID with an 'email' field.
+            // In a real app, this lookup might be done via a Cloud Function for security.
+            const q = query(collection(db, "users"), where("email", "==", email));
+            const userSnap = await getDocs(q);
+            
+            if (userSnap.empty) {
+                throw new Error("User with that email not found.");
+            }
+            const invitedUserDoc = userSnap.docs[0];
+            const invitedUserId = invitedUserDoc.id;
+            const invitedUserData = invitedUserDoc.data();
+
+            const projectRef = doc(db, "ai_templates", s.editId);
+            await updateDoc(projectRef, {
+                sharedWith: arrayUnion(invitedUserId),
+                [`collaborators.${invitedUserId}`]: {
+                    email: invitedUserData.email,
+                    displayName: invitedUserData.displayName || invitedUserData.email
+                }
+            });
+            $('share-email-input').value = '';
+            notify('User added to project!', 'success');
+        } catch (e) {
+            notify(`Error: ${e.message}`, 'error');
+        } finally {
+            setLoading($('confirm-share-btn'), false);
+        }
+    });
+
+    $('collaborators-list').addEventListener('click', async (e) => {
+        const removeBtn = e.target.closest('.collaborator-item__remove-btn');
+        if (removeBtn) {
+            const item = removeBtn.closest('.collaborator-item');
+            const uidToRemove = item.dataset.uid;
+            if (!s.editId || !uidToRemove) return;
+
+            if (confirm('Are you sure you want to remove this collaborator?')) {
+                try {
+                    const projectRef = doc(db, "ai_templates", s.editId);
+                    await updateDoc(projectRef, {
+                        sharedWith: arrayRemove(uidToRemove),
+                        [`collaborators.${uidToRemove}`]: deleteField() // Requires importing deleteField
+                    });
+                     notify('Collaborator removed.', 'success');
+                } catch (e) {
+                     notify(`Error removing collaborator: ${e.message}`, 'error');
+                }
+            }
+        }
+    });
     
     // --- Save Logic ---
     $('confirm-save-btn').addEventListener('click', async () => {
@@ -652,17 +848,28 @@ document.addEventListener('DOMContentLoaded', () => {
         // FIX 3: Correctly define the data object for saving
         const data = { 
             name, siteName, htmlContent: s.html, chatHistory: s.chatHistory, 
-            userId: s.user.uid, isDirty: s.currentProjectData?.isDirty || false 
+            userId: s.user.uid, isDirty: s.currentProjectData?.isDirty || false,
+            // ADD THESE fields for new projects
+            sharedWith: [], 
+            collaborators: {
+                [s.user.uid]: {
+                    email: s.user.email,
+                    displayName: s.user.displayName
+                }
+            }
         };
         let docIdToUpdate;
         try {
             if (s.editId) {
+                delete data.sharedWith;
+                delete data.collaborators;
                 await updateDoc(doc(db, "ai_templates", s.editId), data);
-                docIdToUpdate = s.editId;
             } else {
                 const docRef = await addDoc(collection(db, "ai_templates"), { ...data, createdAt: serverTimestamp() });
                 s.editId = docRef.id;
-                docIdToUpdate = docRef.id;
+                // Important: Start listening for real-time changes immediately after creation
+                const newDocSnap = await getDoc(docRef);
+                loadProject(newDocSnap.data(), newDocSnap.id);
             }
             s.currentProjectData = { ...s.currentProjectData, ...data, id: docIdToUpdate };
             toggleModal('save-modal', false);
@@ -727,38 +934,63 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     // --- Template List Actions ---
-    $('templates-list').addEventListener('click', async e => {
-        const btn = e.target.closest('button, a'); if (!btn) return;
-        e.preventDefault(); const id = btn.dataset.id;
-        if (btn.classList.contains('load-btn')) { const docSnap = await getDoc(doc(db, "ai_templates", id)); if (docSnap.exists()) loadProject(docSnap.data(), docSnap.id); } 
-        else if (btn.classList.contains('deploy-btn')) {
-            setLoading(btn, true, 'Deploying...');
-            try {
-                const docSnap = await getDoc(doc(db, "ai_templates", id));
-                const pData = docSnap.data();
-                const siteName = pData.siteName || slugify(pData.name);
-                // Note: The deployment URL is specific to your Google Apps Script
-                const res = await fetch("https://script.google.com/macros/s/AKfycbyYdmhzlBHLYw-nK2QfGXxrTFo6EUPsBtCBIqE4xVBC-gJ40x7bVBXSiX6v_5tDNHFDsQ/exec", { method: 'POST', mode: 'cors', body: JSON.stringify({ htmlContent: pData.htmlContent, siteName }) });
-                const result = await res.json();
-                if (result.success) {
-                    await updateDoc(doc(db, "ai_templates", id), { deploymentUrl: `https://${result.url}`, siteName, isDirty: false });
-                    loadTemplates();
-                    notify('Deployment successful!', 'success');
-                } else {
-                    throw new Error(result.error || 'Deployment failed.');
-                }
-            } catch (err) {
-                notify(`Deploy failed: ${err.message}`, 'error');
-            } finally {
-                setLoading(btn, false);
-            }} 
-        else if (btn.classList.contains('template-card__delete-btn')) { $('delete-modal').dataset.id = id; toggleModal('delete-modal', true); } 
-        else if (btn.classList.contains('template-card__donate-btn')) {
-            const fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.accept = 'image/*'; fileInput.style.display = 'none';
-            fileInput.dataset.projectId = id; fileInput.addEventListener('change', handleDonationUpload);
-            document.body.appendChild(fileInput); fileInput.click(); document.body.removeChild(fileInput);
-        } else if (btn.tagName === 'A' && btn.classList.contains('btn--success')) { window.open(btn.href, '_blank'); }
-    });
+    // --- Template List Actions (Updated for both My Projects and Shared Projects) ---
+document.querySelector('.saved-templates').addEventListener('click', async e => {
+    const btn = e.target.closest('button, a'); 
+    if (!btn) return;
+    // Only act on buttons with a data-id to avoid conflicts
+    const id = btn.dataset.id;
+    if (!id) return;
+    
+    e.preventDefault(); 
+
+    if (btn.classList.contains('load-btn')) { 
+        const docSnap = await getDoc(doc(db, "ai_templates", id)); 
+        if (docSnap.exists()) {
+             // Use the real-time loadProject function
+             loadProject(docSnap.data(), docSnap.id);
+        }
+    } 
+    else if (btn.classList.contains('deploy-btn')) {
+        setLoading(btn, true, 'Deploying...');
+        try {
+            const docSnap = await getDoc(doc(db, "ai_templates", id));
+            const pData = docSnap.data();
+            const siteName = pData.siteName || slugify(pData.name);
+            const res = await fetch("https://script.google.com/macros/s/AKfycbyYdmhzlBHLYw-nK2QfGXxrTFo6EUPsBtCBIqE4xVBC-gJ40x7bVBXSiX6v_5tDNHFDsQ/exec", { method: 'POST', mode: 'cors', body: JSON.stringify({ htmlContent: pData.htmlContent, siteName }) });
+            const result = await res.json();
+            if (result.success) {
+                await updateDoc(doc(db, "ai_templates", id), { deploymentUrl: `https://${result.url}`, siteName, isDirty: false });
+                loadTemplates();
+                notify('Deployment successful!', 'success');
+            } else {
+                throw new Error(result.error || 'Deployment failed.');
+            }
+        } catch (err) {
+            notify(`Deploy failed: ${err.message}`, 'error');
+        } finally {
+            setLoading(btn, false);
+        }
+    } 
+    else if (btn.classList.contains('template-card__delete-btn')) { 
+        $('delete-modal').dataset.id = id; 
+        toggleModal('delete-modal', true); 
+    } 
+    else if (btn.classList.contains('template-card__donate-btn')) {
+        const fileInput = document.createElement('input'); 
+        fileInput.type = 'file'; 
+        fileInput.accept = 'image/*'; 
+        fileInput.style.display = 'none';
+        fileInput.dataset.projectId = id; 
+        fileInput.addEventListener('change', handleDonationUpload);
+        document.body.appendChild(fileInput); 
+        fileInput.click(); 
+        document.body.removeChild(fileInput);
+    } else if (btn.tagName === 'A' && btn.classList.contains('btn--success')) { 
+        window.open(btn.href, '_blank'); 
+    }
+});
+
     $('confirm-delete-btn').addEventListener('click', async () => {
         const id = $('delete-modal').dataset.id; if (!id) return;
         setLoading($('confirm-delete-btn'), true, 'Deleting...');
@@ -787,6 +1019,29 @@ document.addEventListener('DOMContentLoaded', () => {
             renderFirestoreDocuments(); renderFirestoreData();
         }
     });
+
+     // --- NEW: Project View Toggle Logic ---
+    $('view-toggles').addEventListener('click', (e) => {
+        const btn = e.target.closest('.view-toggle-btn');
+        if (!btn) return;
+
+        const view = btn.dataset.view;
+
+        // Update active button state
+        document.querySelectorAll('#view-toggles .view-toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Show/hide the correct project grid
+        if (view === 'my-projects') {
+            $('templates-list').classList.remove('hidden');
+            $('shared-templates-list').classList.add('hidden');
+        } else {
+            $('templates-list').classList.add('hidden');
+            $('shared-templates-list').classList.remove('hidden');
+        }
+    });
+
+    
     
     // --- Code Modal Logic ---
     document.querySelector('#code-modal .modal__header').addEventListener('click', handleCodeModalHeaderClick);
@@ -844,14 +1099,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // FIX 4: Universal Modal Close Handler for simple modals
     document.addEventListener('click', (e) => {
-        // Close modal if clicking on the background overlay
-        if (e.target.classList.contains('modal')) {
-            toggleModal(e.target.id, false);
+    // Close modal if clicking on the background overlay
+    if (e.target.classList.contains('modal')) {
+        toggleModal(e.target.id, false);
+    }
+    // FIX: Close modal if clicking on ANY '.modal__close' button or specific cancel buttons
+    if (e.target.matches('.modal__close, #cancel-delete-btn, #close-notification-btn')) {
+        const modal = e.target.closest('.modal');
+        if (modal) {
+            toggleModal(modal.id, false);
         }
-        // Close modal if clicking on a simple close button (not handled by specific listeners)
-        if (e.target.matches('#cancel-delete-btn, #close-notification-btn')) {
-            toggleModal(e.target.closest('.modal').id, false);
-        }
-    });
-
+    }
+});
 });

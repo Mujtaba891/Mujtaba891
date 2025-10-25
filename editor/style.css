@@ -358,6 +358,7 @@ p, li { max-width: 65ch; }
     margin-bottom: var(--spacing-md);
     flex-wrap: wrap;
     gap: var(--spacing-md);
+    position: relative;
 }
 .workspace__title {
     display: flex;
@@ -417,6 +418,78 @@ p, li { max-width: 65ch; }
     text-align: center;
 }
 .initial-message i { font-size: 4rem; margin-bottom: var(--spacing-md); opacity: 0.5; }
+
+.collaborators-container {
+    position: absolute;
+    top: -20px; /* Adjust as needed */
+    right: 220px; /* Adjust to position next to action buttons */
+    display: flex;
+    align-items: center;
+}
+
+.collaborator-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--secondary-color);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    border: 2px solid var(--surface-color);
+    margin-left: -10px;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast);
+    cursor: default;
+}
+.collaborator-avatar:hover {
+    transform: scale(1.1);
+    z-index: 5;
+}
+
+.share-input-group {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0 var(--spacing-lg) 0;
+}
+.share-input-group .btn {
+    width: auto;
+    flex-shrink: 0;
+}
+.collaborators-list {
+    margin-top: var(--spacing-md);
+    text-align: left;
+    max-height: 200px;
+    overflow-y: auto;
+}
+.collaborator-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--border-color-light);
+}
+.collaborator-item:last-child {
+    border-bottom: none;
+}
+.collaborator-item__info {
+    font-size: 0.9rem;
+}
+.collaborator-item__info small {
+    display: block;
+    color: var(--text-light);
+}
+.collaborator-item__remove-btn {
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.5rem;
+}
 
 
 /* ==========================================================================
@@ -500,7 +573,58 @@ p, li { max-width: 65ch; }
 .template-card__actions .load-btn { grid-column: 1 / -1; } /* Make load button span full width if other buttons exist */
 .template-card__actions .deploy-btn.needs-update { animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1); }
 
+/* Add these styles anywhere in your stylesheet, e.g., in Section 6 */
 
+/* --- Project View Toggles (Tabs) --- */
+.templates__header-main {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    flex-grow: 1;
+}
+
+.view-toggles {
+    display: flex;
+    gap: var(--spacing-xs);
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 4px;
+}
+
+.view-toggle-btn {
+    border: none;
+    background-color: transparent;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-light);
+    transition: all var(--transition-fast);
+}
+
+.view-toggle-btn:hover {
+    color: var(--text-color);
+}
+
+.view-toggle-btn.active {
+    background-color: var(--surface-color);
+    color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
+}
+
+/* --- Style for Owner Info on Shared Cards --- */
+.template-card__owner {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+.template-card__owner i {
+    margin-right: var(--spacing-xs);
+}
 /* ==========================================================================
    7. MODALS
    ========================================================================== */
