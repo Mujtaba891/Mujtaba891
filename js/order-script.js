@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderNavigation() {
         const isFirstStep = state.quiz.currentQuestionIndex === 0;
         const isLastStep = state.quiz.currentQuestionIndex === CONFIG.questions.length - 1;
-        state.dom.navContainer.innerHTML = `<button id="back-btn" class="neumorphic-btn" style="visibility:${isFirstStep ? 'hidden' : 'visible'};">Back</button>${isLastStep ? `<div><button id="save-order-btn" class="neumorphic-btn">Save for Later</button></div>` : `<button id="next-btn" class="neumorphic-btn primary">Next</button>`}`;
+        state.dom.navContainer.innerHTML = `<button id="back-btn" class="neumorphic-btn" style="visibility:${isFirstStep ? 'hidden' : 'visible'};">Back</button>${isLastStep ? `<div><button id="save-order-btn" class="neumorphic-btn">Save for Later</button><button id="checkout-btn" class="neumorphic-btn primary">Proceed to Checkout</button></div>` : `<button id="next-btn" class="neumorphic-btn primary">Next</button>`}`;
         attachNavigationListeners();
     }
 
@@ -350,3 +350,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 });
+
