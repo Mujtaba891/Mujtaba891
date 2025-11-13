@@ -124,9 +124,12 @@ body {
 }
 
 /* --- SHARED SECTION STYLES --- */
-.templates, .features, .how-it-works, .final-cta { padding: 6rem 0; text-align: center; }
-.section-title { font-size: 2.5rem; font-weight: 700; margin: 0 0 1rem; }
-.section-subtitle { font-size: 1.15rem; color: var(--text-light); max-width: 600px; margin: 0 auto 3rem; }
+.templates, .features, .how-it-works, .final-cta, 
+.feature-showcase, .testimonials, .who-its-for, .faq { 
+    padding: 6rem 0; 
+}
+.section-title { font-size: 2.5rem; font-weight: 700; margin: 0 0 1rem; text-align: center;}
+.section-subtitle { font-size: 1.15rem; color: var(--text-light); max-width: 600px; margin: 0 auto 3rem; text-align: center;}
 
 /* --- TEMPLATES SECTION --- */
 .templates { background-color: var(--background-color); }
@@ -151,9 +154,7 @@ body {
 .template-card h3 { padding: 1.5rem 1.5rem 0.5rem; margin: 0; }
 .template-card .btn { margin: 1rem 1.5rem 1.5rem; width: calc(100% - 3rem); }
 
-/* --- ADD TO home.css --- */
-
-/* Template Controls (Search & Filters) */
+/* --- Template Controls (Search & Filters) --- */
 .templates__controls {
     max-width: 800px;
     margin: 0 auto 3rem;
@@ -247,26 +248,8 @@ body {
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-
-
-/* --- FEATURES SECTION --- */
-.features { background-color: #fff; }
-.features__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 4rem; }
-.feature-item i {
-    font-size: 2rem;
-    color: var(--primary-color);
-    background: #f0f0ff;
-    width: 60px; height: 60px;
-    border-radius: 50%;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-.feature-item h3 { font-size: 1.25rem; margin: 0 0 0.5rem; }
-.feature-item p { color: var(--text-light); margin: 0; }
-
 /* --- HOW IT WORKS SECTION --- */
+.how-it-works { text-align: center; }
 .steps__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
 .step-item span {
     font-size: 1.5rem;
@@ -284,7 +267,7 @@ body {
 .step-item p { color: var(--text-light); margin: 0; }
 
 /* --- FINAL CTA SECTION --- */
-.final-cta { background: var(--gradient); }
+.final-cta { background: var(--gradient); text-align: center; }
 .final-cta h2 { font-size: 2.5rem; }
 .final-cta p { font-size: 1.15rem; margin-bottom: 2rem; color: #3b3882; }
 
@@ -309,10 +292,11 @@ body {
     .section-title { font-size: 2rem; }
 }
 
-/* In home.css, add these new styles at the end of the file */
+
+/* --- START: NEW SECTION STYLES --- */
 
 /* --- FEATURES SHOWCASE --- */
-.feature-showcase { padding: 6rem 0; background-color: #fff; }
+.feature-showcase { background-color: #fff; }
 .feature-showcase__item {
     display: flex;
     align-items: center;
@@ -342,7 +326,7 @@ body {
 }
 
 /* --- TESTIMONIALS --- */
-.testimonials { padding: 6rem 0; background: var(--gradient); }
+.testimonials { background: var(--gradient); }
 .testimonials__grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -356,6 +340,7 @@ body {
     border-radius: var(--radius);
     display: flex;
     flex-direction: column;
+    text-align: left;
 }
 .testimonial-card blockquote {
     margin: 0 0 1.5rem 0;
@@ -378,7 +363,7 @@ body {
 .testimonial-card figcaption p { margin: 0; color: var(--text-light); }
 
 /* --- WHO IT'S FOR SECTION --- */
-.who-its-for { padding: 6rem 0; }
+.who-its-for { text-align: center; }
 .who-its-for__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
 .who-card {
     background: #fff;
@@ -396,10 +381,11 @@ body {
 .who-card p { color: var(--text-light); margin: 0; }
 
 /* --- FAQ SECTION --- */
-.faq { padding: 6rem 0; background-color: #fff; }
+.faq { background-color: #fff; }
 .faq__container {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 3rem auto 0;
+    text-align: left;
 }
 .faq-item {
     border-bottom: 1px solid #e2e8f0;
@@ -435,5 +421,8 @@ body {
     .feature-showcase__item, .feature-showcase__item--reversed {
         flex-direction: column;
         gap: 2rem;
+        text-align: center;
     }
 }
+
+/* --- END: NEW SECTION STYLES --- */

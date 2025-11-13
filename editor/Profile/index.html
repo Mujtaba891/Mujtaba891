@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | Stylo AI</title>
+    <link rel="icon" href="assets/Images/logo1.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../Project/style.css">
+    <link rel="stylesheet" href="./profile.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <img src="../assets/Images/logo1.png" alt="logo" width="110px">
+        </div>
+        <div id="auth-container">
+            <button id="login-btn" class="btn btn--secondary"><i class="fab fa-google"></i> Sign In</button>
+            <div id="user-info" class="user-profile hidden">
+                <div class="user-profile__trigger">
+                    <span id="user-email"></span>
+                    <img id="user-avatar" src="../assets/avatar/A1.jpeg" alt="User Avatar">
+                </div>
+                <div class="user-dropdown">
+                    <a href="../Project/" class="user-dropdown__item"><i class="fas fa-home"></i> My Profile</a>
+                    <button id="logout-btn" class="user-dropdown__item"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="profile-container">
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="profile-sidebar">
+            <div class="profile-card profile-card--sidebar">
+                 <div class="profile-picture-container">
+                    <!-- REPLACED div with img for consistency -->
+                    <img id="profile-picture-display" src="../assets/avatar/A2.jpeg" class="profile-picture" alt="User Avatar">
+                </div>
+                <h2 id="display-name-header">[User Name]</h2>
+                <p id="email-display" class="text-light">[user@email.com]</p>
+            </div>
+            <nav class="profile-nav">
+                <a href="#profile" class="profile-nav-link active" data-target="profile-section"><i class="fas fa-user-edit"></i> Profile</a>
+                <a href="#pricing" class="profile-nav-link" data-target="pricing-section"><i class="fas fa-credit-card"></i> Pricing & Billing</a>
+                <!-- NEW: My Images Link -->
+                <a href="#images" class="profile-nav-link" data-target="images-section"><i class="fas fa-images"></i> My Images</a>
+                <a href="#api" class="profile-nav-link" data-target="api-section"><i class="fas fa-key"></i> API Keys</a>
+                <a href="#account" class="profile-nav-link" data-target="account-section"><i class="fas fa-cog"></i> Account</a>
+            </nav>
+        </aside>
+
+        <!-- CONTENT AREA -->
+        <div class="profile-content">
+            <!-- 1. Profile Section (No Changes Here) -->
+            <section id="profile-section" class="content-section active">
+                <h1>Public Profile</h1>
+                <p>This information may be displayed publicly.</p>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Profile Information</h3>
+                        <button id="edit-profile-btn" class="btn btn--secondary btn--sm"><i class="fas fa-pencil-alt"></i> Edit Profile</button>
+                    </div>
+                    <div id="profile-display-view" class="profile-info-grid">
+                        <div class="profile-info-row profile-info-row--picture">
+                            <label>Profile Picture</label>
+                            <img id="profile-picture-view" src="../assets/avatar/A3.jpeg" class="profile-picture profile-picture--small" alt="Profile Picture">
+                        </div>
+                        <div class="profile-info-row">
+                            <label>Display Name</label>
+                            <p id="display-name-view">[User Name]</p>
+                        </div>
+                        <div class="profile-info-row">
+                            <label>Bio</label>
+                            <p id="bio-view" class="text-light">[Bio not set]</p>
+                        </div>
+                        <div class="profile-info-row">
+                            <label>Email Address</label>
+                            <p id="email-view">[user@email.com]</p>
+                        </div>
+                        <div class="profile-info-row">
+                            <label>Age</label>
+                            <p id="age-view">[Not set]</p>
+                        </div>
+                        <div class="profile-info-row">
+                            <label>Gender</label>
+                            <p id="gender-view">[Not set]</p>
+                        </div>
+                        <div class="profile-info-row">
+                            <label>Position / Title</label>
+                            <p id="position-view">[Not set]</p>
+                        </div>
+                        <div class="profile-info-row">
+                            <label>Website</label>
+                            <p id="website-view">[Not set]</p>
+                        </div>
+                         <div class="profile-info-row">
+                            <label>Location</label>
+                            <p id="location-view">[Not set]</p>
+                        </div>
+                    </div>
+                    <form id="profile-form" class="hidden">
+                        <div class="form-group-horizontal" style="align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+                            <label>Profile Picture</label>
+                            <div class="profile-picture-uploader">
+                                <img id="profile-picture-display-form" src="../assets/avatar/A4.jpeg" class="profile-picture profile-picture--small" alt="Profile Picture">
+                                <button type="button" id="choose-avatar-form-btn" class="btn btn--secondary">Choose Avatar</button>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="display-name-input">Display Name</label>
+                                <input type="text" id="display-name-input" class="form__input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email-input">Email</label>
+                                <input type="email" id="email-input" class="form__input" readonly>
+                                <small class="form-helper-text">Email address cannot be changed.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="age-input">Age</label>
+                                <input type="number" id="age-input" class="form__input" min="13">
+                            </div>
+                            <div class="form-group">
+                                <label for="gender-select">Gender</label>
+                                <select id="gender-select" class="form__input">
+                                    <option value="Prefer not to say">Prefer not to say</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                             <div class="form-group">
+                                <label for="position-input">Position / Title</label>
+                                <input type="text" id="position-input" class="form__input" placeholder="e.g., Software Engineer">
+                            </div>
+                             <div class="form-group">
+                                <label for="location-input">Location</label>
+                                <input type="text" id="location-input" class="form__input" placeholder="e.g., San Francisco, CA">
+                            </div>
+                            <div class="form-group form-group-span-2">
+                                <label for="website-input">Website</label>
+                                <input type="url" id="website-input" class="form__input" placeholder="https://example.com">
+                            </div>
+                            <div class="form-group form-group-span-2">
+                                <label for="bio-input">Bio</label>
+                                <textarea id="bio-input" class="form__input" rows="3" placeholder="Tell us a bit about yourself..."></textarea>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                             <span id="profile-save-status"></span>
+                             <button type="button" id="cancel-edit-btn" class="btn btn--secondary">Cancel</button>
+                            <button type="submit" id="save-profile-btn" class="btn btn--primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+            
+            <!-- 2. Team Section (No Changes Here) -->
+            <section id="team-section" class="content-section">
+                <h1>Team Management</h1>
+                <p>Invite and manage your team members.</p>
+                <div class="card">
+                     <h3>Invite New Member</h3>
+                     <form id="invite-form" class="form-inline">
+                         <input type="email" id="invite-email-input" class="form__input" placeholder="member@example.com" required>
+                         <select id="invite-role-select" class="form__input">
+                             <option value="editor">Editor</option>
+                             <option value="admin">Admin</option>
+                         </select>
+                         <button type="submit" id="invite-btn" class="btn btn--primary">Send Invite</button>
+                     </form>
+                </div>
+                <div class="card">
+                <h3>Incoming Invitations</h3>
+                <div id="incoming-invites-list">
+                    <!-- JS will render invites, a loader, or an empty state here -->
+                </div>
+            </div>
+                <div class="card">
+                    <h3>Pending Invites</h3>
+                    <table class="styled-table" id="pending-invites-table">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                 <div class="card">
+                    <h3>Team Members</h3>
+                    <table class="styled-table" id="team-members-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- NEW: 3. Pricing & Billing Section -->
+            <section id="pricing-section" class="content-section">
+                <h1>Pricing & Billing</h1>
+                <p>Manage your subscription and view payment history.</p>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Current Plan</h3>
+                    </div>
+                    <div class="pricing-card">
+                        <div class="pricing-tier">
+                            <h2>Free Plan</h2>
+                            <p class="price">$0 <span>/ month</span></p>
+                            <p class="text-light">Our free forever plan for individuals and small projects.</p>
+                        </div>
+                        <ul class="features-list">
+                            <li><i class="fas fa-check-circle"></i> Unlimited Projects</li>
+                            <li><i class="fas fa-check-circle"></i> Core AI Assistance</li>
+                            <li><i class="fas fa-check-circle"></i> Community Support</li>
+                            <li><i class="fas fa-check-circle"></i> 500MB Image Storage</li>
+                        </ul>
+                         <button class="btn btn--primary" disabled>Your Current Plan</button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- NEW: 4. My Images Section -->
+            <section id="images-section" class="content-section">
+                <h1>My Images</h1>
+                <p>A gallery of all images from across all your projects.</p>
+                <div class="card">
+                    <h3>Image Gallery</h3>
+                    <div id="image-gallery-container">
+                        <!-- JS will render images, a loader, or an empty state here -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 5. API Section (No Changes Here) -->
+            <section id="api-section" class="content-section">
+                <h1>API Keys</h1>
+                <p>Manage API keys for integrations and programmatic access.</p>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Your Personal Access Tokens</h3>
+                        <button id="generate-api-key-btn" class="btn btn--secondary btn--sm"><i class="fas fa-plus"></i> Generate New Key</button>
+                    </div>
+                    <div id="api-keys-list"></div>
+                </div>
+            </section>
+
+            <!-- 6. Account Section (No Changes Here) -->
+            <section id="account-section" class="content-section">
+                 <h1>Account Settings</h1>
+                 <p>Manage your account preferences.</p>
+                 <div class="card card--danger">
+                    <h3>Danger Zone</h3>
+                    <div>
+                        <p>Deleting your account is permanent. All your projects, teams, and billing information will be removed.</p>
+                        <button id="delete-account-btn" class="btn btn--danger">Delete My Account</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- MODALS (No Changes Here, but adding context menu) -->
+    <div id="delete-account-modal" class="modal hidden">
+        <div class="modal__overlay"></div>
+        <div class="modal__content">
+            <div class="modal__header">
+                <h2 class="modal__title">Delete Account</h2>
+                <button class="btn-icon modal__close" title="Close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal__body">
+                <p>Are you absolutely sure? This action cannot be undone. This will permanently delete your account and all associated data.</p>
+                <p>Please type <strong>delete my account</strong> to confirm.</p>
+                <div class="form-group">
+                    <input type="text" id="delete-confirm-input" class="form__input" autocomplete="off">
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button id="cancel-delete-btn" class="btn btn--secondary">Cancel</button>
+                <button id="confirm-delete-btn" class="btn btn--danger" disabled>Delete Account</button>
+            </div>
+        </div>
+    </div>
+    <div id="notification-modal" class="modal hidden">
+        <div class="modal__content">
+             <div class="modal__body" id="notification-content">
+                <span id="notification-message">Notification message here.</span>
+                <button id="close-notification-btn" class="btn-icon modal__close" title="Close"><i class="fas fa-times"></i></button>
+             </div>
+        </div>
+    </div>
+    <div id="avatar-selection-modal" class="modal hidden">
+        <div class="modal__overlay"></div>
+        <div class="modal__content modal__content--avatars">
+            <div class="modal__header">
+                <h3 class="modal__title">Choose Your Avatar</h3>
+                <button class="btn-icon modal__close" aria-label="Close modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="avatar-grid" class="avatar-grid"></div>
+        </div>
+    </div>
+    
+    <!-- NEW: CUSTOM CONTEXT MENU FOR IMAGE ACTIONS -->
+    <div id="custom-context-menu" class="custom-context-menu hidden">
+        <!-- JS will populate this with project list for exporting -->
+    </div>
+
+    <script type="module" src="../Project/js/firebase-config.js"></script>
+    <script type="module" src="profile.js"></script>
+
+</body>
+</html>

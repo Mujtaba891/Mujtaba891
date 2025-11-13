@@ -3,270 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stylo AI | Website Editor</title>
+    <title>Stylo AI - Build Websites Instantly with AI</title>
     <link rel="icon" href="assets/Images/logo1.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="home.css">
 </head>
 <body>
 
-    <!-- HEADER -->
     <header class="header">
-        <div class="logo" onclick="window.location.href='home.html'">
-            <img src="assets/Images/logo1.png" alt="logo" width="110px">
-        </div>
-        <div class="header__actions">
-            <!-- NEW: Collections Button -->
-            <button id="collections-btn" class="btn-icon" title="My Collections" disabled><i class="fas fa-database"></i></button>
-            <button id="images-btn" class="btn-icon" title="My Images" disabled><i class="fas fa-images"></i></button>
-        </div>
-        <div id="auth-container">
-            <button id="login-btn" class="btn btn--secondary"><i class="fab fa-google"></i> Sign In</button>
-            <div id="user-info" class="user-profile hidden">
-                <span id="user-email"></span>
-                <div id="user-avatar"></div>
-                <button id="logout-btn" class="btn-icon" title="Logout" aria-label="Logout"><i class="fas fa-sign-out-alt"></i></button>
+        <div class="container">
+            <div class="logo">
+                <img src="./assets/Images/logo1.png" alt="logo" width="110px">
             </div>
+            <nav class="nav">
+                <a href="#features">Features</a>
+                <a href="#templates" id="nav-templates-link">Templates</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+            <!-- UPDATED THIS LINK -->
+            <a href="./Project?modal=new-project-modal" class="btn btn--primary btn--header">Open Editor</a>
         </div>
     </header>
 
-    <main class="main-container">
-        <aside class="control-panel">
-            <div class="control-panel__header">
-                <h2><i class="fas fa-comments"></i> AI Chat</h2>
-                <button id="new-project-btn" class="btn btn--secondary btn--sm"><i class="fas fa-plus"></i> New Project</button>
-            </div>
-            
-            <details class="control-section">
-                <summary>1. Train AI (AI Persona)</summary>
-                <div class="control-group">
-                    <label for="ai-persona-input">Set a personality or expertise for the AI.</label>
-                    <textarea id="ai-persona-input" rows="3" placeholder="e.g., You are a minimalist web designer..."></textarea>
+    <main>
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <div class="container hero__content">
+                <h1 class="hero__title">Build Websites Instantly with AI</h1>
+                <p class="hero__subtitle">Describe your vision in plain English. Watch as Stylo AI crafts your unique website in seconds. No code required.</p>
+                <div class="hero__cta">
+                    <a href="./Project?modal=new-project-modal" class="btn btn--primary">Start Creating for Free</a>
+                    <a href="#templates" class="btn btn--secondary" id="show-templates-btn">See Templates</a>
                 </div>
-            </details>
-
-            <div class="chat-container">
-                <div id="chat-history" class="chat-history"></div>
-                <div class="chat-input-area">
-                    <div id="image-mention-popup" class="mention-popup hidden"></div>
-                    <!-- NEW: Collection Mention Popup -->
-                    <div id="collection-mention-popup" class="mention-popup hidden"></div>
-                    <textarea id="chat-input" rows="3" placeholder="e.g., Create a contact form linked to collection #leads..."></textarea>
-                    <button id="send-chat-btn" class="btn btn--primary"><i class="fas fa-paper-plane"></i></button>
-                </div>
-            </div>
-             <button id="generate-btn" class="btn btn--primary"><i class="fas fa-bolt"></i><span class="btn__text">2. Generate with AI</span></button>
-        </aside>
-
-        <section class="workspace">
-            <div class="workspace__header">
-                <div class="workspace__title">
-                    <h2><i class="fas fa-eye"></i> Live Preview</h2>
-                    <div id="responsive-toggles" class="responsive-toggles">
-                        <button class="btn-icon active" data-size="100%" title="Desktop"><i class="fas fa-desktop"></i></button>
-                        <button class="btn-icon" data-size="768px" title="Tablet"><i class="fas fa-tablet-alt"></i></button>
-                        <button class="btn-icon" data-size="375px" title="Mobile"><i class="fas fa-mobile-alt"></i></button>
+                <div class="hero__visual">
+                    <div class="laptop-mockup">
+                        <div class="laptop-screen">
+                             <img src="./laptop (2).gif" alt="AI generating a website preview">
+                        </div>
                     </div>
                 </div>
-                <div id="collaborators-container" class="collaborators-container"></div>
-                <div class="action-buttons">
-                    <button id="view-new-tab-btn" class="btn btn--secondary hidden"><i class="fas fa-external-link-alt"></i> New Tab</button>
-                    <button id="code-btn" class="btn btn--secondary hidden"><i class="fas fa-code"></i> View Code</button>
-                    <button id="share-btn" class="btn btn--secondary hidden"><i class="fas fa-user-plus"></i> Share</button>
-                    <button id="save-btn" class="btn btn--secondary hidden"><i class="fas fa-save"></i> Save Project</button>
+            </div>
+        </section>
+
+        <!-- HOW IT WORKS SECTION -->
+        <section class="how-it-works">
+            <div class="container">
+                <h2 class="section-title">How It Works in 3 Simple Steps</h2>
+                <div class="steps__grid">
+                    <div class="step-item">
+                        <span>1</span>
+                        <h3>Describe</h3>
+                        <p>Chat with the AI and describe the website you want to create.</p>
+                    </div>
+                    <div class="step-item">
+                        <span>2</span>
+                        <h3>Generate & Refine</h3>
+                        <p>Let the AI generate the code, then tweak it with chat or our code editor.</p>
+                    </div>
+                    <div class="step-item">
+                        <span>3</span>
+                        <h3>Deploy & Share</h3>
+                        <p>Publish your finished website to a live URL instantly.</p>
+                    </div>
                 </div>
             </div>
-           <div class="preview-container">
-                <div id="loader-overlay" class="loader-overlay hidden">
-                    <div class="spinner"></div><p>Building your vision...</p>
+        </section>
+        
+        <!-- EXPANDED FEATURES SHOWCASE -->
+        <section id="features" class="feature-showcase">
+            <div class="container">
+                <h2 class="section-title">Everything You Need to Go from Idea to Live Site</h2>
+                
+                <div class="feature-showcase__item">
+                    <div class="feature-showcase__text">
+                        <h3>Conversational Web Design</h3>
+                        <p>Simply talk to the AI. Ask for a landing page, a portfolio, or a blog. Request changes, new sections, or different color schemes. It's like having a developer and designer on call, 24/7.</p>
+                    </div>
+                    <div class="feature-showcase__image">
+                        <img src="./assets/videos/Conversational Web Design.gif" alt="Chat interface for AI website generation">
+                    </div>
                 </div>
-                 <div id="initial-message" class="initial-message">
-                    <i class="fas fa-desktop"></i><p>Your generated website will appear here.</p>
+
+                <div class="feature-showcase__item feature-showcase__item--reversed">
+                    <div class="feature-showcase__text">
+                        <h3>AI-Powered Code Editor</h3>
+                        <p>Dive into the code with an intelligent assistant. Select any part of your HTML, CSS, or JavaScript and ask the AI to refactor, debug, or add new functionality. It's the perfect blend of AI speed and developer control.</p>
+                    </div>
+                    <div class="feature-showcase__image">
+                        <img src="./assets/videos/AI suggestion.gif" alt="AI suggesting code edits in a modal">
+                    </div>
                 </div>
-                <iframe id="preview-frame" title="Website Preview"></iframe>
+
+                <div class="feature-showcase__item">
+                    <div class="feature-showcase__text">
+                        <h3>One-Click Deployment</h3>
+                        <p>Forget complex hosting configurations. When your site is ready, deploy it to a publicly accessible URL with a single click. Need to make a change? Just ask the AI and re-deploy instantly.</p>
+                    </div>
+                    <div class="feature-showcase__image">
+                        <img src="./assets/videos/Deploy function.gif" alt="Project dashboard showing deployment options">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TEMPLATES SECTION (Initially Hidden) -->
+        <section id="templates" class="templates" style="display: none;">
+            <div class="container">
+                <h2 class="section-title">Start with a Stunning Template</h2>
+                <p class="section-subtitle">Explore professionally designed, community-shared templates to jumpstart your project.</p>
+                
+                <div class="templates__controls">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="template-search" placeholder="Search templates (e.g., 'portfolio', 'crypto')...">
+                    </div>
+                    <div class="category-filters" id="category-filters">
+                        <!-- JavaScript will automatically create the buttons here -->
+                    </div>
+                </div>
+                
+                <div id="public-templates-grid" class="templates__grid">
+                    <!-- Templates will be rendered here by home.js -->
+                    <div class="templates-loading">
+                        <div class="spinner"></div>
+                        <p>Loading community templates...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TESTIMONIALS SECTION -->
+        <section class="testimonials">
+            <div class="container">
+                <h2 class="section-title">Loved by Creators and Developers</h2>
+                <div class="testimonials__grid">
+                    <article class="testimonial-card">
+                        <blockquote>“Stylo AI is a game-changer for prototyping. I can spin up a high-fidelity landing page from a simple idea in minutes, not hours. The AI code suggestions are surprisingly brilliant.”</blockquote>
+                        <figure>
+                            <img src="" alt="Photo of Sarah L.">
+                            <figcaption>
+                                <h4>Sarah L.</h4>
+                                <p>Freelance Developer</p>
+                            </figcaption>
+                        </figure>
+                    </article>
+                    <article class="testimonial-card">
+                        <blockquote>“As a startup founder, my time is precious. Stylo AI lets me build our marketing sites and internal tools incredibly fast without pulling engineering resources. It's an essential part of our workflow now.”</blockquote>
+                        <figure>
+                            <img src="" alt="Photo of Mike R.">
+                            <figcaption>
+                                <h4>Mike R.</h4>
+                                <p>Startup Founder</p>
+                            </figcaption>
+                        </figure>
+                    </article>
+                    <article class="testimonial-card">
+                        <blockquote>“I'm not a coder, but I have a lot of ideas. Stylo AI bridges that gap perfectly. I can finally create the exact website I envision just by describing it. It feels like magic.”</blockquote>
+                        <figure>
+                            <img src="" alt="Photo of Emily C.">
+                            <figcaption>
+                                <h4>Emily C.</h4>
+                                <p>Digital Marketer</p>
+                            </figcaption>
+                        </figure>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- WHO IT'S FOR SECTION -->
+        <section class="who-its-for">
+            <div class="container">
+                <h2 class="section-title">Perfect For...</h2>
+                <div class="who-its-for__grid">
+                    <div class="who-card">
+                        <i class="fas fa-code"></i>
+                        <h3>Developers</h3>
+                        <p>Rapidly scaffold projects, generate boilerplate, and get unstuck with AI-powered code assistance.</p>
+                    </div>
+                    <div class="who-card">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3>Entrepreneurs</h3>
+                        <p>Launch landing pages, validate ideas, and build MVPs without writing a single line of code.</p>
+                    </div>
+                    <div class="who-card">
+                        <i class="fas fa-bullhorn"></i>
+                        <h3>Marketers</h3>
+                        <p>Create campaign-specific pages, A/B test designs, and publish content independently and quickly.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ SECTION -->
+        <section id="faq" class="faq">
+            <div class="container">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <div class="faq__container">
+                    <details class="faq-item">
+                        <summary>Is Stylo AI completely free to use?</summary>
+                        <p>Yes, Stylo AI is currently free to use. This includes generating, editing, saving, and deploying websites. We rely on Google's Gemini API, which has its own usage limits, but for most users, it's more than enough for regular use.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Can I export the code and host it myself?</summary>
+                        <p>Absolutely! The "View Code" feature in the editor gives you direct access to the complete HTML, CSS, and JavaScript. You can copy and paste this code anywhere you like and host it on your own server or services like Netlify, Vercel, or GitHub Pages.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Who owns the websites I create?</summary>
+                        <p>You do. You own 100% of the code and the final website that you generate with Stylo AI. You have full rights to use it for personal or commercial projects.</p>
+                    </details>
+                     <details class="faq-item">
+                        <summary>How good is the AI-generated code?</summary>
+                        <p>The code is generated by Google's powerful Gemini model and is generally high-quality, modern, and responsive. It uses standard HTML5, CSS (often with Flexbox or Grid), and vanilla JavaScript. While it's very capable, we always recommend reviewing the code before using it in a critical production environment.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINAL CTA SECTION -->
+        <section class="final-cta">
+            <div class="container">
+                <h2>Ready to Build Your Vision?</h2>
+                <p>No credit card required. Start building with Stylo AI today.</p>
+                <!-- UPDATED THIS LINK -->
+                <a href="./roject?modal=new-project-modal" class="btn btn--primary">Create Your Website for Free</a>
             </div>
         </section>
     </main>
 
-    <div class="content-wrapper">
-        <section class="saved-templates">
-    <div class="templates__header">
-        <!-- MODIFIED HEADER STRUCTURE -->
-        <div class="templates__header-main">
-            <h2><i class="fas fa-history"></i> Projects</h2>
-            <!-- NEW: View Toggles (Tabs) -->
-            <div id="view-toggles" class="view-toggles">
-                <button class="view-toggle-btn active" data-view="my-projects">My Projects</button>
-                <button class="view-toggle-btn" data-view="shared-projects">Shared with Me</button>
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__links">
+                <a href="#">Home</a>
+                <a href="./Project/">Editor</a>
+                <a href="#features">Features</a>
+                <a href="#faq">FAQ</a>
             </div>
+            <div class="footer__social">
+                <a href="https://github.com" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            </div>
+            <p>&copy; 2024 Stylo AI. All rights reserved.</p>
         </div>
-        <input type="search" id="search-input" class="form__input" placeholder="Search projects...">
-    </div>
-    <!-- This grid is for the user's own projects -->
-    <div id="templates-list" class="templates__grid"></div>
-    <!-- NEW: This grid is for projects shared with the user, hidden by default -->
-    <div id="shared-templates-list" class="templates__grid hidden"></div>
-</section>
-    </div>
+    </footer>
     
-    <!-- MODALS -->
-    <div id="code-modal" class="modal hidden">
-        <div class="modal__content modal__content--large">
-            <div class="modal__header">
-                 <h3>Website Code</h3>
-                 <!-- NEW: Code Editor Actions -->
-                 <div class="modal__actions--header">
-                    <button id="code-edit-toggle" class="btn-icon" title="Toggle Edit Mode"><i class="fas fa-pencil-alt"></i></button>
-                    <button id="code-download-zip" class="btn-icon" title="Download as .zip"><i class="fas fa-file-archive"></i></button>
-                    <button class="modal__close" aria-label="Close modal">&times;</button>
-                 </div>
-            </div>
-            <div class="code-viewer">
-                <div class="code-viewer__tabs">
-                    <button class="code-viewer__tab active" data-tab="html">HTML</button>
-                    <button class="code-viewer__tab" data-tab="css">CSS</button>
-                    <button class="code-viewer__tab" data-tab="js">JavaScript</button>
-                </div>
-                <div class="code-viewer__content">
-                    <!-- NEW: Code Editor Structure with line numbers and textarea -->
-                    <div class="code-editor__pane active" data-pane="html">
-                        <textarea readonly class="line-numbers"></textarea>
-                        <textarea id="code-html" class="language-html code-editor" spellcheck="false"></textarea>
-                    </div>
-                    <div class="code-editor__pane" data-pane="css">
-                        <textarea readonly class="line-numbers"></textarea>
-                        <textarea id="code-css" class="language-css code-editor" spellcheck="false"></textarea>
-                    </div>
-                    <div class="code-editor__pane" data-pane="js">
-                        <textarea readonly class="line-numbers"></textarea>
-                        <textarea id="code-js" class="language-javascript code-editor" spellcheck="false"></textarea>
-                    </div>
-                </div>
-                <div class="code-viewer__footer">
-                    <div class="code-viewer__ai-suggester">
-                        <i class="fas fa-magic-wand-sparkles"></i>
-                        <input type="text" id="ai-suggestion-prompt" class="form__input" placeholder="e.g., line 15, make this button blue">
-                        <button id="ai-suggestion-btn" class="btn btn--primary">Suggest Edit</button>
-                    </div>
-                    <button id="ai-apply-changes-btn" class="btn btn--secondary">Apply Changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Other Modals (Save, Notify, Delete, Images) remain the same -->
-    <div id="save-modal" class="modal hidden">
-        <div class="modal__content">
-            <button class="modal__close" aria-label="Close modal">&times;</button>
-            <h3>Save Project</h3>
-            <p>Give your project a name to save or update it.</p>
-            <input type="text" id="save-template-name-input" class="form__input" placeholder="e.g., My SaaS Landing Page">
-            <div class="modal__actions">
-                <button id="confirm-save-btn" class="btn btn--primary">Confirm & Save</button>
-            </div>
-        </div>
-    </div>
-    <div id="notification-modal" class="modal hidden">
-        <div class="modal__content">
-            <p id="notification-message"></p>
-            <div class="modal__actions">
-                 <button id="close-notification-btn" class="btn btn--primary">OK</button>
-            </div>
-        </div>
-    </div>
-    <div id="delete-modal" class="modal hidden">
-        <div class="modal__content">
-            <h3>Confirm Deletion</h3>
-            <p>Are you sure you want to permanently delete this project? This action cannot be undone.</p>
-            <div class="modal__actions">
-                <button id="cancel-delete-btn" class="btn btn--secondary">Cancel</button>
-                <button id="confirm-delete-btn" class="btn btn--danger">Yes, Delete</button>
-            </div>
-        </div>
-    </div>
-    <div id="images-modal" class="modal hidden">
-        <div class="modal__content modal__content--large">
-            <div class="modal__header">
-                 <h3>My Images</h3>
-                 <button class="modal__close" aria-label="Close modal">&times;</button>
-            </div>
-            <div class="images-manager__body">
-                <div class="images-manager__actions">
-                    <input type="file" id="image-upload-input" multiple accept="image/*" class="hidden">
-                    <button id="upload-image-btn" class="btn btn--primary"><i class="fas fa-upload"></i> Upload New Images</button>
-                    <div id="image-upload-status"></div>
-                </div>
-                <div id="images-list" class="images-manager__grid"></div>
-            </div>
-        </div>
-    </div>
-    <div id="share-modal" class="modal hidden">
-    <div class="modal__content">
-        <button class="modal__close" aria-label="Close modal">&times;</button>
-        <h3>Share Project</h3>
-        <p>Invite others by email to collaborate in real-time. They will have full edit access.</p>
-        <div class="share-input-group">
-            <input type="email" id="share-email-input" class="form__input" placeholder="Enter user email to invite...">
-            <button id="confirm-share-btn" class="btn btn--primary">Invite</button>
-        </div>
-        <h4>Current Collaborators</h4>
-        <div id="collaborators-list" class="collaborators-list">
-            <!-- Collaborators will be rendered here by JS -->
-        </div>
-    </div>
-</div>
-    <!-- COLLECTIONS MODAL - Firestore Style -->
-<div id="collections-modal" class="modal hidden">
-    <div class="modal__content modal__content--large modal__content--firestore">
-        <div class="firestore-browser">
-            <!-- Pane 1: Collections -->
-            <div class="firestore-pane" id="firestore-pane-collections">
-                <div class="firestore-header">
-                    <span class="firestore-header__title"><i class="fas fa-layer-group"></i> Collections</span>
-                    <button id="add-collection-btn" class="btn-icon" title="Add New Collection"><i class="fas fa-plus"></i></button>
-                </div>
-                <div class="firestore-list" id="collections-list">
-                    <!-- JS will render collections here -->
-                    <div class="firestore-item--empty">Select a collection.</div>
-                </div>
-            </div>
+    <script type="module" src="./firebase-config.js"></script>
+    <script type="module" src="./home.js"></script>
 
-            <!-- Pane 2: Documents (Submissions) -->
-            <div class="firestore-pane" id="firestore-pane-documents">
-                <div class="firestore-header">
-                    <div class="firestore-header__breadcrumb" id="documents-breadcrumb">
-                        <span>Select a collection...</span>
-                    </div>
-                </div>
-                <div class="firestore-list" id="documents-list">
-                    <!-- JS will render documents here -->
-                    <div class="firestore-item--empty">No collection selected.</div>
-                </div>
-            </div>
-
-            <!-- Pane 3: Data Viewer -->
-            <div class="firestore-pane" id="firestore-pane-data">
-                <div class="firestore-header">
-                    <div class="firestore-header__breadcrumb" id="data-breadcrumb">
-                        <span>Select a document...</span>
-                    </div>
-                    <button class="modal__close btn-icon" aria-label="Close modal" title="Close"><i class="fas fa-times"></i></button>
-                </div>
-                <div class="firestore-data-viewer" id="data-viewer">
-                     <!-- JS will render data here -->
-                    <div class="firestore-item--empty">No document selected.</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-    <!-- SCRIPTS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script type="module" src="firebase-config.js"></script>
-    <script type="module" src="app.js"></script>
 </body>
 </html>

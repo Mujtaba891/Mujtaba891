@@ -1,51 +1,31 @@
 // home.js
 
 import { db } from './firebase-config.js';
-import { collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
 
 // --- STATE, CONSTANTS, & UI ELEMENTS ---
-// 1. ADD "Forms & Surveys" to the list. I've placed it in a logical spot.
 const CATEGORIES = [
-    'All',
-    'Portfolio',
-    'AI Tools',
-    'E-commerce',
-    'Business',
-    'Marketing & Sales',
-    'Forms & Surveys', // <-- NEW CATEGORY ADDED HERE
-    'Blog & Content',
-    'Education',
-    'Technology',
-    'Real Estate',
-    'Health & Fitness',
-    'Food & Drink',
-    'Events',
-    'Other'
+    'All', 'Portfolio', 'AI Tools', 'E-commerce', 'Business', 
+    'Marketing & Sales', 'Forms & Surveys', 'Blog & Content', 'Education', 
+    'Technology', 'Real Estate', 'Health & Fitness', 'Food & Drink', 'Events', 'Other'
 ];
 
-// Local cache for all fetched templates
 let allTemplates = [];
+let templatesInitialized = false; // Flag to prevent multiple fetches
 let currentCategory = 'All';
 let currentSearchTerm = '';
 
 const gridEl = document.getElementById('public-templates-grid');
 const searchInput = document.getElementById('template-search');
 const categoriesContainer = document.getElementById('category-filters');
+const showTemplatesBtn = document.getElementById('show-templates-btn');
+const navTemplatesLink = document.getElementById('nav-templates-link');
+const templatesSection = document.getElementById('templates');
 
 // --- "AI" CATEGORIZATION LOGIC ---
-
-/**
- * A smarter function to automatically categorize templates based on keywords in their name.
- * @param {string} name - The name of the template.
- * @returns {string} The determined category.
- */
 const determineCategory = (name) => {
     const n = name.toLowerCase();
-
-    // 2. ADD a new rule at the TOP to catch all form-related keywords first.
     if (n.includes('form') || n.includes('survey') || n.includes('inquiry') || n.includes('registration') || n.includes('application') || n.includes('feedback') || n.includes('onboarding') || n.includes('proposal') || n.includes('enrollment')) return 'Forms & Surveys';
-
-    // --- Existing rules remain the same ---
     if (n.includes('portfolio') || n.includes('resume') || n.includes('cv') || n.includes('personal bio') || n.includes('photographer') || n.includes('designer') || n.includes('scholar') || n.includes('speaker')) return 'Portfolio';
     if (n.includes(' ai') || n.includes('advisor') || n.includes('optimization') || n.includes('assistant') || n.includes('co-pilot')) return 'AI Tools';
     if (n.includes('shop') || n.includes('store') || n.includes('e-commerce') || n.includes('product')) return 'E-commerce';
@@ -58,12 +38,10 @@ const determineCategory = (name) => {
     if (n.includes('fitness') || n.includes('salon') || n.includes('spa')) return 'Health & Fitness';
     if (n.includes('cafe') || n.includes('restaurant') || n.includes('grocery')) return 'Food & Drink';
     if (n.includes('artist') || n.includes('musician') || n.includes('event')) return 'Events';
-    
-    return 'Other'; // Fallback for any name that doesn't match a keyword
+    return 'Other';
 };
 
 // --- RENDERING FUNCTIONS ---
-
 const renderTemplates = (templatesToRender) => {
     if (!gridEl) return;
     if (templatesToRender.length === 0) {
@@ -80,7 +58,7 @@ const renderTemplates = (templatesToRender) => {
             <div class="template-card">
                 <img src="${imageUrl}" alt="${t.data.name}" loading="lazy">
                 <h3>${t.data.name}</h3>
-                <a href="index.html?templateId=${t.id}" class="btn btn--secondary">Open in Editor</a>
+                <a href="./project?project=${t.id}" class="btn btn--secondary">Open in Editor</a>
             </div>
         `;
     }).join('');
@@ -89,7 +67,6 @@ const renderTemplates = (templatesToRender) => {
 
 const renderCategoryFilters = () => {
     if (!categoriesContainer) return;
-    // The buttons are now generated from our predefined CATEGORIES constant
     const buttonsHTML = CATEGORIES.map(category => `
         <button class="filter-btn ${category === 'All' ? 'active' : ''}" data-category="${category}">
             ${category}
@@ -98,9 +75,7 @@ const renderCategoryFilters = () => {
     categoriesContainer.innerHTML = buttonsHTML;
 };
 
-
 // --- CORE LOGIC ---
-
 const filterAndRender = () => {
     const term = currentSearchTerm.toLowerCase();
     const filtered = allTemplates.filter(t => {
@@ -110,11 +85,11 @@ const filterAndRender = () => {
     });
     renderTemplates(filtered);
 };
-/**
- * Fetches ALL public templates from Firestore ONCE on page load.
- */
+
 const initializeTemplates = async () => {
-    if (!gridEl) return;
+    if (!gridEl || templatesInitialized) return;
+    templatesInitialized = true; // Set flag to true
+
     gridEl.innerHTML = `<div class="templates-loading"><div class="spinner"></div><p>Loading community templates...</p></div>`;
 
     try {
@@ -122,32 +97,24 @@ const initializeTemplates = async () => {
             collection(db, 'ai_templates'),
             where("isPublic", "==", true)
         );
-
         const querySnapshot = await getDocs(q);
         if (querySnapshot.empty) {
             gridEl.innerHTML = `<div class="templates-empty"><i class="fas fa-folder-open"></i><p>No public templates available yet. Be the first!</p></div>`;
             return;
         }
 
-        // Store all templates in a temporary array.
         let templatesFromDB = querySnapshot.docs.map(doc => {
             const data = doc.data();
-            return {
-                id: doc.id,
-                data: data,
-                derivedCategory: determineCategory(data.name)
-            };
+            return { id: doc.id, data: data, derivedCategory: determineCategory(data.name) };
         });
-        
-        // --- THIS IS THE NEW SHUFFLE LOGIC ---
+
+        // Fisher-Yates shuffle algorithm
         for (let i = templatesFromDB.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [templatesFromDB[i], templatesFromDB[j]] = [templatesFromDB[j], templatesFromDB[i]]; // Swap elements
+            [templatesFromDB[i], templatesFromDB[j]] = [templatesFromDB[j], templatesFromDB[i]];
         }
-        // --- END OF SHUFFLE LOGIC ---
         allTemplates = templatesFromDB;
 
-        // Render the UI
         renderCategoryFilters();
         renderTemplates(allTemplates);
     } catch (error) {
@@ -156,12 +123,31 @@ const initializeTemplates = async () => {
     }
 };
 
-
 // --- EVENT LISTENERS ---
+const handleShowTemplatesClick = (e) => {
+    e.preventDefault();
+    if (templatesSection) {
+        // Make the section visible
+        templatesSection.style.display = 'block';
+
+        // Scroll to the section smoothly
+        templatesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Fetch templates if they haven't been fetched yet
+        initializeTemplates();
+    }
+};
 
 document.addEventListener('DOMContentLoaded', () => {
-    initializeTemplates();
+    // Attach event listeners for showing the templates
+    if (showTemplatesBtn) {
+        showTemplatesBtn.addEventListener('click', handleShowTemplatesClick);
+    }
+    if (navTemplatesLink) {
+        navTemplatesLink.addEventListener('click', handleShowTemplatesClick);
+    }
 
+    // Event listener for search input
     if (searchInput) {
         let debounceTimer;
         searchInput.addEventListener('input', () => {
@@ -173,13 +159,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Event delegation for category filters
     if (categoriesContainer) {
         categoriesContainer.addEventListener('click', (e) => {
             if (!e.target.matches('.filter-btn')) return;
-
             document.querySelector('.filter-btn.active')?.classList.remove('active');
             e.target.classList.add('active');
-
             currentCategory = e.target.dataset.category;
             filterAndRender();
         });

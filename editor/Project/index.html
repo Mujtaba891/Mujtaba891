@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stylo AI | Website Editor</title>
+    <link rel="icon" href="../assets/Images/logo1.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://cdn.jsdelivr.net/npm/typeit@8.7.1/dist/index.umd.js"></script>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo" onclick="window.location.href='home.html'">
+            <img src="../assets/Images/logo1.png" alt="logo" width="110px">
+        </div>
+        <div class="header__actions">
+            <!-- REMOVED: Global Collections and Images Buttons -->
+        </div>
+        <div id="auth-container">
+            <button id="login-btn" class="btn btn--secondary"><i class="fab fa-google"></i> Sign In</button>
+            <div id="user-info" class="user-profile hidden">
+                <!-- MODIFIED: Wrapped trigger elements -->
+                <div class="user-profile__trigger">
+                    <span id="user-email"></span>
+                    <img id="user-avatar" src="../assets/avatar/A10.jpeg" alt="User Avatar">
+                </div>
+                <!-- NEW: User dropdown menu -->
+                <div class="user-dropdown">
+                    <div class="user-dropdown__header">
+                        <strong>Logged in as</strong>
+                        <span id="user-email-dropdown"></span>
+                    </div>
+                    <a href="../Profile/" class="user-dropdown__item">
+                        <i class="fas fa-user-circle"></i> My Profile
+                    </a>
+                    <button id="logout-btn" class="user-dropdown__item">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <aside class="control-panel">
+            <div class="control-panel__header">
+                <h2><i class="fas fa-comments"></i> AI Chat</h2>
+                <button id="new-project-btn" class="btn btn--secondary btn--sm"><i class="fas fa-plus"></i> New Project</button>
+            </div>
+            
+            <details class="control-section">
+                <summary>1. Train AI (AI Persona)</summary>
+                <div class="control-group">
+                    <label for="ai-persona-input">Set a personality or expertise for the AI.</label>
+                    <textarea id="ai-persona-input" rows="3" placeholder="e.g., You are a minimalist web designer..."></textarea>
+                </div>
+            </details>
+
+            <div class="chat-container">
+    <div id="chat-history" class="chat-history"></div>
+    <div class="chat-input-area">
+    <div id="image-mention-popup" class="mention-popup hidden"></div>
+    <div id="collection-mention-popup" class="mention-popup hidden"></div>
+    <div id="mentioned-assets-container" class="mentioned-assets-container hidden"></div>
+    <div class="send">
+        <textarea id="chat-input" rows="3" placeholder="e.g., Use @logo and link form to #leads..."></textarea>
+        <div class="send-stable">
+            <button id="send-chat-btn" class="btn btn--primary"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+</div>
+             <button id="generate-btn" class="btn btn--primary"><i class="fas fa-bolt"></i><span class="btn__text">2. Generate with AI</span></button>
+        </aside>
+
+        <section class="workspace">
+            <div class="workspace__header">
+    <div class="workspace__title">
+        <h2><i class="fas fa-eye"></i> Live Preview</h2>
+        <div id="responsive-toggles" class="responsive-toggles">
+            <button class="btn-icon active" data-size="100%" title="Desktop"><i class="fas fa-desktop"></i></button>
+            <button class="btn-icon" data-size="768px" title="Tablet"><i class="fas fa-tablet-alt"></i></button>
+            <button class="btn-icon" data-size="375px" title="Mobile"><i class="fas fa-mobile-alt"></i></button>
+        </div>
+    </div>
+    <div id="realtime-status" class="realtime-status hidden"></div>
+    <div class="workspace__actions">
+        <!-- NEW: Project-specific asset buttons -->
+        <div id="project-assets-btns" class="project-assets-btns hidden">
+            <button id="project-db-btn" class="btn-icon" title="Project Databases"><i class="fas fa-database"></i></button>
+            <button id="project-images-btn" class="btn-icon" title="Project Images"><i class="fas fa-images"></i></button>
+        </div>
+        <div id="collaborators-container" class="collaborators-container"></div>
+        <!-- MODIFIED: Main action buttons are now icons -->
+        <div class="action-buttons">
+            <button id="view-new-tab-btn" class="btn-icon hidden" title="Open in New Tab"><i class="fas fa-external-link-alt"></i></button>
+            <button id="code-btn" class="btn-icon hidden" title="View Code"><i class="fas fa-code"></i></button>
+            <button id="history-btn" class="btn-icon hidden" title="Version History"><i class="fas fa-history"></i></button>
+            <button id="share-btn" class="btn-icon hidden" title="Share & Collaborate"><i class="fas fa-user-plus"></i></button>
+            <button id="save-btn" class="btn btn--secondary hidden"><i class="fas fa-save"></i> Save Project</button>
+        </div>
+    </div>
+</div>
+           <div class="preview-container">
+                <div id="loader-overlay" class="loader-overlay hidden">
+                    <img src="../assets/Images/Generate.gif" alt="Loader" style="width: 80%; height: auto; object-fit: cover; object-position: center top; clip-path: inset(0 0 35px 0);">
+                </div>
+                 <div id="initial-message" class="initial-message">
+                    <i class="fas fa-desktop"></i><p>Your generated website will appear here.</p>
+                </div>
+                <iframe id="preview-frame" title="Website Preview"></iframe>
+            </div>
+        </section>
+    </main>
+
+    <div class="content-wrapper">
+        <section class="saved-templates">
+    <div class="templates__header">
+        <!-- MODIFIED HEADER STRUCTURE -->
+        <div class="templates__header-main">
+            <h2><i class="fas fa-history"></i> Projects</h2>
+            <!-- NEW: View Toggles (Tabs) -->
+            <div id="view-toggles" class="view-toggles">
+                <button class="view-toggle-btn active" data-view="my-projects">My Projects</button>
+                <button class="view-toggle-btn" data-view="shared-projects">Shared with Me</button>
+            </div>
+        </div>
+        <input type="search" id="search-input" class="form__input" placeholder="Search projects...">
+    </div>
+    <!-- This grid is for the user's own projects -->
+    <div id="templates-list" class="templates__grid"></div>
+    <!-- NEW: This grid is for projects shared with the user, hidden by default -->
+    <div id="shared-templates-list" class="templates__grid hidden"></div>
+</section>
+    </div>
+    
+    <!-- MODALS -->
+    <div id="code-modal" class="modal hidden">
+        <div class="modal__content modal__content--large">
+            <div class="modal__header">
+                 <h3>Website Code</h3>
+                 <!-- NEW: Code Editor Actions -->
+                 <div class="modal__actions--header">
+                    <button id="code-edit-toggle" class="btn-icon" title="Toggle Edit Mode"><i class="fas fa-pencil-alt"></i></button>
+                    <button id="code-download-zip" class="btn-icon" title="Download as .zip"><i class="fas fa-file-archive"></i></button>
+                    <button class="modal__close" aria-label="Close modal">&times;</button>
+                 </div>
+            </div>
+            <div class="code-viewer">
+                <div class="code-viewer__tabs">
+                    <button class="code-viewer__tab active" data-tab="html">HTML</button>
+                    <button class="code-viewer__tab" data-tab="css">CSS</button>
+                    <button class="code-viewer__tab" data-tab="js">JavaScript</button>
+                </div>
+                <div class="code-viewer__content">
+                    <!-- NEW: Code Editor Structure with line numbers and textarea -->
+                    <div class="code-editor__pane active" data-pane="html">
+                        <textarea readonly class="line-numbers"></textarea>
+                        <textarea id="code-html" class="language-html code-editor" spellcheck="false"></textarea>
+                    </div>
+                    <div class="code-editor__pane" data-pane="css">
+                        <textarea readonly class="line-numbers"></textarea>
+                        <textarea id="code-css" class="language-css code-editor" spellcheck="false"></textarea>
+                    </div>
+                    <div class="code-editor__pane" data-pane="js">
+                        <textarea readonly class="line-numbers"></textarea>
+                        <textarea id="code-js" class="language-javascript code-editor" spellcheck="false"></textarea>
+                    </div>
+                </div>
+                <div class="code-viewer__footer">
+                    <div class="code-viewer__ai-suggester">
+                        <i class="fas fa-magic-wand-sparkles"></i>
+                        <input type="text" id="ai-suggestion-prompt" class="form__input" placeholder="e.g., line 15, make this button blue">
+                        <button id="ai-suggestion-btn" class="btn btn--primary">Suggest Edit</button>
+                    </div>
+                    <button id="ai-apply-changes-btn" class="btn btn--secondary">Apply Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Other Modals (Save, Notify, Delete, Images) remain the same -->
+    <div id="save-modal" class="modal hidden">
+        <div class="modal__content">
+            <button class="modal__close" aria-label="Close modal">&times;</button>
+            <h3>Save Project</h3>
+            <p>Give your project a name to save or update it.</p>
+            <input type="text" id="save-template-name-input" class="form__input" placeholder="e.g., My SaaS Landing Page">
+            <div class="modal__actions">
+                <button id="confirm-save-btn" class="btn btn--primary">Confirm & Save</button>
+            </div>
+        </div>
+    </div>
+    <div id="notification-modal" class="modal hidden">
+        <div class="modal__content">
+            <p id="notification-message"></p>
+            <div class="modal__actions">
+                 <button id="close-notification-btn" class="btn btn--primary">OK</button>
+            </div>
+        </div>
+    </div>
+    <div id="delete-modal" class="modal hidden">
+        <div class="modal__content">
+            <h3>Confirm Deletion</h3>
+            <p>Are you sure you want to permanently delete this project? This action cannot be undone.</p>
+            <div class="modal__actions">
+                <button id="cancel-delete-btn" class="btn btn--secondary">Cancel</button>
+                <button id="confirm-delete-btn" class="btn btn--danger">Yes, Delete</button>
+            </div>
+        </div>
+    </div>
+    <div id="images-modal" class="modal hidden">
+        <div class="modal__content modal__content--large">
+            <div class="modal__header">
+                 <!-- REMOVED: View Toggles -->
+                 <h3>Project Images</h3>
+                 <button class="modal__close" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="images-manager__body">
+                <div class="images-manager__actions">
+                    <input type="file" id="image-upload-input" multiple accept="image/*" class="hidden">
+                    <button id="upload-image-btn" class="btn btn--primary"><i class="fas fa-upload"></i> Upload New Images</button>
+                    <div id="image-upload-status"></div>
+                </div>
+                <div id="images-list" class="images-manager__grid"></div>
+            </div>
+        </div>
+    </div>
+    <div id="share-modal" class="modal hidden">
+    <div class="modal__content">
+        <button class="modal__close" aria-label="Close modal">&times;</button>
+        <h3>Share Project</h3>
+        <p>Invite others by email to collaborate. They will be notified upon their next login.</p>
+        <div class="share-input-group">
+            <input type="email" id="share-email-input" class="form__input" placeholder="Enter user email to invite...">
+            <!-- NEW: Role selection dropdown -->
+            <select id="share-role-select" class="form__input">
+                <option value="editor" selected>Full Edit Access</option>
+                <option value="viewer">View Only</option>
+            </select>
+            <button id="confirm-share-btn" class="btn btn--primary">Invite</button>
+        </div>
+        <h4>Current Collaborators</h4>
+        <div id="collaborators-list" class="collaborators-list">
+            <!-- Collaborators will be rendered here by JS -->
+        </div>
+    </div>
+</div>
+<!-- NEW: Version History Modal -->
+<div id="version-history-modal" class="modal hidden">
+    <div class="modal__content modal__content--xlarge">
+        <div class="modal__header">
+            <h3><i class="fas fa-history"></i> Version History</h3>
+            <button class="modal__close" aria-label="Close modal">&times;</button>
+        </div>
+        <div class="version-history-container">
+            <div class="version-history__list-pane">
+                <h4>Saved Versions</h4>
+                <div id="versions-list" class="versions-list">
+                    <!-- Version items will be rendered here by JS -->
+                </div>
+            </div>
+            <div class="version-history__preview-pane">
+                <div class="version-history__preview-header">
+                    <h4 id="version-preview-title">Select a version to preview</h4>
+                    <button id="restore-version-btn" class="btn btn--primary" disabled>
+                        <i class="fas fa-undo"></i> Restore This Version
+                    </button>
+                </div>
+                <div class="preview-container preview-container--version">
+                    <iframe id="version-preview-frame" title="Version Preview"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- COLLECTIONS MODAL - Firestore Style -->
+<div id="collections-modal" class="modal hidden">
+    <div class="modal__content modal__content--large modal__content--firestore">
+        <div class="firestore-browser">
+            <!-- Pane 1: Collections -->
+            <div class="firestore-pane" id="firestore-pane-collections">
+                <div class="firestore-header">
+                    <span class="firestore-header__title"><i class="fas fa-layer-group"></i> Project Databases</span>
+                    <button id="add-collection-btn" class="btn-icon" title="Add New Collection"><i class="fas fa-plus"></i></button>
+                </div>
+                <div class="firestore-list" id="collections-list">
+                    <!-- JS will render collections here -->
+                </div>
+            </div>
+
+            <!-- Pane 2: Documents (Submissions) -->
+            <div class="firestore-pane" id="firestore-pane-documents">
+                <div class="firestore-header">
+                     <!-- REMOVED: View Toggles -->
+                    <div class="firestore-header__breadcrumb" id="documents-breadcrumb">
+                        <span>Select a collection...</span>
+                    </div>
+                </div>
+                <div class="firestore-list" id="documents-list">
+                    <!-- JS will render documents here -->
+                    <div class="firestore-item--empty">No collection selected.</div>
+                </div>
+            </div>
+
+            <!-- Pane 3: Data Viewer -->
+            <div class="firestore-pane" id="firestore-pane-data">
+                <div class="firestore-header">
+                    <div class="firestore-header__breadcrumb" id="data-breadcrumb">
+                        <span>Select a document...</span>
+                    </div>
+                    <button class="modal__close btn-icon" aria-label="Close modal" title="Close"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="firestore-data-viewer" id="data-viewer">
+                     <!-- JS will render data here -->
+                    <div class="firestore-item--empty">No document selected.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- NEW: New Project Modal -->
+    <div id="new-project-modal" class="modal hidden">
+        <div class="modal__content">
+            <button class="modal__close" aria-label="Close modal">&times;</button>
+            <h3>Create a New Project</h3>
+            <p>Give your new project a name to get started.</p>
+            <input type="text" id="new-project-name-input" class="form__input" placeholder="e.g., My Awesome Portfolio">
+            <div class="modal__actions">
+                <button id="confirm-create-project-btn" class="btn btn--primary">Create Project</button>
+            </div>
+        </div>
+    </div>
+<div id="avatar-selection-modal" class="modal hidden">
+    <div class="modal__content modal__content--avatars">
+        <button class="modal__close" aria-label="Close modal">&times;</button>
+        <h3>Choose Your Avatar</h3>
+        <p>Select an avatar that represents you.</p>
+        <div id="avatar-grid" class="avatar-grid">
+            <!-- Avatars will be rendered here by JS -->
+        </div>
+    </div>
+</div>
+<!-- NEW: Custom Context Menu -->
+<div id="custom-context-menu" class="custom-context-menu hidden">
+<ul id="context-menu-items">
+<!-- Dynamically populated by JS -->
+</ul>
+</div>
+<input type="file" id="donate-thumbnail-upload" class="hidden" accept="image/png, image/jpeg">
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script type="module" src="./js/main.js"></script>
+    <script type="module" src="./js/auth.js"></script>
+    <script src="./js/mobile.js"></script>
+</body>
+</html>
