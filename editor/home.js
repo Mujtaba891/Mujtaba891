@@ -58,7 +58,7 @@ const renderTemplates = (templatesToRender) => {
             <div class="template-card">
                 <img src="${imageUrl}" alt="${t.data.name}" loading="lazy">
                 <h3>${t.data.name}</h3>
-                <a href="./project?project=${t.id}" class="btn btn--secondary">Open in Editor</a>
+                <a href="./Project?project=${t.id}" class="btn btn--secondary">Open in Editor</a>
             </div>
         `;
     }).join('');
@@ -169,4 +169,5 @@ document.addEventListener('DOMContentLoaded', () => {
             filterAndRender();
         });
     }
+
 });
