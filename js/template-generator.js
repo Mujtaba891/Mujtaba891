@@ -17,8 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         openRouterEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
         aiModel: 'google/gemini-2.0-flash-001',
-        // FIX: Fallback key allows the form to work even if DB read fails
-        //fallbackKey: "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",
         staticTemplates: [
             { id: 'clinic', name: 'Clinic', plan: 'pro', price: 11999, pages: 7, domain: 'Free Subdomain', img: 'Template Images/CLINIC.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/Clinic/Clinic' },
             { id: 'daycare', name: 'Daycare Website', plan: 'pro', price: 10999, pages: 7, domain: 'Free Subdomain', img: 'Template Images/daycare-website-template.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/daycare-website-template/daycare-website-template' },
@@ -296,4 +294,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // =================================================================================
 
     main();
+
 });
