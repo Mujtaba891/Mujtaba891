@@ -37,7 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const state = {
         db: null,
-        openRouterApiKey: null,
+        // FIX: We initialize the key directly here. Guaranteed to be present.
+        openRouterApiKey: "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",
         isGenerating: false
     };
 
@@ -51,7 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function main() {
         initializeFirebase();
-        state.openRouterApiKey = await fetchOpenRouterApiKey();
+        // We still try to fetch the key to see if there's an update, but we don't wait for it to enable UI
+        fetchOpenRouterApiKey(); 
         
         const urlParams = new URLSearchParams(window.location.search);
         const planFilter = urlParams.get('plan');
@@ -69,26 +71,20 @@ document.addEventListener('DOMContentLoaded', () => {
             state.db = firebase.firestore();
         } catch (error) {
             console.error("Firebase Init Failed.", error);
-            // Even if Firebase fails, we continue so the fallback key works for AI
         }
     }
 
     async function fetchOpenRouterApiKey() {
-        // FIX: Initialize with fallback key immediately
-        state.openRouterApiKey = CONFIG.fallbackKey;
-
-        if (!state.db) return CONFIG.fallbackKey;
-
+        if (!state.db) return;
         try {
             const doc = await state.db.collection('settings').doc('api_keys').get();
             if (doc.exists && doc.data().openRouter) {
                 state.openRouterApiKey = doc.data().openRouter;
-                return doc.data().openRouter;
+                console.log("Template Generator: API Key updated from Database.");
             }
         } catch (error) {
-            console.warn("Using fallback API key due to DB error:", error);
+            console.warn("Template Generator: Using default API Key (DB read blocked).");
         }
-        return CONFIG.fallbackKey;
     }
 
     // =================================================================================
@@ -156,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        // FIX: Only disable if NO key exists (fallback ensures we always have one)
+        // FIX: The key is now always present in state, so this check will pass.
         if (!state.openRouterApiKey) {
             document.getElementById('generate-btn').disabled = true;
             document.getElementById('website-description').disabled = true;
@@ -294,5 +290,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // =================================================================================
 
     main();
-
 });
