@@ -12,8 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         openRouterEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
         aiModel: 'google/gemini-2.0-flash-001',
-        // FIX: Added fallback key for Order Quiz suggestions
-        //fallbackKey: "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",
+        // FIX: Added fallback key for Order Quiz suggestion
         addOnCosts: { logoDesign: 2499, contentCreation: 4999, perExtraPage: 799 },
         templates: { 'clinic':{name:'Clinic',price:11999,pageLimit:7},'daycare':{name:'Daycare Website',price:10999,pageLimit:7},'educenter':{name:'Educenter',price:13999,pageLimit:7},'ecommerce':{name:'Electro eCommerce',price:24999,pageLimit:15},'etrain':{name:'E-Train Master',price:18999,pageLimit:15},'karma':{name:'Karma Master',price:6999,pageLimit:3},'kiddy':{name:'Kiddy Master',price:9999,pageLimit:7},'meditrust':{name:'MediTrust',price:12999,pageLimit:7},'organic':{name:'Organic',price:21999,pageLimit:15},'passion':{name:'Passion',price:5999,pageLimit:3},'topic-listing':{name:'Topic Listing',price:4999,pageLimit:3},'villa-agency':{name:'Villa Agency',price:14999,pageLimit:7},'glossy-touch':{name:'Glossy Touch',price:7999,pageLimit:3},'personal-shape':{name:'Personal Shape',price:4999,pageLimit:3},'nexus-flow':{name:'Nexus Flow',price:20999,pageLimit:15} },
         questions: [
@@ -350,5 +349,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const hideValidationError = () => { state.dom.validationError.style.display = 'none'; };
     
     main();
+
 
 });
