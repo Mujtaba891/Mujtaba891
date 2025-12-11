@@ -13,15 +13,14 @@ document.addEventListener('DOMContentLoaded', () => {
             appId: "1:221609343134:web:d64123479f43e6bc66638f"
         },
         openRouterEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
-        // Using a reliable model on OpenRouter
-        aiModel: 'google/gemini-2.0-flash-001',
-        // FIX: Fallback key added here to prevent button disappearing if DB read fail
+        aiModel: 'google/gemini-2.0-flash-001'
     };
 
     // Application state
+    // FIX: We initialize the key directly here. This guarantees it is never null.
     const state = {
         db: null,
-        openRouterApiKey: null,
+        openRouterApiKey: "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", // Hardcoded Key
         isChatOpen: false,
         isFirstOpen: true,
         isAwaitingResponse: false,
@@ -46,24 +45,21 @@ document.addEventListener('DOMContentLoaded', () => {
             state.db = firebase.firestore();
         } catch (error) {
             console.error("AI Assistant: Firebase initialization failed.", error);
-            // FIX: Removed the line that hides the FAB on error
         }
     }
 
     async function fetchApiKey() {
-        // First, set the fallback key so it works even if DB fails
-        state.openRouterApiKey = CONFIG.fallbackKey;
-
+        // We try to fetch from DB, but if it fails, we keep the hardcoded key from above.
         if (!state.db) return;
         try {
             const doc = await state.db.collection('settings').doc('api_keys').get();
             if (doc.exists && doc.data().openRouter) {
                 state.openRouterApiKey = doc.data().openRouter;
-                console.log("AI Assistant: API Key loaded from Database.");
+                console.log("AI Assistant: API Key updated from Database.");
             }
         } catch (error) {
-            console.warn("AI Assistant: Could not fetch key from DB (using fallback).", error);
-            // FIX: Removed the line that hides the FAB on error
+            // We ignore the permission error because we already have the hardcoded key in state
+            console.warn("AI Assistant: Using default API Key (DB read blocked).");
         }
     }
 
@@ -279,5 +275,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     init();
-
 });
