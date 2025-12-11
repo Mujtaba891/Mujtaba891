@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Configuration for Firebase and Gemini API
+    // Configuration for Firebase and OpenRouter API
     const CONFIG = {
         firebase: {
             apiKey: "AIzaSyCrimPYJOBcmx-ynWJ9g2GqjrT9ANsTrpg", 
@@ -12,13 +12,17 @@ document.addEventListener('DOMContentLoaded', () => {
             messagingSenderId: "221609343134", 
             appId: "1:221609343134:web:d64123479f43e6bc66638f"
         },
-        geminiApiEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key='
+        openRouterEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
+        // Using a reliable model on OpenRouter
+        aiModel: 'google/gemini-2.0-flash-001',
+        // FIX: Fallback key added here to prevent button disappearing if DB read fails
+        //fallbackKey: "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"
     };
 
     // Application state
     const state = {
         db: null,
-        geminiApiKey: null,
+        openRouterApiKey: null,
         isChatOpen: false,
         isFirstOpen: true,
         isAwaitingResponse: false,
@@ -43,23 +47,24 @@ document.addEventListener('DOMContentLoaded', () => {
             state.db = firebase.firestore();
         } catch (error) {
             console.error("AI Assistant: Firebase initialization failed.", error);
-            if (state.dom.fab) state.dom.fab.style.display = 'none';
+            // FIX: Removed the line that hides the FAB on error
         }
     }
 
     async function fetchApiKey() {
+        // First, set the fallback key so it works even if DB fails
+        state.openRouterApiKey = CONFIG.fallbackKey;
+
         if (!state.db) return;
         try {
             const doc = await state.db.collection('settings').doc('api_keys').get();
-            if (doc.exists && doc.data().geminiApiKey) {
-                state.geminiApiKey = doc.data().geminiApiKey;
-            } else {
-                console.warn("AI Assistant: Gemini API Key not found. AI features disabled.");
-                if (state.dom.fab) state.dom.fab.style.display = 'none';
+            if (doc.exists && doc.data().openRouter) {
+                state.openRouterApiKey = doc.data().openRouter;
+                console.log("AI Assistant: API Key loaded from Database.");
             }
         } catch (error) {
-            console.error("AI Assistant: Error fetching API key.", error);
-            if (state.dom.fab) state.dom.fab.style.display = 'none';
+            console.warn("AI Assistant: Could not fetch key from DB (using fallback).", error);
+            // FIX: Removed the line that hides the FAB on error
         }
     }
 
@@ -68,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
         state.dom.fab.addEventListener('click', toggleChat);
         state.dom.closeButton.addEventListener('click', toggleChat);
         state.dom.chatForm.addEventListener('submit', handleFormSubmit);
-        // NEW: Event delegation for suggestion chips
         state.dom.chatContainer.addEventListener('click', (e) => {
             if (e.target.classList.contains('suggestion-chip')) {
                 handleSuggestionClick(e.target.textContent);
@@ -126,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
         state.dom.messagesContainer.scrollTop = state.dom.messagesContainer.scrollHeight;
     }
 
-    // NEW: Function to render suggestion chips
     function renderSuggestions(suggestions = []) {
         clearSuggestions();
         if (suggestions.length === 0) return;
@@ -145,13 +148,11 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollToBottom();
     }
 
-    // NEW: Function to clear old suggestions
     function clearSuggestions() {
         const existingContainer = document.getElementById('ai-suggestion-chips');
         if (existingContainer) existingContainer.remove();
     }
     
-    // NEW: Function to handle clicking a suggestion
     function handleSuggestionClick(text) {
         state.dom.chatInput.value = text;
         state.dom.chatForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
@@ -171,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleTypingIndicator(true);
 
         try {
-            if (!state.geminiApiKey) throw new Error("API Key is not available.");
+            if (!state.openRouterApiKey) throw new Error("API Key is not available.");
             
             const aiResponseText = await getAiResponse(userInput);
             const responseData = JSON.parse(aiResponseText);
@@ -202,7 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function getAiResponse(userPrompt) {
-        // --- THIS IS THE UPDATED AI TRAINING PROMPT ---
         const systemPrompt = `You are the AI persona of Mujtaba Alam, a web developer from Kashmir. You are helpful, professional, and encourage visitors to hire you.
 
         My Information:
@@ -217,80 +217,52 @@ document.addEventListener('DOMContentLoaded', () => {
         Social Media: Github (https://github.com/Mujtaba891), LinkedIn (https://www.linkedin.com/in/mujtaba-alam-239589382/), Twitter (https://x.com/mujtaba47639658), Instagram (https://www.instagram.com/mujtabaalam25/), Youtube (https://www.youtube.com/@MujtabaAlam25), Watsapp (https://wa.me/+919797060239), Email (mailto:mujtabaalam0102gmail.com)
 
         Overview of the New "Get a Quote" Flow
-        This implementation creates two clear paths for your clients:
-
         Option 1: Choose a Pre-Designed Template (The Classic Path)
-        This is the best option if you'd like to start with a professional design.
-        Step 1: Select Your Plan
-        Head over to my Pricing Page. Here you can choose a base package that fits your budget and needs (like Starter, Pro, or Advanced). This helps narrow down the best templates for you.
-        Step 2: Choose Your Favorite Template
-        After selecting a plan, you'll see a gallery of professional templates. Browse through them and select the design that you like the most as a starting point.
-        Step 3: Customize Your Project
-        You'll be guided through a simple quiz where you can customize everything. You'll answer questions about the pages you need, your brand colors, and any special features you want to add.
-        Step 4: Get Your Final Quote
-        As you make your selections, you'll see the total estimated price update in real-time. Once you're finished, you can save the project to your account or proceed directly to checkout.
+        Step 1: Select Plan -> Step 2: Choose Template -> Step 3: Customize -> Step 4: Get Quote.
         
         Option 2: Use the AI Project Builder (The Custom Path)
-        This is perfect if you have a unique idea and want a plan built just for you.
-        Step 1: Select the "AI Custom" Plan
-        Go to the Pricing Page and choose the card labeled "AI Custom". This will take you to my AI-powered project builder.
-        Step 2: Describe Your Vision
-        You'll see a simple text box. In your own words, describe the website you want to create. For example: "I need a clean, modern website for my local bakery. It should have a menu, a gallery, and a contact page with a map."
-        Step 3: Let My AI Build Your Plan
-        Click "Generate My Plan," and my AI will instantly create a custom project plan for you, including a suggested name, a base price, and a list of recommended pages.
-        Step 4: Fine-Tune the Details
-        You'll be taken to the same customization quiz as in Option 1, but with all the key details from your AI-generated plan already filled in for you! You can then make any final adjustments.
-        
+        Step 1: Select "AI Custom" Plan -> Step 2: Describe Vision -> Step 3: AI Builds Plan -> Step 4: Fine-Tune.
 
         Your Rules:
         1.  **Persona:** ALWAYS speak as if you are Mujtaba.
         2.  **Markdown:** Use simple markdown: **text** for bold, [Text](URL) for links.
-        3.  **Redirection Command:** If the user wants to go to a page (contact, pricing, etc.), respond ONLY with this JSON: {"action": "redirect", "url": "contact.html"}.
-        4.  **NEW Email Command:** If a user asks you to write or draft an email for them to send to me (e.g., for collaboration, a project inquiry), you MUST respond ONLY with a JSON object like this: {"action": "send_email", "subject": "Collaboration Inquiry", "body": "Hello Mujtaba,\\n\\nI found your portfolio and I'm interested in collaborating on a project..."}. Generate a relevant subject and a professional, concise body based on the user's request.
-        5.  **Stay On Topic:** If asked about unrelated topics, politely steer the conversation back to web development.
-        6.  **Be Concise:** Keep answers direct.
+        3.  **Redirection Command:** If the user wants to go to a page (contact, pricing, etc.), respond ONLY with JSON: {"action": "redirect", "url": "contact.html"}.
+        4.  **Email Command:** If asked to draft email, respond ONLY with JSON: {"action": "send_email", "subject": "...", "body": "..."}.
+        5.  **JSON ONLY:** For all other interactions, you MUST respond ONLY with a single, valid JSON object. Do NOT write any text before or after the JSON.
         
-        - Skills: HTML5, CSS3, JavaScript (ES6), Supabase, Firebase, Canva.
-        - Services: Web Development, UI/UX Design, SEO.
-        - Projects: ORA Docs App, Article Globe, Baba Hardware. More on GitHub.
-        - Quote Process: Users can either pick a plan from the pricing page to see templates or use the "AI Custom" plan to describe their project and get a custom plan built by an AI.
-        
-        **CRITICAL RESPONSE RULE:** You MUST respond ONLY with a single, valid JSON object. Do NOT write any text before or after the JSON.
         The JSON object MUST have two keys:
-        1. "answer": A string containing your conversational response. Use simple Markdown (**bold**, [links](url)).
-        2. "suggestions": An array of 2-3 short, relevant follow-up questions the user might ask next.
-        
-        **ACTION RULE:** If you need to perform an action like redirecting or sending an email, add an "action" key to the JSON.
-        
-        **EXAMPLES:**
-        1. User asks "What are your skills?":
-           {"answer": "I specialize in front-end technologies like **HTML5, CSS3, and JavaScript (ES6)**. I also work with backend services like **Firebase and Supabase** to build full applications.", "suggestions": ["Tell me about your projects", "What are your prices?", "How do I get a quote?"]}
-        
-        2. User asks "Take me to the contact page":
-           {"action": "redirect", "url": "contact.html", "answer": "Of course! Taking you to the contact page now...", "suggestions": ["What's your email address?", "Can you draft an email for me?"]}
-           
-        3. User asks "Help me write an email for a project":
-           {"action": "send_email", "subject": "Project Inquiry from Portfolio", "body": "Hello Mujtaba,\\n\\nI found your portfolio and I'm interested in discussing a potential project...", "answer": "Great! I've drafted an email for you. I'm opening your default email client so you can review and send it.", "suggestions": ["What are your rates?", "How long does a project take?"]}
+        1. "answer": A string containing your conversational response.
+        2. "suggestions": An array of 2-3 short, relevant follow-up questions.
         `;
         
-        const apiEndpoint = `${CONFIG.geminiApiEndpoint}${state.geminiApiKey}`;
-        const requestBody = { contents: [{ parts: [{ text: `System Instructions:\n${systemPrompt}\n\nUser Question:\n${userPrompt}` }] }] };
+        const requestBody = {
+            model: CONFIG.aiModel,
+            messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userPrompt }
+            ]
+        };
 
-        const response = await fetch(apiEndpoint, {
+        const response = await fetch(CONFIG.openRouterEndpoint, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${state.openRouterApiKey}`,
+                'HTTP-Referer': window.location.href, // Optional OpenRouter requirement
+                'X-Title': 'Mujtaba Alam Portfolio' // Optional OpenRouter requirement
+            },
             body: JSON.stringify(requestBody)
         });
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(`API request failed: ${errorData.error.message}`);
+            throw new Error(`API request failed: ${errorData.error?.message || response.statusText}`);
         }
 
         const data = await response.json();
-        if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
-            // Clean the response to ensure it's valid JSON
-            return data.candidates[0].content.parts[0].text.replace(/```json/g, '').replace(/```/g, '').trim();
+        
+        if (data.choices && data.choices[0] && data.choices[0].message) {
+            return data.choices[0].message.content.replace(/```json/g, '').replace(/```/g, '').trim();
         } else {
             throw new Error("Received an invalid response format from the AI.");
         }

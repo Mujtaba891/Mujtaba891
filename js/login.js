@@ -9,7 +9,14 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. Firebase Initialization ---
-    const firebaseConfig = { apiKey: "AIzaSyCrimPYJOBcmx-ynWJ9g2GqjrT9ANsTrpg", authDomain: "mujtaba-alam.firebaseapp.com", projectId: "mujtaba-alam", storageBucket: "mujtaba-alam.appspot.com", messagingSenderId: "221609343134", appId: "1:221609343134:web:d64123479f43e6bc66638f" };
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCrimPYJOBcmx-ynWJ9g2GqjrT9ANsTrpg", 
+        authDomain: "mujtaba-alam.firebaseapp.com", 
+        projectId: "mujtaba-alam", 
+        storageBucket: "mujtaba-alam.appspot.com", 
+        messagingSenderId: "221609343134", 
+        appId: "1:221609343134:web:d64123479f43e6bc66638f" 
+    };
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 

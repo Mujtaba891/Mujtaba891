@@ -1,11 +1,3 @@
-/**
- * @file AI-Powered Template Page Script (templates.html)
- * @author Mujtaba Alam
- * @version 1.1.0 (Bug Fixes & UX Improvements)
- * @description This script dynamically displays either a grid of pre-made templates or an
- *              AI-powered generator based on the URL parameter. It fixes bugs related to
- *              template visibility and AI form interactivity.
- */
 'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -23,7 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
             messagingSenderId: "221609343134",
             appId: "1:221609343134:web:d64123479f43e6bc66638f"
         },
-        geminiApiEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=',
+        openRouterEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
+        aiModel: 'google/gemini-2.0-flash-001',
+        // FIX: Fallback key allows the form to work even if DB read fails
+        //fallbackKey: "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",
         staticTemplates: [
             { id: 'clinic', name: 'Clinic', plan: 'pro', price: 11999, pages: 7, domain: 'Free Subdomain', img: 'Template Images/CLINIC.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/Clinic/Clinic' },
             { id: 'daycare', name: 'Daycare Website', plan: 'pro', price: 10999, pages: 7, domain: 'Free Subdomain', img: 'Template Images/daycare-website-template.png', previewUrl: 'https://mujtabaalam.netlify.app/Templates/daycare-website-template/daycare-website-template' },
@@ -44,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const state = {
         db: null,
-        geminiApiKey: null,
+        openRouterApiKey: null,
         isGenerating: false
     };
 
@@ -58,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function main() {
         initializeFirebase();
-        state.geminiApiKey = await fetchGeminiApiKey();
+        state.openRouterApiKey = await fetchOpenRouterApiKey();
         
         const urlParams = new URLSearchParams(window.location.search);
         const planFilter = urlParams.get('plan');
@@ -76,24 +71,26 @@ document.addEventListener('DOMContentLoaded', () => {
             state.db = firebase.firestore();
         } catch (error) {
             console.error("Firebase Init Failed.", error);
-            DOM.pageContent.innerHTML = `<h1>Error connecting to services. Please refresh the page.</h1>`;
+            // Even if Firebase fails, we continue so the fallback key works for AI
         }
     }
 
-    async function fetchGeminiApiKey() {
-        if (!state.db) return null;
+    async function fetchOpenRouterApiKey() {
+        // FIX: Initialize with fallback key immediately
+        state.openRouterApiKey = CONFIG.fallbackKey;
+
+        if (!state.db) return CONFIG.fallbackKey;
+
         try {
             const doc = await state.db.collection('settings').doc('api_keys').get();
-            if (doc.exists && doc.data().geminiApiKey) {
-                return doc.data().geminiApiKey;
-            } else {
-                console.warn("Gemini API Key not found in Firestore. AI features will be disabled.");
-                return null;
+            if (doc.exists && doc.data().openRouter) {
+                state.openRouterApiKey = doc.data().openRouter;
+                return doc.data().openRouter;
             }
         } catch (error) {
-            console.error("Error fetching Gemini API key:", error);
-            return null;
+            console.warn("Using fallback API key due to DB error:", error);
         }
+        return CONFIG.fallbackKey;
     }
 
     // =================================================================================
@@ -105,7 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ? CONFIG.staticTemplates.filter(t => t.plan === planFilter) 
             : CONFIG.staticTemplates;
 
-        // Ensure we always show something, even if the filter is invalid
         if (templatesToDisplay.length === 0) {
             templatesToDisplay = CONFIG.staticTemplates;
         }
@@ -137,7 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         
-        // Post-render attachments
         attachAnimationObserver();
         attachPreviewListeners();
     }
@@ -163,7 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        if (!state.geminiApiKey) {
+        // FIX: Only disable if NO key exists (fallback ensures we always have one)
+        if (!state.openRouterApiKey) {
             document.getElementById('generate-btn').disabled = true;
             document.getElementById('website-description').disabled = true;
             document.getElementById('ai-error').textContent = 'The AI Generator is currently unavailable. Please check back later.';
@@ -171,7 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('ai-form').addEventListener('submit', handleAiFormSubmit);
         }
         
-        // Post-render attachments
         attachAnimationObserver();
     }
 
@@ -187,13 +182,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function attachPreviewListeners() {
-        // These elements are defined in the templates.html file, not here in JS.
         const previewModal = document.getElementById('preview-modal');
         const closePreviewBtn = document.getElementById('close-preview');
         const previewFrame = document.getElementById('preview-frame');
         const previewUrlText = document.getElementById('preview-url-text');
         
-        if (!previewModal) return; // Exit if modal is not on the page
+        if (!previewModal) return;
 
         document.querySelectorAll('.preview-btn').forEach(button => {
             button.addEventListener('click', (e) => {
@@ -241,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function generateAiTemplate(description) {
-        const generateBtn = document.getElementById('generate-btn'); // Get reference for finally block
+        const generateBtn = document.getElementById('generate-btn');
         const errorP = document.getElementById('ai-error');
         try {
             const prompt = `
@@ -261,16 +255,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             `;
 
-            const response = await fetch(`${CONFIG.geminiApiEndpoint}${state.geminiApiKey}`, {
+            const response = await fetch(CONFIG.openRouterEndpoint, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${state.openRouterApiKey}`,
+                    'HTTP-Referer': window.location.href,
+                    'X-Title': 'Template Generator'
+                },
+                body: JSON.stringify({
+                    model: CONFIG.aiModel,
+                    messages: [{ role: "user", content: prompt }]
+                })
             });
 
             if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
             
             const data = await response.json();
-            const suggestionText = data.candidates[0].content.parts[0].text;
+            const suggestionText = data.choices[0].message.content;
+            
             const cleanedJsonString = suggestionText.replace(/```json/g, '').replace(/```/g, '').trim();
             const aiTemplate = JSON.parse(cleanedJsonString);
 

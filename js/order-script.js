@@ -1,12 +1,3 @@
-/**
- * @file AI-Powered Project Customization Script (order.html)
- * @author Mujtaba Alam (Professionally Architected & AI Enhanced)
- * @version 9.2.0 (Auto-fill from AI Plan)
- * @description This script handles both static templates and dynamic, AI-generated plans
- *              passed from the template generator page. For AI plans, it now auto-fills the
- *              Site Name and Description fields to create a seamless user journey. It continues
- *              to use Gemini for customization suggestions within the quiz flow.
- */
 'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -19,7 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
         firebase: {
             apiKey: "AIzaSyCrimPYJOBcmx-ynWJ9g2GqjrT9ANsTrpg", authDomain: "mujtaba-alam.firebaseapp.com", projectId: "mujtaba-alam", storageBucket: "mujtaba-alam.appspot.com", messagingSenderId: "221609343134", appId: "1:221609343134:web:d64123479f43e6bc66638f"
         },
-        geminiApiEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=',
+        openRouterEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
+        aiModel: 'google/gemini-2.0-flash-001',
+        // FIX: Added fallback key for Order Quiz suggestions
+        //fallbackKey: "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",
         addOnCosts: { logoDesign: 2499, contentCreation: 4999, perExtraPage: 799 },
         templates: { 'clinic':{name:'Clinic',price:11999,pageLimit:7},'daycare':{name:'Daycare Website',price:10999,pageLimit:7},'educenter':{name:'Educenter',price:13999,pageLimit:7},'ecommerce':{name:'Electro eCommerce',price:24999,pageLimit:15},'etrain':{name:'E-Train Master',price:18999,pageLimit:15},'karma':{name:'Karma Master',price:6999,pageLimit:3},'kiddy':{name:'Kiddy Master',price:9999,pageLimit:7},'meditrust':{name:'MediTrust',price:12999,pageLimit:7},'organic':{name:'Organic',price:21999,pageLimit:15},'passion':{name:'Passion',price:5999,pageLimit:3},'topic-listing':{name:'Topic Listing',price:4999,pageLimit:3},'villa-agency':{name:'Villa Agency',price:14999,pageLimit:7},'glossy-touch':{name:'Glossy Touch',price:7999,pageLimit:3},'personal-shape':{name:'Personal Shape',price:4999,pageLimit:3},'nexus-flow':{name:'Nexus Flow',price:20999,pageLimit:15} },
         questions: [
@@ -40,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         quiz: {
             currentQuestionIndex: 0, userAnswers: {}, selectedTemplateId: null, templateInfo: {}, currentUser: null, isSubmitting: false, basePrice: 0, totalPrice: 0,
             addOns: { logo: 0, content: 0, extraPages: 0 },
-            geminiApiKey: null,
+            openRouterApiKey: null,
         },
         dom: {
             mainContainer: document.getElementById('quiz-container'), quizView: document.getElementById('quiz-view'), questionText: document.getElementById('question-text'), optionsContainer: document.getElementById('options-container'), validationError: document.getElementById('validation-error-message'), progressText: document.getElementById('progress-text'), progressBar: document.getElementById('progress-bar'), navContainer: document.querySelector('.quiz-navigation'), loadingSpinner: document.getElementById('loading-spinner'),
@@ -54,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function main() {
         if (!initializeFirebase()) return;
-        state.quiz.geminiApiKey = await fetchGeminiApiKey();
+        state.quiz.openRouterApiKey = await fetchOpenRouterApiKey();
         handleAuthentication();
     }
 
@@ -83,19 +77,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    async function fetchGeminiApiKey() {
+    async function fetchOpenRouterApiKey() {
+        // FIX: Return fallback immediately if no DB or on error
         try {
             const doc = await state.firebase.db.collection('settings').doc('api_keys').get();
-            if (doc.exists && doc.data().geminiApiKey) {
-                return doc.data().geminiApiKey;
-            } else {
-                console.warn("Gemini API Key not found in Firestore. AI features will be disabled.");
-                return null;
+            if (doc.exists && doc.data().openRouter) {
+                return doc.data().openRouter;
             }
         } catch (error) {
-            console.error("Error fetching Gemini API key:", error);
-            return null;
+            console.warn("Using fallback API key due to DB error:", error);
         }
+        return CONFIG.fallbackKey;
     }
 
     function initializeAppQuiz() {
@@ -130,13 +122,11 @@ document.addEventListener('DOMContentLoaded', () => {
         state.quiz.templateInfo = templateInfo;
         state.quiz.basePrice = templateInfo.price;
         
-        // Auto-fill data from AI-generated plan
         if (templateId.startsWith('ai-')) {
             state.quiz.userAnswers.siteName = templateInfo.name || '';
             state.quiz.userAnswers.siteDesc = templateInfo.description || '';
         }
 
-        // Pre-fill pages if provided by the template (static or AI)
         if (templateInfo.pages && Array.isArray(templateInfo.pages)) {
             state.quiz.userAnswers.pages = templateInfo.pages;
         }
@@ -202,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nextBtn?.addEventListener('click', async () => {
             if (!validateAndSaveCurrentAnswer(true)) return;
             const currentQuestion = CONFIG.questions[state.quiz.currentQuestionIndex];
-            if (currentQuestion.triggersAI && state.quiz.geminiApiKey) {
+            if (currentQuestion.triggersAI && state.quiz.openRouterApiKey) {
                 await handleAiSuggestionGeneration();
             } else {
                 state.quiz.currentQuestionIndex++;
@@ -227,13 +217,26 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const pageOptions = CONFIG.questions.find(q => q.id === 'pages').options;
             const prompt = `Based on the following website details, suggest some customizations. Website Name: "${siteName}". Website Description: "${siteDesc}". Please provide your response ONLY as a valid JSON object with three keys: 1. "pages": An array of strings with recommended page names from this list: [${pageOptions.map(o => `"${o}"`).join(', ')}]. Include essential pages like 'Home' and 'Contact Us'. 2. "branding": A short string suggestion for brand colors or fonts. 3. "features": A short string suggestion for one or two special features. Example: {"pages": ["Home", "About Us", "Services", "Contact Us", "Blog"],"branding": "A clean look with deep blue (#2c3e50) and a modern sans-serif font like Lato.","features": "A simple contact form and a photo gallery for projects."}`;
-            const response = await fetch(`${CONFIG.geminiApiEndpoint}${state.quiz.geminiApiKey}`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            
+            const response = await fetch(CONFIG.openRouterEndpoint, {
+                method: 'POST', 
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${state.quiz.openRouterApiKey}`,
+                    'HTTP-Referer': window.location.href,
+                    'X-Title': 'Order Quiz'
+                },
+                body: JSON.stringify({ 
+                    model: CONFIG.aiModel,
+                    messages: [{ role: "user", content: prompt }] 
+                })
             });
+
             if (!response.ok) throw new Error(`API request failed with status ${response.status}`);
+            
             const data = await response.json();
-            const suggestionText = data.candidates[0].content.parts[0].text;
+            const suggestionText = data.choices[0].message.content;
+            
             const cleanedJsonString = suggestionText.replace(/```json/g, '').replace(/```/g, '').trim();
             const suggestions = JSON.parse(cleanedJsonString);
             applyAiSuggestions(suggestions);
@@ -348,6 +351,4 @@ document.addEventListener('DOMContentLoaded', () => {
     
     main();
 
-
 });
-
