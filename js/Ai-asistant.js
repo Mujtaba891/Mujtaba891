@@ -15,8 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         openRouterEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
         // Using a reliable model on OpenRouter
         aiModel: 'google/gemini-2.0-flash-001',
-        // FIX: Fallback key added here to prevent button disappearing if DB read fails
-        //fallbackKey: "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"
+        // FIX: Fallback key added here to prevent button disappearing if DB read fail
     };
 
     // Application state
@@ -280,4 +279,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     init();
+
 });
