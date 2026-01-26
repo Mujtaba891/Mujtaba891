@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="https://www.google.com/schemas/sitemap-image/1.1">
+
+  <!-- ================= HOME PAGE ================= -->
+  <url>
+    <loc>https://mujtabaalam.vercel.app/</loc>
+    <priority>1.0</priority>
+    <changefreq>weekly</changefreq>
+
+    <image:image>
+      <image:loc>https://mujtabaalam.vercel.app/images/mujtaba.jpg</image:loc>
+      <image:title>Mujtaba Alam Web Developer Kashmir</image:title>
+    </image:image>
+
+    <image:image>
+      <image:loc>https://mujtabaalam.vercel.app/images/faith.jpg</image:loc>
+      <image:title>Faith and Learning - Mujtaba Alam</image:title>
+    </image:image>
+
+    <image:image>
+      <image:loc>https://mujtabaalam.vercel.app/images/learn.jpg</image:loc>
+      <image:title>Learning Web Development</image:title>
+    </image:image>
+  </url>
+
+  <!-- ================= MAIN PAGES ================= -->
+  <url>
+    <loc>https://mujtabaalam.vercel.app/about.html</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://mujtabaalam.vercel.app/services.html</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://mujtabaalam.vercel.app/projects.html</loc>
+    <priority>0.9</priority>
+
+    <image:image>
+      <image:loc>https://mujtabaalam.vercel.app/images/ORA.png</image:loc>
+      <image:title>ORA Docs App SaaS Project</image:title>
+    </image:image>
+
+    <image:image>
+      <image:loc>https://mujtabaalam.vercel.app/images/AG.png</image:loc>
+      <image:title>Article Globe Blogging Website</image:title>
+    </image:image>
+
+    <image:image>
+      <image:loc>https://mujtabaalam.vercel.app/images/BH.png</image:loc>
+      <image:title>Baba Hardware Business Website</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://mujtabaalam.vercel.app/templates.html</loc>
+    <priority>0.8</priority>
+
+    <image:image>
+      <image:loc>https://mujtabaalam.vercel.app/Template%20Images/CLINIC.png</image:loc>
+      <image:title>Clinic Website Template</image:title>
+    </image:image>
+
+    <image:image>
+      <image:loc>https://mujtabaalam.vercel.app/Template%20Images/daycare-website-template.png</image:loc>
+      <image:title>Daycare Website Template</image:title>
+    </image:image>
+
+    <image:image>
+      <image:loc>https://mujtabaalam.vercel.app/Template%20Images/educenter-master.png</image:loc>
+      <image:title>Educenter School Website Template</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://mujtabaalam.vercel.app/pricing.html</loc>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://mujtabaalam.vercel.app/contact.html</loc>
+    <priority>0.7</priority>
+  </url>
+
+</urlset>

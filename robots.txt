@@ -1,0 +1,39 @@
+# ===============================
+# Robots.txt for Mujtaba Alam
+# Website: https://mujtabaalam.vercel.app
+# Purpose: SEO + Image Indexing
+# ===============================
+
+User-agent: *
+Allow: /
+
+# ---- Allow Important Assets ----
+Allow: /css/
+Allow: /js/
+Allow: /images/
+Allow: /Template%20Images/
+Allow: /Templates/
+
+# ---- Explicitly Allow Images for Google Images ----
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.webp$
+
+# ---- Block Non-SEO / Private Areas ----
+Disallow: /admin/
+Disallow: /login.html
+Disallow: /login-customer.html
+Disallow: /checkout.html
+Disallow: /preview.html
+Disallow: /my-orders.html
+
+# ---- Block VS Code / System Files ----
+Disallow: /.vscode/
+
+# ---- Prevent Duplicate / Noise ----
+Disallow: /*?*
+Disallow: /*.json$
+
+# ---- Sitemap Location ----
+Sitemap: https://mujtabaalam.vercel.app/sitemap.xml
